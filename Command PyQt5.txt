@@ -1,0 +1,2 @@
+<Command to convert .ui file in .py file>
+pzuic5 -x filename.ui -o filename.py 
