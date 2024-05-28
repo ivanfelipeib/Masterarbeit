@@ -85,12 +85,83 @@ class ManageIfcWindow(QMainWindow):
 class ManageIdsWindow(QMainWindow):
     def __init__(self):
         super(ManageIdsWindow, self).__init__()
-        Ops.load_ui("ids_manage.ui", self)
+
+        # Load UI file
+        Ops.load_ui("ids_manage.ui",self)
+
+        # Define Widgets
+        main_widget_setup = {
+            "btn_import_ids": QPushButton,
+            "btn_delete_ids": QPushButton,
+            "btn_ids_edit": QPushButton,
+            "btn_ids_new": QPushButton,
+            "list_ids_mgmnt": QListView
+        }
+
+        # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
+        self.button_window_map = {
+            self.btn_import_ids: (IdsInfoWindow, False), #TODO: WIndow with explorer to select files. Up to 10
+            self.btn_delete_ids: (IdsSpecListWindow, False), #TODO: Delete elements form list
+            self.btn_ids_edit: (IdsEditorWindow, False), #TODO: When element selected, open IdsEditor Window populated with data from IDS, No selection than msgBox error
+            self.btn_ids_new: (IdsEditorWindow, False), 
+            }
+        
+        # Load Widgets
+        Ops.loadWidgets(self, main_widget_setup )       
+        # Connect buttons to the load function
+        Ops.clickAndLoad(self)
+        # Show the App
+        self.show()
+
+class IdsInfoWindow(QMainWindow):
+    def __init__(self):
+        super(IdsInfoWindow, self).__init__()
+        Ops.load_ui("idsEditor_general_info.ui", self)
+
+class IdsSpecListWindow(QMainWindow):
+    def __init__(self):
+        super(IdsSpecListWindow, self).__init__()
+        Ops.load_ui("idsEditor_spec_list.ui", self)
+
+class IdsSpecEditorWindow(QMainWindow):
+    def __init__(self):
+        super(IdsSpecEditorWindow, self).__init__()
+        Ops.load_ui("idsEditor_spec_editor.ui", self)
+
+class IdsEditorAuditWindow(QMainWindow):
+    def __init__(self):
+        super(IdsEditorAuditWindow, self).__init__()
+        Ops.load_ui("idsEditor_audit.ui", self)
 
 class IdsEditorWindow(QMainWindow):
     def __init__(self):
         super(IdsEditorWindow, self).__init__()
-        Ops.load_ui("idsEditor_main.ui", self)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_main.ui",self)
+
+        # Define Widgets
+        main_widget_setup = {
+            "btn_ids_info": QPushButton,
+            "btn_ids_specifications": QPushButton,
+            "btn_ids_audit": QPushButton,
+            "mdi_list": QMdiArea,
+            "mdi_editor": QMdiArea
+        }
+
+        # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
+        self.button_window_map = {
+            self.btn_ids_info: (IdsInfoWindow, "mdi_list"),
+            self.btn_ids_specifications: (IdsSpecListWindow, "mdi_list"),#TODO: Button Specifications should load 2 MDI when user hits edit in ManageIdsWindow 
+            self.btn_ids_audit: (IdsEditorAuditWindow, "mdi_editor")
+            }
+        
+        # Load Widgets
+        Ops.loadWidgets(self, main_widget_setup )       
+        # Connect buttons to the load function
+        Ops.clickAndLoad(self)
+        # Show the App
+        self.show()
 
 class CheckWindow(QMainWindow):
     def __init__(self):

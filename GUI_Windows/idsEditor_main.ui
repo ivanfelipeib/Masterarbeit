@@ -14,7 +14,7 @@
    <string>IDS Editor Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QMdiArea" name="mdiIdsEditorUpper">
+   <widget class="QMdiArea" name="mdi_list">
     <property name="geometry">
      <rect>
       <x>169</x>
@@ -24,7 +24,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QMdiArea" name="mdiIdsEditorBottom">
+   <widget class="QMdiArea" name="mdi_editor">
     <property name="geometry">
      <rect>
       <x>170</x>
@@ -34,13 +34,13 @@
      </rect>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>100</width>
-      <height>108</height>
+      <width>125</width>
+      <height>128</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">

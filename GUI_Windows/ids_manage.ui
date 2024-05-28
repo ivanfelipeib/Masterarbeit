@@ -14,7 +14,7 @@
    <string>Manage IDS Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListView" name="list_IDS_management">
+   <widget class="QListView" name="list_ids_mgmnt">
     <property name="geometry">
      <rect>
       <x>30</x>
