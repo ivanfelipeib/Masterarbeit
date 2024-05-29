@@ -14,7 +14,7 @@
    <string>Manage IDS Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListView" name="list_ids_mgmnt">
+   <widget class="CustomListWidget" name="list_ids_mgmnt">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -88,6 +88,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomListWidget</class>
+   <extends>QListView</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

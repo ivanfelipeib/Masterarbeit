@@ -1,2 +1,5 @@
+<Activate venv (only works in cmd terminal, not in powershell)>
+open new cmd terminal in vscode. .venv\Scripts\activate
+
 <Command to convert .ui file in .py file>
 pzuic5 -x filename.ui -o filename.py 

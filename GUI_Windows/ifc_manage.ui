@@ -14,7 +14,7 @@
    <string>Manage IFC Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListView" name="list_IFC_management">
+   <widget class="CustomListWidget" name="list_ifc">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -45,13 +45,13 @@
      <string>BIM Models</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>550</x>
       <y>70</y>
-      <width>77</width>
-      <height>54</height>
+      <width>95</width>
+      <height>64</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -74,6 +74,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomListWidget</class>
+   <extends>QListView</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QMainWindow,QApplication, QPushButton, QMdiArea, QListView, QMdiSubWindow, QComboBox
+from PyQt5.QtWidgets import QMainWindow,QApplication, QPushButton, QMdiArea, QListView, QMdiSubWindow, QComboBox, QFileDialog, QMessageBox
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-
 from pathlib import Path
+from myWidgets import CustomListWidget
 import sys
 
 DIRECTORY_GUI= "GUI_Windows"
@@ -80,7 +80,51 @@ class MainWindow(QMainWindow):
 class ManageIfcWindow(QMainWindow):
     def __init__(self):
         super(ManageIfcWindow, self).__init__()
-        Ops.load_ui("ifc_manage.ui", self)    
+
+        # Load UI file
+        Ops.load_ui("ifc_manage.ui",self)
+
+        # Define Widgets
+        main_widget_setup = {
+            "btn_import_ifc": QPushButton,
+            "btn_delete_ifc": QPushButton,
+            "list_ifc": CustomListWidget,
+        }
+        # Load Widgets
+        Ops.loadWidgets(self, main_widget_setup )
+
+        self.btn_import_ifc.clicked.connect(self.clickImport)
+        self.btn_delete_ifc.clicked.connect(self.clickDelete)
+    
+    def clickImport(self):
+        #Adds filepath from selected element to a list
+        self.filter="IFC-Dateien (*.ifc)"
+        self.title= "Öffnen"
+        self.fileDialog = QFileDialog()
+        self.tuple_names= self.fileDialog.getOpenFileNames(self, self.title, "", self.filter)
+        
+        if len(self.tuple_names[0]) <= self.list_ifc.maxFileList and self.tuple_names:
+            self.file_names= self.tuple_names[0]
+            for name in self.file_names:
+                #Checks whether name already in fileList or not and add element if not 
+                if len(self.list_ifc.findItems(name, Qt.MatchExactly)) == 0:
+                    self.list_ifc.addItem(name)
+                    self.list_ifc.maxFileList-=1
+        else:
+            self.msgError= QMessageBox()
+            self.msgError.setIcon(QMessageBox.Warning)
+            self.msgError.setWindowTitle("Error")
+            self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren")
+            self.msgError.show()
+    
+    def clickDelete(self):
+        #Grabs selected row or current row in List and deletes it
+        row= self.list_ifc.currentRow()
+        self.list_ifc.takeItem(row)
+        #Updates maxFileList value
+        self.list_ifc.maxFileList+=1
+
+
 
 class ManageIdsWindow(QMainWindow):
     def __init__(self):
@@ -95,23 +139,51 @@ class ManageIdsWindow(QMainWindow):
             "btn_delete_ids": QPushButton,
             "btn_ids_edit": QPushButton,
             "btn_ids_new": QPushButton,
-            "list_ids_mgmnt": QListView
+            "list_ids_mgmnt": CustomListWidget
         }
 
         # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
         self.button_window_map = {
-            self.btn_import_ids: (IdsInfoWindow, False), #TODO: WIndow with explorer to select files. Up to 10
-            self.btn_delete_ids: (IdsSpecListWindow, False), #TODO: Delete elements form list
             self.btn_ids_edit: (IdsEditorWindow, False), #TODO: When element selected, open IdsEditor Window populated with data from IDS, No selection than msgBox error
             self.btn_ids_new: (IdsEditorWindow, False), 
             }
-        
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup )       
         # Connect buttons to the load function
         Ops.clickAndLoad(self)
-        # Show the App
-        self.show()
+
+        #Filepaths import
+        self.btn_import_ids.clicked.connect(self.clickImport)
+        self.btn_delete_ids.clicked.connect(self.clickDelete)
+    
+    def clickImport(self):
+        #Adds filepath from selected element to a list
+        self.filter="IDS-Dateien (*.ids)"
+        self.title= "Öffnen"
+        self.fileDialog = QFileDialog()
+        self.tuple_names= self.fileDialog.getOpenFileNames(self, self.title, "", self.filter)
+        
+        if len(self.tuple_names[0]) <= self.list_ids_mgmnt.maxFileList and self.tuple_names:
+            self.file_names= self.tuple_names[0]
+            for name in self.file_names:
+                #Checks whether name already in fileList or not and add element if not 
+                if len(self.list_ids_mgmnt.findItems(name, Qt.MatchExactly)) == 0:
+                    self.list_ids_mgmnt.addItem(name)
+                    self.list_ids_mgmnt.maxFileList-=1
+        else:
+            self.msgError= QMessageBox()
+            self.msgError.setIcon(QMessageBox.Warning)
+            self.msgError.setWindowTitle("Error")
+            self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren")
+            self.msgError.show()
+    
+    def clickDelete(self):
+        #Grabs selected row or current row in List and deletes it
+        row= self.list_ids_mgmnt.currentRow()
+        self.list_ids_mgmnt.takeItem(row)
+        #Updates maxFileList value
+        self.list_ids_mgmnt.maxFileList+=1
+        
 
 class IdsInfoWindow(QMainWindow):
     def __init__(self):
