@@ -1,85 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow,QApplication, QPushButton, QMdiArea, QListView, QMdiSubWindow, QComboBox, QFileDialog, QMessageBox
-from PyQt5 import uic
-from PyQt5.QtCore import Qt
-from pathlib import Path
+from PyQt5.QtWidgets import QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow
+from PyQt5.QtCore import Qt, pyqtSignal
 from myWidgets import CustomListWidget
+from Ops import Ops
 import sys
-
-DIRECTORY_GUI= "GUI_Windows"
-#Method for loading .ui files
-
-class Ops():
-    @staticmethod
-    def load_ui(filename, window):
-        root_dir = Path(__file__).resolve().parent
-        filepath = root_dir / DIRECTORY_GUI / filename
-        uic.loadUi(filepath, window)
-
-    @staticmethod
-    def loadWidgets(window,widget_setup):
-        window.widgets = {}
-        if widget_setup:
-            for widget_name, widget_type in widget_setup.items():
-                window.widgets[widget_name] = window.findChild(widget_type, widget_name)
-    
-    @staticmethod
-    def loadSubWindow(self, window_class, mdi_area_name):
-        window = window_class()
-        sub_window = QMdiSubWindow()
-        sub_window.setWidget(window)
-        sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-        sub_window.setAttribute(Qt.WA_DeleteOnClose)
-        mdi_area = self.widgets[mdi_area_name]
-        mdi_area.addSubWindow(sub_window)
-        sub_window.showMaximized()
-
-    @staticmethod
-    def loadWindow(self, window_class):
-        self.window = window_class()
-        self.window.show()
-        self.close()
-    
-    @staticmethod
-    def clickAndLoad(self):
-        for button, (window_class, mdi_area_name) in self.button_window_map.items():
-            if mdi_area_name:
-                button.clicked.connect(lambda checked, wc=window_class, name=mdi_area_name: Ops.loadSubWindow(self, wc, name))
-            else:
-                button.clicked.connect(lambda checked, wc=window_class: Ops.loadWindow(self, wc))
-
-
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow, self).__init__()
-
-        # Load UI file
-        Ops.load_ui("main.ui",self)
-
-        # Define Widgets
-        main_widget_setup = {
-            "btn_manage_ifc": QPushButton,
-            "btn_manage_ids": QPushButton,
-            "btn_check": QPushButton,
-            "mdi_main": QMdiArea
-        }
-
-        # Map buttons to their respective load methods and windows ("name"->load in mdi/ false->load independent window)
-        self.button_window_map = {
-            self.btn_manage_ifc: (ManageIfcWindow, "mdi_main"),
-            self.btn_manage_ids: (ManageIdsWindow, "mdi_main"),
-            self.btn_check: (CheckWindow, False)
-            }
         
-        # Load Widgets
-        Ops.loadWidgets(self, main_widget_setup )       
-        # Connect buttons to the load function
-        Ops.clickAndLoad(self)
-        # Show the App
-        self.show()
-
 class ManageIfcWindow(QMainWindow):
-    def __init__(self):
-        super(ManageIfcWindow, self).__init__()
+    back_to_main_signal= pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(ManageIfcWindow, self).__init__(parent)
 
         # Load UI file
         Ops.load_ui("ifc_manage.ui",self)
@@ -127,8 +56,9 @@ class ManageIfcWindow(QMainWindow):
 
 
 class ManageIdsWindow(QMainWindow):
-    def __init__(self):
-        super(ManageIdsWindow, self).__init__()
+    back_to_main_signal= pyqtSignal()
+    def __init__(self, parent=None):
+        super(ManageIdsWindow, self).__init__(parent)
 
         # Load UI file
         Ops.load_ui("ids_manage.ui",self)
@@ -184,6 +114,31 @@ class ManageIdsWindow(QMainWindow):
         #Updates maxFileList value
         self.list_ids_mgmnt.maxFileList+=1
         
+class CheckWindow(QMainWindow):
+    back_to_main_signal= pyqtSignal()
+
+    def __init__(self, parent=None):
+        super(CheckWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("check.ui",self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "btn_check_ifc": QPushButton,
+            "btn_check_ifc_ids": QPushButton,
+            "btn_report": QPushButton,
+            "btn_back": QPushButton,
+            "comboBox_ifc": QComboBox,
+            "comboBox_ids": QComboBox
+        }
+        Ops.loadWidgets(self, main_widget_setup)
+
+        self.btn_back.clicked.connect(self.back_to_main)
+
+    def back_to_main(self):
+        self.back_to_main_signal.emit()
+        self.hide()
 
 class IdsInfoWindow(QMainWindow):
     def __init__(self):
@@ -235,39 +190,80 @@ class IdsEditorWindow(QMainWindow):
         # Show the App
         self.show()
 
-class CheckWindow(QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
-        super(CheckWindow, self).__init__()
+        super(MainWindow, self).__init__()
 
         # Load UI file
-        Ops.load_ui("check.ui",self)
+        Ops.load_ui("main.ui",self)
 
-        # Define Widgets
+        # Define and load Widgets
         main_widget_setup = {
-            "btn_check_ifc": QPushButton,
-            "btn_check_ifc_ids": QPushButton,
-            "btn_report": QPushButton,
-            "btn_back": QPushButton,
-            "comboBox_ifc": QComboBox,
-            "comboBox_ids": QComboBox
+            "btn_manage_ifc": QPushButton,
+            "btn_manage_ids": QPushButton,
+            "btn_check": QPushButton,
+            "mdi_main": QMdiArea
         }
+        Ops.loadWidgets(self, main_widget_setup)
 
-        # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
-        self.button_window_map = {
-            self.btn_check_ifc: (ManageIfcWindow, False),
-            self.btn_check_ifc_ids: (ManageIdsWindow, False),
-            self.btn_report: (CheckWindow, False),
-            self.btn_back: (MainWindow, False),
-            }
-        
-        # Load Widgets
-        Ops.loadWidgets(self, main_widget_setup )       
-        # Connect buttons to the load function
-        Ops.clickAndLoad(self)
-        # Show the App
+        #Create instance of Subwindows
+        self.ifc_window=None
+        self.ids_window=None
+        self.check_window= None   
+
+        #Conect handler
+        self.btn_manage_ifc.clicked.connect(self.openIfcWindow)
+        self.btn_manage_ids.clicked.connect(self.openIdsWindow)
+        self.btn_check.clicked.connect(self.openCheckWindow)
+    
+    def openIfcWindow(self):
+        if self.ifc_window is None or self.ifc_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.ifc_window = ManageIfcWindow()
+            self.ifc_window.back_to_main_signal.connect(self.clearMdiArea)
+            sub_window.setWidget(self.ifc_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in OpenIfcWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.mdi_main.addSubWindow(sub_window)
+            self.ifc_window.isClosed = False
+            sub_window.showMaximized()
+        else:
+            self.ifc_window.showMaximized()
+    
+    def openIdsWindow(self):
+        if self.ids_window is None or self.ids_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.ids_window = ManageIdsWindow()
+            self.ids_window.back_to_main_signal.connect(self.clearMdiArea)
+            sub_window.setWidget(self.ids_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+             # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in OpenIdsWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.mdi_main.addSubWindow(sub_window)
+            self.ids_window.isClosed = False
+            sub_window.showMaximized()
+        else:
+            self.ids_window.showMaximized()
+
+    def openCheckWindow(self): 
+        if self.check_window is None:
+            self.check_window = CheckWindow()
+            self.check_window.back_to_main_signal.connect(self.clearMdiArea)
+            self.check_window.back_to_main_signal.connect(self.show_main_window)
+        self.hide()  # Hide the main window
+        self.check_window.show()
+        self.check_window.raise_()
+        self.check_window.activateWindow()
+    
+    def show_main_window(self):
         self.show()
+
+    def clearMdiArea(self):
+        self.mdi_main.closeAllSubWindows() #TODO:add argument in clearMdiArea with name of mdi. NoneType error triggered??
 
 #Initialize the app
 app= QApplication(sys.argv)
 UIWindow = MainWindow()
+UIWindow.show()
 app.exec_()   
