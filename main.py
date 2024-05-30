@@ -3,7 +3,86 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from myWidgets import CustomListWidget
 from Ops import Ops
 import sys
-        
+
+class IdsEditorWindow(QMainWindow):
+    back_to_manage_ids= pyqtSignal()
+
+    def __init__(self, parent= None):
+        super(IdsEditorWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_main.ui",self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "btn_ids_info": QPushButton,
+            "btn_ids_specifications": QPushButton,
+            "btn_ids_audit": QPushButton,
+            "btn_back": QPushButton,
+            "mdi_list": QMdiArea,
+            "mdi_editor": QMdiArea
+        }
+        Ops.loadWidgets(self, main_widget_setup )
+
+        #Create instance of Subwindows
+        self.info_window=None
+        self.spec_list_window=None
+        self.spec_edit_window= None
+        self.audit_window= None
+               
+        #Conect handler TODO: method in Ops to automatically connec handler
+        self.btn_ids_info.clicked.connect(self.openInfoWindow)
+        self.btn_ids_specifications.clicked.connect(self.openSpecListWindow)
+        self.btn_ids_audit.clicked.connect(self.openAuditWindow)
+        self.btn_back.clicked.connect(self.backIdsList)
+    
+    def openInfoWindow(self):
+        if self.info_window is None or self.info_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.info_window = IdsInfoWindow()
+            sub_window.setWidget(self.info_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openInfoWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.mdi_list.addSubWindow(sub_window)
+            self.info_window.isClosed = False
+            sub_window.showMaximized()
+        else:
+            self.info_window.showMaximized()
+
+    def openSpecListWindow(self):
+        if self.spec_list_window is None or self.spec_list_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.spec_list_window = IdsSpecListWindow()
+            sub_window.setWidget(self.spec_list_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.mdi_list.addSubWindow(sub_window)
+            self.spec_list_window.isClosed = False
+            sub_window.showMaximized()
+        else:
+            self.spec_list_window.showMaximized()
+
+    def openAuditWindow(self):
+        if self.audit_window is None or self.audit_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.audit_window = IdsEditorAuditWindow()
+            sub_window.setWidget(self.audit_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.mdi_editor.addSubWindow(sub_window)
+            self.audit_window.isClosed = False
+            sub_window.showMaximized()
+        else:
+            self.audit_window.showMaximized()
+
+    def backIdsList(self):
+        self.back_to_manage_ids.emit()
+        self.hide()
+
+
 class ManageIfcWindow(QMainWindow):
     back_to_main_signal= pyqtSignal()
 
@@ -54,16 +133,16 @@ class ManageIfcWindow(QMainWindow):
         self.list_ifc.maxFileList+=1
 
 
-
 class ManageIdsWindow(QMainWindow):
     back_to_main_signal= pyqtSignal()
+
     def __init__(self, parent=None):
         super(ManageIdsWindow, self).__init__(parent)
 
         # Load UI file
         Ops.load_ui("ids_manage.ui",self)
 
-        # Define Widgets
+        # Define and load Widgets
         main_widget_setup = {
             "btn_import_ids": QPushButton,
             "btn_delete_ids": QPushButton,
@@ -71,20 +150,16 @@ class ManageIdsWindow(QMainWindow):
             "btn_ids_new": QPushButton,
             "list_ids_mgmnt": CustomListWidget
         }
+        Ops.loadWidgets(self, main_widget_setup )
 
-        # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
-        self.button_window_map = {
-            self.btn_ids_edit: (IdsEditorWindow, False), #TODO: When element selected, open IdsEditor Window populated with data from IDS, No selection than msgBox error
-            self.btn_ids_new: (IdsEditorWindow, False), 
-            }
-        # Load Widgets
-        Ops.loadWidgets(self, main_widget_setup )       
-        # Connect buttons to the load function
-        Ops.clickAndLoad(self)
-
-        #Filepaths import
+        #Create instance of Subwindows
+        self.idsEditor_window=None
+            
+        # Connect handler TODO:Conect handler with method in class Ops
         self.btn_import_ids.clicked.connect(self.clickImport)
         self.btn_delete_ids.clicked.connect(self.clickDelete)
+        self.btn_ids_edit.clicked.connect(self.clickExistingEditorWindow) #TODO: Clear IDS Instance and populate it with data from selected IDS
+        self.btn_ids_new.clicked.connect(self.clickNewEditorWindow)
     
     def clickImport(self):
         #Adds filepath from selected element to a list
@@ -113,6 +188,26 @@ class ManageIdsWindow(QMainWindow):
         self.list_ids_mgmnt.takeItem(row)
         #Updates maxFileList value
         self.list_ids_mgmnt.maxFileList+=1
+    
+    def clickNewEditorWindow(self): 
+        self.idsEditor_window = IdsEditorWindow()
+        self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
+        self.hide()  # Hide the main window
+        self.idsEditor_window.show()
+        self.idsEditor_window.raise_()
+        self.idsEditor_window.activateWindow()
+    
+    def clickExistingEditorWindow(self): #TODO: Clear IDS Instance and populate it with data from selected IDS
+        if self.idsEditor_window is None:
+            self.idsEditor_window = IdsEditorWindow()
+            self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
+        self.hide()  # Hide the main window
+        self.idsEditor_window.show()
+        self.idsEditor_window.raise_()
+        self.idsEditor_window.activateWindow()
+    
+    def showManageIds(self):
+        self.show()
         
 class CheckWindow(QMainWindow):
     back_to_main_signal= pyqtSignal()
@@ -160,36 +255,6 @@ class IdsEditorAuditWindow(QMainWindow):
         super(IdsEditorAuditWindow, self).__init__()
         Ops.load_ui("idsEditor_audit.ui", self)
 
-class IdsEditorWindow(QMainWindow):
-    def __init__(self):
-        super(IdsEditorWindow, self).__init__()
-
-        # Load UI file
-        Ops.load_ui("idsEditor_main.ui",self)
-
-        # Define Widgets
-        main_widget_setup = {
-            "btn_ids_info": QPushButton,
-            "btn_ids_specifications": QPushButton,
-            "btn_ids_audit": QPushButton,
-            "mdi_list": QMdiArea,
-            "mdi_editor": QMdiArea
-        }
-
-        # Map buttons to their respective load methods and windows ("name""->load in mdi/ false->load independent window)
-        self.button_window_map = {
-            self.btn_ids_info: (IdsInfoWindow, "mdi_list"),
-            self.btn_ids_specifications: (IdsSpecListWindow, "mdi_list"),#TODO: Button Specifications should load 2 MDI when user hits edit in ManageIdsWindow 
-            self.btn_ids_audit: (IdsEditorAuditWindow, "mdi_editor")
-            }
-        
-        # Load Widgets
-        Ops.loadWidgets(self, main_widget_setup )       
-        # Connect buttons to the load function
-        Ops.clickAndLoad(self)
-        # Show the App
-        self.show()
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -211,7 +276,7 @@ class MainWindow(QMainWindow):
         self.ids_window=None
         self.check_window= None   
 
-        #Conect handler
+        #Conect handler TODO: method in Ops to automatically connec handler
         self.btn_manage_ifc.clicked.connect(self.openIfcWindow)
         self.btn_manage_ids.clicked.connect(self.openIdsWindow)
         self.btn_check.clicked.connect(self.openCheckWindow)
@@ -251,7 +316,15 @@ class MainWindow(QMainWindow):
             self.check_window = CheckWindow()
             self.check_window.back_to_main_signal.connect(self.clearMdiArea)
             self.check_window.back_to_main_signal.connect(self.show_main_window)
-        self.hide()  # Hide the main window
+
+        #Populates Comboboxes in new CheckWindow()
+        self.check_window.comboBox_ifc.clear()
+        self.check_window.comboBox_ids.clear()
+        self.check_window.comboBox_ifc.addItems(CustomListWidget.getItems(self.ifc_window.list_ifc))
+        self.check_window.comboBox_ids.addItems(CustomListWidget.getItems(self.ids_window.list_ids_mgmnt))
+
+        # Hide the main window show check window
+        self.hide()  
         self.check_window.show()
         self.check_window.raise_()
         self.check_window.activateWindow()

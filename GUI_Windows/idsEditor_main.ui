@@ -40,7 +40,7 @@
       <x>20</x>
       <y>20</y>
       <width>125</width>
-      <height>128</height>
+      <height>166</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -77,6 +77,13 @@
       <widget class="QPushButton" name="btn_ids_audit">
        <property name="text">
         <string>Audit and Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_back">
+       <property name="text">
+        <string>Back to IDS Manager</string>
        </property>
       </widget>
      </item>
