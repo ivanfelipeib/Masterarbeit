@@ -19,18 +19,17 @@ class IdsEditorWindow(QMainWindow):
             "btn_ids_specifications": QPushButton,
             "btn_ids_audit": QPushButton,
             "btn_back": QPushButton,
-            "mdi_list": QMdiArea,
-            "mdi_editor": QMdiArea
+            "mdi": QMdiArea
         }
-        Ops.loadWidgets(self, main_widget_setup )
+        Ops.loadWidgets(self, main_widget_setup)
 
         #Create instance of Subwindows
         self.info_window=None
         self.spec_list_window=None
-        self.spec_edit_window= None
+        self.spec_editor_window= None
         self.audit_window= None
                
-        #Conect handler TODO: method in Ops to automatically connec handler
+        #Conect handler TODO: method in Ops to automatically connect handler
         self.btn_ids_info.clicked.connect(self.openInfoWindow)
         self.btn_ids_specifications.clicked.connect(self.openSpecListWindow)
         self.btn_ids_audit.clicked.connect(self.openAuditWindow)
@@ -44,7 +43,7 @@ class IdsEditorWindow(QMainWindow):
             sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
             # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openInfoWindow with name of mdi. NoneType error triggered??
             # mdi_area.addSubWindow(sub_window)
-            self.mdi_list.addSubWindow(sub_window)
+            self.mdi.addSubWindow(sub_window)
             self.info_window.isClosed = False
             sub_window.showMaximized()
         else:
@@ -54,11 +53,14 @@ class IdsEditorWindow(QMainWindow):
         if self.spec_list_window is None or self.spec_list_window.isClosed:
             sub_window = QMdiSubWindow()
             self.spec_list_window = IdsSpecListWindow()
+            self.spec_list_window.open_spec_editor.connect(self.openSpecEditorWindow)
             sub_window.setWidget(self.spec_list_window)
             sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
             # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
             # mdi_area.addSubWindow(sub_window)
-            self.mdi_list.addSubWindow(sub_window)
+            self.total_height = self.mdi.height()
+            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
+            self.mdi.addSubWindow(sub_window)
             self.spec_list_window.isClosed = False
             sub_window.showMaximized()
         else:
@@ -72,16 +74,44 @@ class IdsEditorWindow(QMainWindow):
             sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
             # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
             # mdi_area.addSubWindow(sub_window)
-            self.mdi_editor.addSubWindow(sub_window)
+            self.mdi.setMaximumHeight(self.height())
+            self.mdi.addSubWindow(sub_window)
             self.audit_window.isClosed = False
             sub_window.showMaximized()
         else:
             self.audit_window.showMaximized()
+    
+    def openSpecEditorWindow(self):
+        if self.spec_editor_window is None or self.spec_editor_window.isClosed:
+            sub_window = QMdiSubWindow()
+            self.spec_editor_window = IdsSpecEditorWindow()
+            sub_window.setWidget(self.spec_editor_window)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
+            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
+            # mdi_area.addSubWindow(sub_window)
+            self.total_height = self.mdi.height()
+            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
+            self.spec_editor_window.setGeometry(0, self.total_height // 3, self.mdi.width(), 2 * self.total_height // 3)
+            self.mdi.addSubWindow(sub_window)
+            self.spec_editor_window.isClosed = False
+            sub_window.show()
+            self.spec_editor_window.show()
+        else:
+            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
+            self.spec_editor_window.setGeometry(0, self.total_height // 3, self.mdi.width(), 2 * self.total_height // 3)
+            self.spec_list_window.show()
+            self.spec_editor_window.show()
+
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
         self.hide()
 
+    def setGeometriesMdiArea(self, window1):
+        total_height = self.mdi.height()
+        window1.setGeometry(0, 0, self.mdi.width(), total_height // 3)
+        #window2.setGeometry(0, total_height // 3, self.mdi.width(), 2 * total_height // 3)
+    
 
 class ManageIfcWindow(QMainWindow):
     back_to_main_signal= pyqtSignal()
@@ -241,9 +271,39 @@ class IdsInfoWindow(QMainWindow):
         Ops.load_ui("idsEditor_general_info.ui", self)
 
 class IdsSpecListWindow(QMainWindow):
-    def __init__(self):
-        super(IdsSpecListWindow, self).__init__()
-        Ops.load_ui("idsEditor_spec_list.ui", self)
+    open_spec_editor= pyqtSignal()
+
+    def __init__(self, parent= None):
+        super(IdsSpecListWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_spec_list.ui",self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "btn_new_spec": QPushButton,
+            "btn_delete_spec": QPushButton,
+            "list_ids_spec": CustomListWidget
+        }
+        Ops.loadWidgets(self, main_widget_setup)
+
+        #Create instance of Subwindows
+        self.spec_editor_window=None
+               
+        #Conect handler TODO: method in Ops to automatically connect handler
+        self.btn_new_spec.clicked.connect(self.clickNew)
+        self.btn_delete_spec.clicked.connect(self.clickDelete)
+
+    def clickNew(self):
+        self.open_spec_editor.emit()
+    
+    def clickDelete(self):
+        #Grabs selected row or current row in List and deletes it
+        row= self.list_ids_spec.currentRow()
+        self.list_ids_spec.takeItem(row)
+        #Updates maxFileList value
+        self.list_ids_spec.maxFileList+=1
+
 
 class IdsSpecEditorWindow(QMainWindow):
     def __init__(self):
@@ -317,17 +377,26 @@ class MainWindow(QMainWindow):
             self.check_window.back_to_main_signal.connect(self.clearMdiArea)
             self.check_window.back_to_main_signal.connect(self.show_main_window)
 
-        #Populates Comboboxes in new CheckWindow()
-        self.check_window.comboBox_ifc.clear()
-        self.check_window.comboBox_ids.clear()
-        self.check_window.comboBox_ifc.addItems(CustomListWidget.getItems(self.ifc_window.list_ifc))
-        self.check_window.comboBox_ids.addItems(CustomListWidget.getItems(self.ids_window.list_ids_mgmnt))
+        #Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
+        if self.check_window.comboBox_ifc.count() == 0 and self.check_window.comboBox_ids.count() == 0:
+            self.check_window.comboBox_ifc.clear()
+            self.check_window.comboBox_ids.clear()
+            self.check_window.comboBox_ifc.addItems(CustomListWidget.getItems(self.ifc_window.list_ifc))
+            self.check_window.comboBox_ids.addItems(CustomListWidget.getItems(self.ids_window.list_ids_mgmnt))
 
-        # Hide the main window show check window
-        self.hide()  
-        self.check_window.show()
-        self.check_window.raise_()
-        self.check_window.activateWindow()
+            # Hide the main window show check window
+            self.hide()  
+            self.check_window.show()
+            self.check_window.raise_()
+            self.check_window.activateWindow()
+        else:
+            self.msgError= QMessageBox()
+            self.msgError.setIcon(QMessageBox.Warning)
+            self.msgError.setWindowTitle("Error")
+            self.msgError.setText("You have not uploaded any files yet")
+            self.msgError.show()
+
+        
     
     def show_main_window(self):
         self.show()

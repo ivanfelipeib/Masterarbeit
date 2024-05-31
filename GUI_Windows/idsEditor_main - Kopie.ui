@@ -20,13 +20,23 @@
    <string>IDS Editor Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QMdiArea" name="mdi">
+   <widget class="QMdiArea" name="mdi_list">
     <property name="geometry">
      <rect>
       <x>169</x>
       <y>19</y>
       <width>800</width>
       <height>832</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QMdiArea" name="mdi_editor">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>380</y>
+      <width>800</width>
+      <height>461</height>
      </rect>
     </property>
    </widget>

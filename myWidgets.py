@@ -29,7 +29,7 @@ class CustomListWidget(QListWidget):
             event.accept()
 
             links = []
-            if len(event.mimeData().urls()) <= self.maxFileList:
+            if len(event.mimeData().urls()) <= self.maxFileList: #TODO:add exception when droping IFC in IDS or viceversa
                 for url in event.mimeData().urls():
                     filepath=str(url.toLocalFile())
                     itemInList= len(self.findItems(filepath, Qt.MatchExactly))
