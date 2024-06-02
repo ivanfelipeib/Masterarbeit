@@ -28,12 +28,16 @@ class IdsEditorWindow(QMainWindow):
         self.spec_list_window=None
         self.spec_editor_window= None
         self.audit_window= None
-               
-        #Conect handler TODO: method in Ops to automatically connect handler
-        self.btn_ids_info.clicked.connect(self.openInfoWindow)
-        self.btn_ids_specifications.clicked.connect(self.openSpecListWindow)
-        self.btn_ids_audit.clicked.connect(self.openAuditWindow)
-        self.btn_back.clicked.connect(self.backIdsList)
+
+        # Connect handlers
+        handlers = {
+            "btn_ids_info": self.openInfoWindow,
+            "btn_ids_specifications": self.openSpecListWindow,
+            "btn_ids_audit": self.openAuditWindow,
+            "btn_back": self.backIdsList
+        }
+        Ops.connectHandlers(self, handlers)
+
     
     def openInfoWindow(self):
         if self.info_window is None or self.info_window.isClosed:
@@ -110,12 +114,9 @@ class IdsEditorWindow(QMainWindow):
     def setGeometriesMdiArea(self, window1):
         total_height = self.mdi.height()
         window1.setGeometry(0, 0, self.mdi.width(), total_height // 3)
-        #window2.setGeometry(0, total_height // 3, self.mdi.width(), 2 * total_height // 3)
-    
+        #window2.setGeometry(0, total_height // 3, self.mdi.width(), 2 * total_height // 3)   
 
 class ManageIfcWindow(QMainWindow):
-    back_to_main_signal= pyqtSignal()
-
     def __init__(self, parent=None):
         super(ManageIfcWindow, self).__init__(parent)
 
@@ -131,8 +132,12 @@ class ManageIfcWindow(QMainWindow):
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup )
 
-        self.btn_import_ifc.clicked.connect(self.clickImport)
-        self.btn_delete_ifc.clicked.connect(self.clickDelete)
+        # Connect handlers
+        handlers = {
+            "btn_import_ifc": self.clickImport,
+            "btn_delete_ifc": self.clickDelete
+        }
+        Ops.connectHandlers(self, handlers)
     
     def clickImport(self):
         #Adds filepath from selected element to a list
@@ -162,10 +167,7 @@ class ManageIfcWindow(QMainWindow):
         #Updates maxFileList value
         self.list_ifc.maxFileList+=1
 
-
 class ManageIdsWindow(QMainWindow):
-    back_to_main_signal= pyqtSignal()
-
     def __init__(self, parent=None):
         super(ManageIdsWindow, self).__init__(parent)
 
@@ -184,13 +186,16 @@ class ManageIdsWindow(QMainWindow):
 
         #Create instance of Subwindows
         self.idsEditor_window=None
-            
-        # Connect handler TODO:Conect handler with method in class Ops
-        self.btn_import_ids.clicked.connect(self.clickImport)
-        self.btn_delete_ids.clicked.connect(self.clickDelete)
-        self.btn_ids_edit.clicked.connect(self.clickExistingEditorWindow) #TODO: Clear IDS Instance and populate it with data from selected IDS
-        self.btn_ids_new.clicked.connect(self.clickNewEditorWindow)
-    
+
+        # Connect handlers
+        handlers = {
+            "btn_import_ids": self.clickImport,
+            "btn_delete_ids": self.clickDelete,
+            "btn_ids_edit": self.clickExistingEditorWindow,
+            "btn_ids_new": self.clickNewEditorWindow,
+        }
+        Ops.connectHandlers(self, handlers)
+                
     def clickImport(self):
         #Adds filepath from selected element to a list
         self.filter="IDS-Dateien (*.ids)"
@@ -259,7 +264,14 @@ class CheckWindow(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.btn_back.clicked.connect(self.back_to_main)
+        # Connect handlers
+        handlers = {
+            #"btn_check_ifc": self.clickImport, TODO: Implement methods for commented buttons
+            #"btn_check_ifc_ids": self.clickDelete,
+            #"btn_report": self.clickExistingEditorWindow,
+            "btn_back": self.back_to_main,
+        }
+        Ops.connectHandlers(self, handlers)
 
     def back_to_main(self):
         self.back_to_main_signal.emit()
@@ -289,10 +301,13 @@ class IdsSpecListWindow(QMainWindow):
 
         #Create instance of Subwindows
         self.spec_editor_window=None
-               
-        #Conect handler TODO: method in Ops to automatically connect handler
-        self.btn_new_spec.clicked.connect(self.clickNew)
-        self.btn_delete_spec.clicked.connect(self.clickDelete)
+
+        # Connect handlers
+        handlers = {
+            "btn_new_spec": self.clickNew,
+            "btn_delete_spec": self.clickDelete
+        }
+        Ops.connectHandlers(self, handlers)
 
     def clickNew(self):
         self.open_spec_editor.emit()
@@ -303,7 +318,6 @@ class IdsSpecListWindow(QMainWindow):
         self.list_ids_spec.takeItem(row)
         #Updates maxFileList value
         self.list_ids_spec.maxFileList+=1
-
 
 class IdsSpecEditorWindow(QMainWindow):
     def __init__(self):
@@ -334,50 +348,29 @@ class MainWindow(QMainWindow):
         #Create instance of Subwindows
         self.ifc_window=None
         self.ids_window=None
-        self.check_window= None   
+        self.check_window= None
 
-        #Conect handler TODO: method in Ops to automatically connec handler
-        self.btn_manage_ifc.clicked.connect(self.openIfcWindow)
-        self.btn_manage_ids.clicked.connect(self.openIdsWindow)
-        self.btn_check.clicked.connect(self.openCheckWindow)
+        # Connect handlers
+        handlers = {
+            "btn_manage_ifc": self.openIfcWindow,
+            "btn_manage_ids": self.openIdsWindow,
+            "btn_check": self.openCheckWindow
+        }
+        Ops.connectHandlers(self, handlers)   
     
     def openIfcWindow(self):
-        if self.ifc_window is None or self.ifc_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.ifc_window = ManageIfcWindow()
-            self.ifc_window.back_to_main_signal.connect(self.clearMdiArea)
-            sub_window.setWidget(self.ifc_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in OpenIfcWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.mdi_main.addSubWindow(sub_window)
-            self.ifc_window.isClosed = False
-            sub_window.showMaximized()
-        else:
-            self.ifc_window.showMaximized()
+        self.ifc_window = Ops.openSubWindow(self.mdi_main, ManageIfcWindow, self.ifc_window, None)
     
     def openIdsWindow(self):
-        if self.ids_window is None or self.ids_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.ids_window = ManageIdsWindow()
-            self.ids_window.back_to_main_signal.connect(self.clearMdiArea)
-            sub_window.setWidget(self.ids_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-             # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in OpenIdsWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.mdi_main.addSubWindow(sub_window)
-            self.ids_window.isClosed = False
-            sub_window.showMaximized()
-        else:
-            self.ids_window.showMaximized()
+        self.ids_window = Ops.openSubWindow(self.mdi_main, ManageIdsWindow, self.ids_window, None)
 
-    def openCheckWindow(self): 
-        if self.check_window is None:
-            self.check_window = CheckWindow()
-            self.check_window.back_to_main_signal.connect(self.clearMdiArea)
-            self.check_window.back_to_main_signal.connect(self.show_main_window)
+    def openCheckWindow(self):
+        def setup_signals(window_instance):
+            window_instance.back_to_main_signal.connect(self.clearMdiArea)
+            window_instance.back_to_main_signal.connect(self.show_main_window)
+        self.check_window = Ops.openWindow(CheckWindow, self.check_window, setup_signals)
 
-        #Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
+       #Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
         if self.check_window.comboBox_ifc.count() == 0 and self.check_window.comboBox_ids.count() == 0:
             self.check_window.comboBox_ifc.clear()
             self.check_window.comboBox_ids.clear()
@@ -390,14 +383,8 @@ class MainWindow(QMainWindow):
             self.check_window.raise_()
             self.check_window.activateWindow()
         else:
-            self.msgError= QMessageBox()
-            self.msgError.setIcon(QMessageBox.Warning)
-            self.msgError.setWindowTitle("Error")
-            self.msgError.setText("You have not uploaded any files yet")
-            self.msgError.show()
+            Ops.msgError(self,"Error","You have not uploaded any files yet")
 
-        
-    
     def show_main_window(self):
         self.show()
 
