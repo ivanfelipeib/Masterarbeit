@@ -1,8 +1,153 @@
-from PyQt5.QtWidgets import QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow
+from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit
 from PyQt5.QtCore import Qt, pyqtSignal
 from myWidgets import CustomListWidget
 from Ops import Ops
+import filters 
 import sys
+
+class IdsInfoWindow(QMainWindow):
+    def __init__(self):
+        super(IdsInfoWindow, self).__init__()
+        Ops.load_ui("idsEditor_general_info.ui", self)
+
+class IdsSpecListWindow(QMainWindow):
+    open_spec_editor= pyqtSignal()
+
+    def __init__(self, parent= None):
+        super(IdsSpecListWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_spec_list.ui",self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "btn_new_spec": QPushButton,
+            "btn_delete_spec": QPushButton,
+            "list_ids_spec": CustomListWidget
+        }
+        Ops.loadWidgets(self, main_widget_setup)
+
+        #Create instance of Subwindows
+        self.spec_editor_window=None
+
+        # Connect handlers
+        handlers = {
+            "btn_new_spec": self.clickNew,
+            "btn_delete_spec": self.clickDelete
+        }
+        Ops.connectHandlers(self, handlers)
+
+    def clickNew(self):
+        self.open_spec_editor.emit()
+    
+    def clickDelete(self):
+        #Grabs selected row or current row in List and deletes it
+        row= self.list_ids_spec.currentRow()
+        self.list_ids_spec.takeItem(row)
+        #Updates maxFileList value
+        self.list_ids_spec.maxFileList+=1
+
+class IdsSpecEditorWindow(QMainWindow):
+    def __init__(self, parent=None):
+        super(IdsSpecEditorWindow, self).__init__(parent)
+        #Load UI
+        Ops.load_ui("idsEditor_spec_editor.ui", self)
+
+        # Define Widgets
+        main_widget_setup = {
+            #Tab Description
+            "txt_name": QLineEdit,
+            "text_description": QPlainTextEdit,
+            "txt_instructions": QPlainTextEdit,
+            #Tab Applicability
+            "combo_mandatory": QComboBox,
+            "combo_add_filter": QComboBox,
+            "list_filters": CustomListWidget,
+            "mdi_filter": QMdiArea,
+            "btn_delete_filter": QPushButton,
+            "btn_save_filter": QPushButton,
+            #Tab Requirements
+            "combo_add_requirement": QComboBox,
+            "list_requirements": CustomListWidget,
+            "mdi_requirement": QMdiArea,
+            "btn_delete_requirement": QPushButton,
+            "btn_save_requirement": QPushButton,
+            #General
+            "btn_save_specification": QPushButton
+        }
+        # Load Widgets
+        Ops.loadWidgets(self, main_widget_setup)
+
+        # Set subwindow in mdiArea when currentText change in ComboBox 
+        self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
+        self.combo_add_requirement.currentTextChanged.connect(self.openRequirementSubWindow)
+        self.btn_save_requirement.clicked.connect(self.save_requirements_data)
+    
+    def openFilterSubWindow(self, text):
+        mdi_area = self.mdi_filter
+        mdi_area.closeAllSubWindows()
+        
+        window_classes = {
+            "Add filter by class": filters.byClass,
+            "Add filter by part of": filters.byPartOf,
+            "Add filter by attribute": filters.byAttribute,
+            "Add filter by property": filters.byProperty,
+            "Add filter by classification": filters.byClassification,
+            "Add filter by material": filters.byMaterial
+        }
+        
+        if text in window_classes:
+            sub_window = QMdiSubWindow()
+            window_instance = window_classes[text]()
+            sub_window.setWidget(window_instance)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
+            mdi_area.addSubWindow(sub_window)
+            sub_window.showMaximized()
+
+    def openRequirementSubWindow(self, text):
+        mdi_area = self.mdi_requirement
+        mdi_area.closeAllSubWindows()
+        
+        window_classes = {
+            "Add requirement by class": filters.byClass,
+            "Add requirement by part of": filters.byPartOf,
+            "Add requirement by attribute": filters.byAttribute,
+            "Add requirement by property": filters.byProperty,
+            "Add requirement by classification": filters.byClassification,
+            "Add requirement by material": filters.byMaterial
+        }
+        
+        if text in window_classes:
+            sub_window = QMdiSubWindow()
+            window_instance = window_classes[text]()
+            sub_window.setWidget(window_instance)
+            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
+            mdi_area.addSubWindow(sub_window)
+            sub_window.showMaximized()
+
+    def save_requirements_data(self):
+        current_text = self.combo_add_requirement.currentText()
+        
+        window_data_methods = {
+            "Add requirement by class": filters.byClass.getData,
+            "Add requirement by part of": filters.byPartOf.getData,
+            "Add requirement by attribute": filters.byAttribute.getData,
+            "Add requirement by property": filters.byProperty.getData,
+            "Add requirement by classification": filters.byClassification.getData,
+            "Add requirement by material": filters.byMaterial.getData
+        }
+        
+        if current_text in window_data_methods:
+            data = window_data_methods[current_text](self)
+            self.list_requirements.addItem(data)
+            self.list_requirements.closeAllSubWindows()
+        print("Epaaaaaa")
+    
+
+class IdsEditorAuditWindow(QMainWindow):
+    def __init__(self):
+        super(IdsEditorAuditWindow, self).__init__()
+        Ops.load_ui("idsEditor_audit.ui", self)
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
@@ -40,81 +185,22 @@ class IdsEditorWindow(QMainWindow):
 
     
     def openInfoWindow(self):
-        if self.info_window is None or self.info_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.info_window = IdsInfoWindow()
-            sub_window.setWidget(self.info_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openInfoWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.mdi.addSubWindow(sub_window)
-            self.info_window.isClosed = False
-            sub_window.showMaximized()
-        else:
-            self.info_window.showMaximized()
+        self.info_window = Ops.openSubWindow(self.mdi, IdsInfoWindow, self.info_window, None)
 
     def openSpecListWindow(self):
-        if self.spec_list_window is None or self.spec_list_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.spec_list_window = IdsSpecListWindow()
-            self.spec_list_window.open_spec_editor.connect(self.openSpecEditorWindow)
-            sub_window.setWidget(self.spec_list_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.total_height = self.mdi.height()
-            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
-            self.mdi.addSubWindow(sub_window)
-            self.spec_list_window.isClosed = False
-            sub_window.showMaximized()
-        else:
-            self.spec_list_window.showMaximized()
+        def setup_signals(window_instance):
+            window_instance.open_spec_editor.connect(self.openSpecEditorWindow)
+        self.spec_list_window = Ops.openSubWindow(self.mdi, IdsSpecListWindow, self.spec_list_window, setup_signals)
 
     def openAuditWindow(self):
-        if self.audit_window is None or self.audit_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.audit_window = IdsEditorAuditWindow()
-            sub_window.setWidget(self.audit_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.mdi.setMaximumHeight(self.height())
-            self.mdi.addSubWindow(sub_window)
-            self.audit_window.isClosed = False
-            sub_window.showMaximized()
-        else:
-            self.audit_window.showMaximized()
+        self.audit_window = Ops.openSubWindow(self.mdi, IdsEditorAuditWindow, self.audit_window, None)
     
     def openSpecEditorWindow(self):
-        if self.spec_editor_window is None or self.spec_editor_window.isClosed:
-            sub_window = QMdiSubWindow()
-            self.spec_editor_window = IdsSpecEditorWindow()
-            sub_window.setWidget(self.spec_editor_window)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-            # mdi_area = self.widgets[mdi_area_name] #TODO:add argument in openSpecListWindow with name of mdi. NoneType error triggered??
-            # mdi_area.addSubWindow(sub_window)
-            self.total_height = self.mdi.height()
-            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
-            self.spec_editor_window.setGeometry(0, self.total_height // 3, self.mdi.width(), 2 * self.total_height // 3)
-            self.mdi.addSubWindow(sub_window)
-            self.spec_editor_window.isClosed = False
-            sub_window.show()
-            self.spec_editor_window.show()
-        else:
-            self.spec_list_window.setGeometry(0, 0, self.mdi.width(), self.total_height // 3)
-            self.spec_editor_window.setGeometry(0, self.total_height // 3, self.mdi.width(), 2 * self.total_height // 3)
-            self.spec_list_window.show()
-            self.spec_editor_window.show()
-
+        self.spec_editor_window = Ops.openSubWindow(self.mdi, IdsSpecEditorWindow, self.spec_editor_window, None)
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
         self.hide()
-
-    def setGeometriesMdiArea(self, window1):
-        total_height = self.mdi.height()
-        window1.setGeometry(0, 0, self.mdi.width(), total_height // 3)
-        #window2.setGeometry(0, total_height // 3, self.mdi.width(), 2 * total_height // 3)   
 
 class ManageIfcWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -276,58 +362,6 @@ class CheckWindow(QMainWindow):
     def back_to_main(self):
         self.back_to_main_signal.emit()
         self.hide()
-
-class IdsInfoWindow(QMainWindow):
-    def __init__(self):
-        super(IdsInfoWindow, self).__init__()
-        Ops.load_ui("idsEditor_general_info.ui", self)
-
-class IdsSpecListWindow(QMainWindow):
-    open_spec_editor= pyqtSignal()
-
-    def __init__(self, parent= None):
-        super(IdsSpecListWindow, self).__init__(parent)
-
-        # Load UI file
-        Ops.load_ui("idsEditor_spec_list.ui",self)
-
-        # Define and load Widgets
-        main_widget_setup = {
-            "btn_new_spec": QPushButton,
-            "btn_delete_spec": QPushButton,
-            "list_ids_spec": CustomListWidget
-        }
-        Ops.loadWidgets(self, main_widget_setup)
-
-        #Create instance of Subwindows
-        self.spec_editor_window=None
-
-        # Connect handlers
-        handlers = {
-            "btn_new_spec": self.clickNew,
-            "btn_delete_spec": self.clickDelete
-        }
-        Ops.connectHandlers(self, handlers)
-
-    def clickNew(self):
-        self.open_spec_editor.emit()
-    
-    def clickDelete(self):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_ids_spec.currentRow()
-        self.list_ids_spec.takeItem(row)
-        #Updates maxFileList value
-        self.list_ids_spec.maxFileList+=1
-
-class IdsSpecEditorWindow(QMainWindow):
-    def __init__(self):
-        super(IdsSpecEditorWindow, self).__init__()
-        Ops.load_ui("idsEditor_spec_editor.ui", self)
-
-class IdsEditorAuditWindow(QMainWindow):
-    def __init__(self):
-        super(IdsEditorAuditWindow, self).__init__()
-        Ops.load_ui("idsEditor_audit.ui", self)
 
 class MainWindow(QMainWindow):
     def __init__(self):

@@ -4,13 +4,21 @@ from PyQt5.QtCore import Qt
 from pathlib import Path
 
 DIRECTORY_GUI= "GUI_Windows"
+DIRECTORY_GUI_FILTERS ="Filters-Requirements"
 
 class Ops():
     @staticmethod
-    def load_ui(filename, window):
-        root_dir = Path(__file__).resolve().parent
-        filepath = root_dir / DIRECTORY_GUI / filename
-        uic.loadUi(filepath, window)
+    def load_ui(filename, window, filter= False):
+        #UI Elements in filters-requirements folder
+        if filter:
+            root_dir = Path(__file__).resolve().parent
+            filepath = root_dir / DIRECTORY_GUI / DIRECTORY_GUI_FILTERS / filename
+            uic.loadUi(filepath, window)
+        #UI in GUI_Windows folder
+        else:
+            root_dir = Path(__file__).resolve().parent
+            filepath = root_dir / DIRECTORY_GUI / filename
+            uic.loadUi(filepath, window)
 
     @staticmethod
     def loadWidgets(window,widgets):
@@ -22,6 +30,7 @@ class Ops():
     def connectHandlers(window, handlers):
         for btn, handler in handlers.items():
             getattr(window, btn).clicked.connect(handler)
+
 
     @staticmethod
     def openWindow(window_class, window_instance, setup_signals=None):

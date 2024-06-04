@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
+    <width>790</width>
     <height>554</height>
    </rect>
   </property>
@@ -14,17 +14,17 @@
    <string>Manage IDS Specifications Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QTabWidget" name="tabs_Specifications">
+   <widget class="QTabWidget" name="tabs_specifications">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>60</y>
-      <width>671</width>
+      <y>50</y>
+      <width>791</width>
       <height>461</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -33,14 +33,70 @@
      <widget class="QLabel" name="label">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>40</y>
+        <x>20</x>
+        <y>20</y>
         <width>111</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Description is missing!!!!!!</string>
+       <string>Name:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>60</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Description:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>230</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Instructions:</string>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="text_description">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>60</y>
+        <width>641</width>
+        <height>151</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="txt_instructions">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>230</y>
+        <width>641</width>
+        <height>201</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="txt_name">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>20</y>
+        <width>641</width>
+        <height>22</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -53,20 +109,20 @@
        <rect>
         <x>590</x>
         <y>100</y>
-        <width>41</width>
+        <width>181</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>-</string>
+       <string>Delete filter</string>
       </property>
      </widget>
      <widget class="QLabel" name="lbl_elements_app">
       <property name="geometry">
        <rect>
-        <x>10</x>
+        <x>20</x>
         <y>20</y>
-        <width>81</width>
+        <width>111</width>
         <height>16</height>
        </rect>
       </property>
@@ -74,20 +130,20 @@
        <string>Elements in model</string>
       </property>
      </widget>
-     <widget class="QListView" name="list_filters">
+     <widget class="CustomListWidget" name="list_filters">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>50</y>
         <width>551</width>
-        <height>131</height>
+        <height>151</height>
        </rect>
       </property>
      </widget>
-     <widget class="QComboBox" name="combo_optional_app">
+     <widget class="QComboBox" name="combo_mandatory">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>130</x>
         <y>20</y>
         <width>141</width>
         <height>16</height>
@@ -114,155 +170,176 @@
        <rect>
         <x>590</x>
         <y>50</y>
-        <width>41</width>
+        <width>181</width>
         <height>31</height>
        </rect>
       </property>
       <item>
        <property name="text">
-        <string>Filter by class</string>
+        <string>Add filter by class</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Filter by part of</string>
+        <string>Add filter by part of</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Filter by attribute</string>
+        <string>Add filter by attribute</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Filter by property</string>
+        <string>Add filter by property</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Filter by classification</string>
+        <string>Add filter by classification</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Filter by material</string>
+        <string>Add filter by material</string>
        </property>
       </item>
+     </widget>
+     <widget class="QMdiArea" name="mdi_filter">
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>219</y>
+        <width>551</width>
+        <height>211</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_save_filter">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>300</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save filter</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_requirements">
      <attribute name="title">
       <string>Requirements</string>
      </attribute>
-     <widget class="QLabel" name="lbl_elements_requ">
+     <widget class="QPushButton" name="btn_save_requirement">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>81</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Elements in model</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="btn_delete_req">
-      <property name="geometry">
-       <rect>
-        <x>590</x>
-        <y>100</y>
-        <width>41</width>
+        <x>600</x>
+        <y>300</y>
+        <width>181</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
-       <string>-</string>
+       <string>Save requirement</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="combo_add_req">
+     <widget class="QMdiArea" name="mdi_requirement">
       <property name="geometry">
        <rect>
-        <x>590</x>
-        <y>50</y>
-        <width>41</width>
-        <height>31</height>
+        <x>19</x>
+        <y>219</y>
+        <width>551</width>
+        <height>211</height>
        </rect>
       </property>
-      <item>
-       <property name="text">
-        <string>Filter by class</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Filter by part of</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Filter by attribute</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Filter by property</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Filter by classification</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Filter by material</string>
-       </property>
-      </item>
      </widget>
-     <widget class="QComboBox" name="combo_optional_req">
+     <widget class="QLabel" name="lbl_elements_app_4">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>20</x>
         <y>20</y>
         <width>141</width>
         <height>16</height>
        </rect>
       </property>
-      <item>
-       <property name="text">
-        <string>MUST have</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>CAN have</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>MUST NOT have</string>
-       </property>
-      </item>
+      <property name="text">
+       <string>Information requirements:</string>
+      </property>
      </widget>
-     <widget class="QListView" name="list_requirements">
+     <widget class="CustomListWidget" name="list_requirements">
       <property name="geometry">
        <rect>
         <x>20</x>
         <y>50</y>
         <width>551</width>
-        <height>131</height>
+        <height>151</height>
        </rect>
       </property>
      </widget>
+     <widget class="QPushButton" name="btn_delete_requirement">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>100</y>
+        <width>191</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Delete requirement</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="combo_add_requirement">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>50</y>
+        <width>191</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>Add requirement by class</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by part of</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by attribute</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by property</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by classification</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by material</string>
+       </property>
+      </item>
+     </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>186</width>
+      <width>211</width>
       <height>26</height>
      </rect>
     </property>
@@ -299,9 +376,29 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="btn_save_specification">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>20</y>
+      <width>141</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Save Specification</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomListWidget</class>
+   <extends>QListView</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
