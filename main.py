@@ -88,6 +88,7 @@ class IdsSpecEditorWindow(QMainWindow):
         self.btn_save_filter.clicked.connect(self.save_filters_data)
         self.btn_delete_filter.clicked.connect(self.clickDeleteFilter)
         self.btn_delete_requirement.clicked.connect(self.clickDeleteRequirement)
+        self.btn_save_specification.clicked.connect(self.saveSpecification)
     
     def openFilterSubWindow(self, text):
         mdi_area = self.mdi_filter
@@ -157,6 +158,30 @@ class IdsSpecEditorWindow(QMainWindow):
         #Updates maxFileList value
         self.list_filters.maxFileList+=1
 
+    def saveSpecification(self):
+        #TODO: finish this section, Save specification
+        # description_data = {
+        #     "Name": self.txt_name.text(),
+        #     "Description": self.text_description.text(),
+        #     "Instructions": self.txt_instructions.text()
+        # }
+
+        # applicability_data = []
+        # for i in range(self.list_.count()):
+        #     applicability_data.append(self.list_requirements.item(i).text())
+
+        # requirements_data = []
+        # for i in range(self.list_filters.count()):
+        #     requirements_data.append(self.list_filters.item(i).text())
+
+        # spec_data = {
+        #     "Description": description_data,
+        #     "Applicability": applicability_data,
+        #     "Requirements": requirements_data
+        # }
+
+        # self.spec_list_window.add_specification(spec_data)
+        
 class IdsEditorAuditWindow(QMainWindow):
     def __init__(self):
         super(IdsEditorAuditWindow, self).__init__()
