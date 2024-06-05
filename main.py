@@ -78,71 +78,77 @@ class IdsSpecEditorWindow(QMainWindow):
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup)
 
+        #Create instance for subwindow
+        self.opened_window= None
+
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
         self.combo_add_requirement.currentTextChanged.connect(self.openRequirementSubWindow)
         self.btn_save_requirement.clicked.connect(self.save_requirements_data)
+        self.btn_save_filter.clicked.connect(self.save_filters_data)
+        # self.btn_delete_filter.clicked.connect(self.clickDelete(self.list_filters))
+        # self.btn_delete_requirement.clicked.connect(self.clickDelete(self.list_requirements))
     
     def openFilterSubWindow(self, text):
         mdi_area = self.mdi_filter
         mdi_area.closeAllSubWindows()
-        
-        window_classes = {
-            "Add filter by class": filters.byClass,
-            "Add filter by part of": filters.byPartOf,
-            "Add filter by attribute": filters.byAttribute,
-            "Add filter by property": filters.byProperty,
-            "Add filter by classification": filters.byClassification,
-            "Add filter by material": filters.byMaterial
-        }
-        
-        if text in window_classes:
-            sub_window = QMdiSubWindow()
-            window_instance = window_classes[text]()
-            sub_window.setWidget(window_instance)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
-            mdi_area.addSubWindow(sub_window)
-            sub_window.showMaximized()
+
+        match text:
+            case "Add filter by class":
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, self.by_class_window, setup_signals=None)
+            case "Add filter by part of":
+                #self.by_part_of_window = Ops.openSubWindow(mdi_area, filters.byPartOf, self.by_part_of_window, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
+            case "Add filter by attribute":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, self.by_attribute_window, setup_signals=None)
+            case "Add filter by property":
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, self.by_property_window, setup_signals=None)
+            case "Add filter by classification":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, self.by_classification_window, setup_signals=None)
+            case "Add filter by material":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, self.by_material_window, setup_signals=None)
+            case _:
+                Ops.msgError(self,"Error","Text in ComboBox does not match any type of filter")
 
     def openRequirementSubWindow(self, text):
         mdi_area = self.mdi_requirement
         mdi_area.closeAllSubWindows()
-        
-        window_classes = {
-            "Add requirement by class": filters.byClass,
-            "Add requirement by part of": filters.byPartOf,
-            "Add requirement by attribute": filters.byAttribute,
-            "Add requirement by property": filters.byProperty,
-            "Add requirement by classification": filters.byClassification,
-            "Add requirement by material": filters.byMaterial
-        }
-        
-        if text in window_classes:
-            sub_window = QMdiSubWindow()
-            window_instance = window_classes[text]()
-            sub_window.setWidget(window_instance)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
-            mdi_area.addSubWindow(sub_window)
-            sub_window.showMaximized()
+
+        match text:
+            case "Add requirement by class":
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, self.by_class_window, setup_signals=None)
+            case "Add requirement by part of":
+                #self.by_part_of_window = Ops.openSubWindow(mdi_area, filters.byPartOf, self.by_part_of_window, setup_signals=None)
+                self.opened_window= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
+            case "Add requirement by attribute":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, self.by_attribute_window, setup_signals=None)
+            case "Add requirement by property":
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, self.by_property_window, setup_signals=None)
+            case "Add requirement by classification":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, self.by_classification_window, setup_signals=None)
+            case "Add requirement by material":
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, self.by_material_window, setup_signals=None)
+            case _:
+                Ops.msgError(self,"Error","Text in ComboBox does not match any type of requirements")
 
     def save_requirements_data(self):
         current_text = self.combo_add_requirement.currentText()
-        
-        window_data_methods = {
-            "Add requirement by class": filters.byClass.getData,
-            "Add requirement by part of": filters.byPartOf.getData,
-            "Add requirement by attribute": filters.byAttribute.getData,
-            "Add requirement by property": filters.byProperty.getData,
-            "Add requirement by classification": filters.byClassification.getData,
-            "Add requirement by material": filters.byMaterial.getData
-        }
-        
-        if current_text in window_data_methods:
-            data = window_data_methods[current_text](self)
-            self.list_requirements.addItem(data)
-            self.list_requirements.closeAllSubWindows()
-        print("Epaaaaaa")
-    
+        data = self.opened_window.getData()
+        self.list_requirements.addItem(data)
+        self.opened_window.close()
+
+    def save_filters_data(self):
+        current_text = self.combo_add_filter.currentText()
+        data = self.opened_window.getData()
+        self.list_filters.addItem(data)
+        self.opened_window.close()
+ 
+    # def clickDelete(self,list):
+    #     #Grabs selected row or current row in List and deletes it
+    #     row= list.currentRow()
+    #     list.takeItem(row)
+    #     #Updates maxFileList value
+    #     list.maxFileList+=1
 
 class IdsEditorAuditWindow(QMainWindow):
     def __init__(self):

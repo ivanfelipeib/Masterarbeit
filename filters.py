@@ -15,12 +15,9 @@ class byAttribute(QMainWindow):
             "txt_value": QLineEdit
         }
         Ops.loadWidgets(self, main_widget_setup)
-    
-        self.name= self.txt_name.text()
-        self.value= self.txt_value.text()
 
     def getData(self):
-        return f"name= {self.name}, value={self.value}"
+        return f"name= {self.txt_name.text()}, value={self.txt_value.text()}"
 
 class byClass(QMainWindow):
     def __init__(self, parent=None):
@@ -36,11 +33,8 @@ class byClass(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.name= self.txt_name.text()
-        self.type= self.txt_type.text()
-
     def getData(self):
-        return f"name= {self.name}, type={self.type}"
+        return f"name= {self.txt_name.text()}, type={self.txt_type.text()}"
 
 class byClassification(QMainWindow):
     def __init__(self, parent=None):
@@ -57,12 +51,8 @@ class byClassification(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.system= self.txt_system.text()
-        self.value= self.txt_value.text()
-        self.uri= self.txt_uri.text()
-
     def getData(self):
-        return f"system= {self.system}, value={self.value}, uri={self.uri} "
+        return f"system= {self.txt_system.text()}, value={self.txt_value.text()}, uri={self.txt_uri.text()} "
 
 class byMaterial(QMainWindow):
     def __init__(self, parent=None):
@@ -78,11 +68,8 @@ class byMaterial(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.value= self.txt_value.text()
-        self.uri= self.txt_uri.text()
-
     def getData(self):
-        return f"value= {self.value}, uri={self.uri}"
+        return f"value= {self.txt_value.text()}, uri={self.txt_uri.text()}"
 
 class byPartOf(QMainWindow):
     def __init__(self, parent=None):
@@ -98,11 +85,8 @@ class byPartOf(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.entity= self.txt_entity.text()
-        self.relation= self.txt_relation.text()
-
     def getData(self):
-        return f"entity= {self.entity}, relation={self.relation}"
+        return f"entity= {self.txt_entity.text()}, relation={self.txt_relation.text()}"
 
 class byProperty(QMainWindow):
     def __init__(self, parent=None):
@@ -121,11 +105,5 @@ class byProperty(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        self.pset= self.txt_pset.text()
-        self.name= self.txt_name.text()
-        self.data_type= self.txt_data_type.text()
-        self.value= self.txt_value.text()
-        self.uri= self.txt_uri.text()
-
     def getData(self):
-        return f"pset= {self.pset}, name={self.name}, data_type={self.data_type}, value={self.value}, uri={self.uri}"
+        return f"pset= {self.txt_pset.text()}, name={self.txt_name.text()}, data_type={self.txt_data_type.text()}, value={self.txt_value.text()}, uri={self.txt_uri.text()}"
