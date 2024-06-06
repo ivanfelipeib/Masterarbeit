@@ -1,0 +1,5 @@
+<Comand to activate venv in CMD terminal!>
+.venv\Scripts\activate
+
+<Command to convert .ui file in .py file>
+pyuic5 -x filename.ui -o filename.py 
