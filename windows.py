@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from myWidgets import CustomListWidget
 from Ops import Ops
 import filters 
-import sys
 
 class IdsInfoWindow(QMainWindow):
     def __init__(self):
@@ -227,14 +226,21 @@ class IdsEditorWindow(QMainWindow):
 
     
     def openInfoWindow(self):
+        self.mdi_editor.hide()
+        self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None)
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
             window_instance.open_spec_editor.connect(self.openSpecEditorWindow)
+
+        self.mdi_editor.hide()
+        self.mdi_list.resize(800,832)
         self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals)
 
     def openAuditWindow(self):
+        self.mdi_editor.hide()
+        self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
     
     def openSpecEditorWindow(self):
