@@ -159,6 +159,7 @@ class IdsSpecEditorWindow(QMainWindow):
         self.list_filters.maxFileList+=1
 
     def saveSpecification(self):
+        pass
         #TODO: finish this section, Save specification
         # description_data = {
         #     "Name": self.txt_name.text(),
@@ -202,9 +203,12 @@ class IdsEditorWindow(QMainWindow):
             "btn_ids_specifications": QPushButton,
             "btn_ids_audit": QPushButton,
             "btn_back": QPushButton,
-            "mdi": QMdiArea
+            "mdi_list": QMdiArea,
+            "mdi_editor": QMdiArea
         }
         Ops.loadWidgets(self, main_widget_setup)
+        #Hide mdi_editor as default when opening new IdsEditor
+        self.mdi_editor.hide()
 
         #Create instance of Subwindows
         self.info_window=None
@@ -223,18 +227,21 @@ class IdsEditorWindow(QMainWindow):
 
     
     def openInfoWindow(self):
-        self.info_window = Ops.openSubWindow(self.mdi, IdsInfoWindow, self.info_window, None)
+        self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None)
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
             window_instance.open_spec_editor.connect(self.openSpecEditorWindow)
-        self.spec_list_window = Ops.openSubWindow(self.mdi, IdsSpecListWindow, self.spec_list_window, setup_signals)
+        self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals)
 
     def openAuditWindow(self):
-        self.audit_window = Ops.openSubWindow(self.mdi, IdsEditorAuditWindow, self.audit_window, None)
+        self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
     
     def openSpecEditorWindow(self):
-        self.spec_editor_window = Ops.openSubWindow(self.mdi, IdsSpecEditorWindow, self.spec_editor_window, None)
+        hint = self.mdi_list.minimumSizeHint()
+        self.mdi_list.resize(hint)
+        self.mdi_editor.showMaximized()
+        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, self.spec_editor_window, None)
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()

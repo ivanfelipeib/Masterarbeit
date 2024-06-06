@@ -20,7 +20,7 @@
    <string>IDS Editor Window</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QMdiArea" name="mdi">
+   <widget class="QMdiArea" name="mdi_list">
     <property name="geometry">
      <rect>
       <x>169</x>
@@ -28,6 +28,12 @@
       <width>800</width>
       <height>832</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>800</width>
+      <height>221</height>
+     </size>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -85,8 +91,23 @@
      </item>
     </layout>
    </widget>
+   <widget class="QMdiArea" name="mdi_editor">
+    <property name="geometry">
+     <rect>
+      <x>160</x>
+      <y>240</y>
+      <width>811</width>
+      <height>611</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>811</width>
+      <height>611</height>
+     </size>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
