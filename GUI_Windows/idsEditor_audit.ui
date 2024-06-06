@@ -35,16 +35,6 @@
      <string>IDS Audit</string>
     </property>
    </widget>
-   <widget class="QListView" name="list_audit_report">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>80</y>
-      <width>521</width>
-      <height>401</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="lbl_text1">
     <property name="geometry">
      <rect>
@@ -84,13 +74,13 @@
      <string>with the IDS standard, please check the report below.</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>337</x>
       <y>490</y>
       <width>211</width>
-      <height>25</height>
+      <height>30</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -110,8 +100,17 @@
      </item>
     </layout>
    </widget>
+   <widget class="QTextBrowser" name="textBrowser_audit">
+    <property name="geometry">
+     <rect>
+      <x>35</x>
+      <y>81</y>
+      <width>531</width>
+      <height>401</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

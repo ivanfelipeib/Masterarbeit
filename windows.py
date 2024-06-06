@@ -1,13 +1,58 @@
-from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit
+from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit,QDateEdit, QTextBrowser
 from PyQt5.QtCore import Qt, pyqtSignal
 from myWidgets import CustomListWidget
 from Ops import Ops
+from idsOps import IdsOps
 import filters 
 
+class IdsEditorAuditWindow(QMainWindow):
+    def __init__(self, parent= None):
+        super(IdsEditorAuditWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_audit.ui", self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "textBrowser_audit": QTextBrowser,
+            "btn_save": QPushButton,
+            "btn_export": QPushButton
+        }
+        Ops.loadWidgets(self, main_widget_setup)
+
+        
+        # Connect handlers
+        handlers = {
+            "btn_save": self.clickNew,
+            "btn_export": self.clickDelete
+        }
+        Ops.connectHandlers(self, handlers)
+
+    def save(self):
+        pass#TODO:Configure both buttons in class IdsEditorAuditWindow
+    
+    def export(self):
+        pass
+
 class IdsInfoWindow(QMainWindow):
-    def __init__(self):
-        super(IdsInfoWindow, self).__init__()
-        Ops.load_ui("idsEditor_general_info.ui", self)
+    def __init__(self, parent= None):
+        super(IdsInfoWindow, self).__init__(parent)
+
+        # Load UI file
+        Ops.load_ui("idsEditor_info.ui", self)
+
+        # Define and load Widgets
+        main_widget_setup = {
+            "txt_title": QLineEdit,
+            "txt_copyright": QLineEdit,
+            "txt_version": QLineEdit,
+            "txt_author": QLineEdit,
+            "date": QDateEdit,
+            "txt_description": QPlainTextEdit,
+            "txt_purpose": QPlainTextEdit,
+            "txt_milestone": QPlainTextEdit
+        }
+        Ops.loadWidgets(self, main_widget_setup)
 
 class IdsSpecListWindow(QMainWindow):
     open_spec_editor= pyqtSignal()
@@ -158,7 +203,7 @@ class IdsSpecEditorWindow(QMainWindow):
         self.list_filters.maxFileList+=1
 
     def saveSpecification(self):
-        pass
+        self.close()
         #TODO: finish this section, Save specification
         # description_data = {
         #     "Name": self.txt_name.text(),
@@ -180,12 +225,7 @@ class IdsSpecEditorWindow(QMainWindow):
         #     "Requirements": requirements_data
         # }
 
-        # self.spec_list_window.add_specification(spec_data)
-        
-class IdsEditorAuditWindow(QMainWindow):
-    def __init__(self):
-        super(IdsEditorAuditWindow, self).__init__()
-        Ops.load_ui("idsEditor_audit.ui", self)
+        # self.spec_list_window.add_specification(spec_data)       
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
@@ -232,7 +272,7 @@ class IdsEditorWindow(QMainWindow):
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
-            window_instance.open_spec_editor.connect(self.openSpecEditorWindow)
+            window_instance.open_spec_editor.connect(self.openSpecEditorWindow) #Connect with signal in IdsSpecEditorWindow Button:New
 
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
@@ -242,12 +282,27 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-    
+        self.setIdsInfo
+     
     def openSpecEditorWindow(self):
         hint = self.mdi_list.minimumSizeHint()
         self.mdi_list.resize(hint)
         self.mdi_editor.showMaximized()
-        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, self.spec_editor_window, None)
+        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None)
+
+    def setIdsInfo(self):
+     #Create ids intance and pass ids_info to ids()
+        ids_info = {
+            "title": self.info_window.txt_title.text(),
+            "copyright": self.info_window.txt_copyright.text(),
+            "version": self.info_window.txt_version.text(),
+            "description": self.info_window.txt_description.text(),
+            "author": self.info_window.txt_author.text(),
+            "date": self.info_window.date.date.toString(),#TODO:Proof if that returns a valid string from Date
+            "purpose": self.info_window.txt_purpose.text(),
+            "milestone": self.info_window.txt_milestone.text()
+        }
+        IdsOps.createIds(ids_info)
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
