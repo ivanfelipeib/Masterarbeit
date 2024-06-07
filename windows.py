@@ -4,6 +4,7 @@ from myWidgets import CustomListWidget
 from Ops import Ops
 from idsOps import IdsOps
 import filters 
+import uuid 
 
 class IdsEditorAuditWindow(QMainWindow):
     def __init__(self, parent= None):
@@ -23,8 +24,8 @@ class IdsEditorAuditWindow(QMainWindow):
         
         # Connect handlers
         handlers = {
-            "btn_save": self.clickNew,
-            "btn_export": self.clickDelete
+            "btn_save": self.save,
+            "btn_export": self.export
         }
         Ops.connectHandlers(self, handlers)
 
@@ -282,7 +283,9 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        self.setIdsInfo
+        self.setIdsInfo()
+        self.setIdsSpecification()
+        #self.my_ids
      
     def openSpecEditorWindow(self):
         hint = self.mdi_list.minimumSizeHint()
@@ -291,18 +294,32 @@ class IdsEditorWindow(QMainWindow):
         self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None)
 
     def setIdsInfo(self):
-     #Create ids intance and pass ids_info to ids()
-        ids_info = {
+     #Create ids intance and pass ids_info to ids.info
+        self.ids_info = {
             "title": self.info_window.txt_title.text(),
             "copyright": self.info_window.txt_copyright.text(),
             "version": self.info_window.txt_version.text(),
-            "description": self.info_window.txt_description.text(),
+            "description": self.info_window.txt_description.toPlainText(),
             "author": self.info_window.txt_author.text(),
-            "date": self.info_window.date.date.toString(),#TODO:Proof if that returns a valid string from Date
-            "purpose": self.info_window.txt_purpose.text(),
-            "milestone": self.info_window.txt_milestone.text()
+            "date": Ops.dateToIsoFormat(self.info_window.date),
+            "purpose": self.info_window.txt_purpose.toPlainText(),
+            "milestone": self.info_window.txt_milestone.toPlainText()
         }
-        IdsOps.createIds(ids_info)
+        self.my_ids=IdsOps.createIds(self.ids_info)
+    
+    def setIdsSpecification(self):
+        self.ids_specification= {
+            "name": self.spec_editor_window.txt_name.text(),
+            "ifcVersion": ["IFC2X3", "IFC4"],
+            "identifier": uuid.uuid4(),
+            "description": self.spec_editor_window.txt_description.toPlainText(),
+            "instructions": self.spec_editor_window.txt_instructions.toPlainText(),
+            "applicability": None, #'List[Facets]'
+            "requirements": None  #'List[Facets]'
+        }
+        #TODO: Add facet lits to applicability and facet list to requirements
+        self.my_spec=IdsOps.createSpecification(self.ids_specification)
+
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()

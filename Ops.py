@@ -64,43 +64,14 @@ class Ops():
         return window_instance
     
     @staticmethod
+    def dateToIsoFormat(date):
+        iso_date=date.date().toString(Qt.ISODate)
+        return iso_date
+
+    @staticmethod
     def msgError(self,title, msg):
         self.msgError= QMessageBox()
         self.msgError.setIcon(QMessageBox.Warning)
         self.msgError.setWindowTitle(title)
         self.msgError.setText(msg)
         self.msgError.show()
-    # @staticmethod
-    # def clickAndLoad(self):
-    #     for button, (window_class, mdi_area_name) in self.button_window_map.items():
-    #         if mdi_area_name:
-    #             button.clicked.connect(lambda checked, wc=window_class, name=mdi_area_name: Ops.loadSubWindow(self, wc, name))
-    #         else:
-    #             button.clicked.connect(lambda checked, wc=window_class: Ops.loadWindow(self, wc))
-
-#Load Methods using intances
-    # @staticmethod
-    # def loadSubWindowInstance(self, window, mdi_area_name):
-    #     sub_window = QMdiSubWindow()
-    #     sub_window.setWidget(window)
-    #     sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) #Frameless window
-    #     sub_window.setAttribute(Qt.WA_DeleteOnClose)
-    #     mdi_area = self.widgets[mdi_area_name]
-    #     mdi_area.addSubWindow(sub_window)
-    #     sub_window.show()
-
-    # @staticmethod
-    # def loadWindowInstance(self, window):
-    #     self.window = window
-    #     self.window.show()
-    #     self.close()
-
-    # @staticmethod
-    # def clickAndLoadInstace(self):
-    #     for button, (window_instance, mdi_area_name) in self.button_window_map.items():
-    #         if mdi_area_name:
-    #             button.clicked.connect(lambda checked, wi=window_instance, name=mdi_area_name: Ops.loadSubWindowInstance(self, wi, name))
-
-    #         else:
-    #             button.clicked.connect(lambda checked, wi=window_instance: Ops.loadWindowInstance(self, wi))
-    

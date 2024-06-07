@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -69,7 +69,7 @@
        <string>Instructions:</string>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="text_description">
+     <widget class="QPlainTextEdit" name="txt_description">
       <property name="geometry">
        <rect>
         <x>100</x>

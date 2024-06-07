@@ -10,44 +10,15 @@ example_dict = {
         "milestone": "Initial"
     },
     "specifications": {
-        "specification": [
-            {
+        "specification": {            
                 "@name": "Example Specification",
                 "@ifcVersion": ["IFC2X3", "IFC4"],
                 "@identifier": "Spec001",
                 "@description": "This is an example specification.",
                 "@instructions": "Follow these instructions.",
-                "applicability": {
-                    "@minOccurs": 1,
-                    "@maxOccurs": "unbounded",
-                    "entity": [
-                        {
-                            "@name": "IfcWall"
-                        }
-                    ],
-                    "classification": [
-                        {
-                            "@name": "ClassificationName",
-                            "@source": "ClassificationSource"
-                        }
-                    ]
-                },
-                "requirements": {
-                    "property": [
-                        {
-                            "@name": "Pset_WallCommon",
-                            "@property": "FireRating",
-                            "@value": "FR-2h"
-                        }
-                    ],
-                    "material": [
-                        {
-                            "@name": "Concrete"
-                        }
-                    ]
-                }
-            }
-        ]
+                "applicability": #List[Facet] = [],
+                "requirements": #List[Facet] = []
+        }
     }
 }
 
