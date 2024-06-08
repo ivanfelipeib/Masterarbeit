@@ -93,7 +93,7 @@ class IdsSpecListWindow(QMainWindow):
         self.list_ids_spec.maxFileList+=1
 
 class IdsSpecEditorWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, my_ids, my_spec, parent=None):
         super(IdsSpecEditorWindow, self).__init__(parent)
         #Load UI
         Ops.load_ui("idsEditor_spec_editor.ui", self)
@@ -123,9 +123,16 @@ class IdsSpecEditorWindow(QMainWindow):
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup)
 
-        #Create instance for subwindow
+        #Create instance for subwindow and ids
         self.opened_window= None
-
+        self.my_ids= my_ids
+        #If no spec was passed from SpecList a new instance is created:
+        self.my_spec= my_spec
+        if self.my_spec is None:
+            self.my_spec=IdsOps.createIds()
+        else: 
+            pass
+    
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
         self.combo_add_requirement.currentTextChanged.connect(self.openRequirementSubWindow)
@@ -179,14 +186,16 @@ class IdsSpecEditorWindow(QMainWindow):
 
     def save_requirements_data(self):
         current_text = self.combo_add_requirement.currentText()
-        data = self.opened_window.getData()
-        self.list_requirements.addItem(data)
+        dict_data = self.opened_window.getData()
+        facet= IdsOps.createFacet(current_text, dict_data)
+        self.list_requirements.addItem(facet.to_string(clause_type= "requirement"))
         self.opened_window.close()
 
     def save_filters_data(self):
         current_text = self.combo_add_filter.currentText()
-        data = self.opened_window.getData()
-        self.list_filters.addItem(data)
+        dict_data = self.opened_window.getData()
+        facet= IdsOps.createFacet(current_text, dict_data)
+        self.list_filters.addItem(facet.to_string(clause_type= "applicability"))
         self.opened_window.close()
  
     def clickDeleteRequirement(self, Type):
@@ -206,11 +215,12 @@ class IdsSpecEditorWindow(QMainWindow):
     def saveSpecification(self):
         self.close()
         #TODO: finish this section, Save specification
-        # description_data = {
-        #     "Name": self.txt_name.text(),
-        #     "Description": self.text_description.text(),
-        #     "Instructions": self.txt_instructions.text()
-        # }
+        spec_info = {
+            "name": self.txt_name.text(),
+            "description": self.text_description.text(),
+            "instructions": self.txt_instructions.text(),
+        }
+        self.my_spec=IdsOps.addSpecInfo(spec_info)
 
         # applicability_data = []
         # for i in range(self.list.count()):
@@ -221,7 +231,7 @@ class IdsSpecEditorWindow(QMainWindow):
         #     requirements_data.append(self.list_filters.item(i).text())
 
         # spec_data = {
-        #     "Description": description_data,
+        #     "Description": spec_info,
         #     "Applicability": applicability_data,
         #     "Requirements": requirements_data
         # }
@@ -231,7 +241,7 @@ class IdsSpecEditorWindow(QMainWindow):
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
 
-    def __init__(self, parent= None):
+    def __init__(self, my_ids, parent= None ):
         super(IdsEditorWindow, self).__init__(parent)
 
         # Load UI file
@@ -256,6 +266,13 @@ class IdsEditorWindow(QMainWindow):
         self.spec_editor_window= None
         self.audit_window= None
 
+        #If no ids was passed from IdsManager a new instance is created:
+        self.my_ids= my_ids
+        if self.my_ids is None:
+            self.my_ids=IdsOps.createIds()
+        else: 
+            pass
+        
         # Connect handlers
         handlers = {
             "btn_ids_info": self.openInfoWindow,
@@ -284,14 +301,14 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
         self.setIdsInfo()
-        self.setIdsSpecification()
+        #self.setIdsSpecification()
         #self.my_ids
      
     def openSpecEditorWindow(self):
         hint = self.mdi_list.minimumSizeHint()
         self.mdi_list.resize(hint)
         self.mdi_editor.showMaximized()
-        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None)
+        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None, ids_instance= self.my_ids)
 
     def setIdsInfo(self):
      #Create ids intance and pass ids_info to ids.info
@@ -305,7 +322,7 @@ class IdsEditorWindow(QMainWindow):
             "purpose": self.info_window.txt_purpose.toPlainText(),
             "milestone": self.info_window.txt_milestone.toPlainText()
         }
-        self.my_ids=IdsOps.createIds(self.ids_info)
+        self.my_ids=IdsOps.addIdsInfo(self.my_ids, self.ids_info)
     
     def setIdsSpecification(self):
         self.ids_specification= {
@@ -318,7 +335,7 @@ class IdsEditorWindow(QMainWindow):
             "requirements": None  #'List[Facets]'
         }
         #TODO: Add facet lits to applicability and facet list to requirements
-        self.my_spec=IdsOps.createSpecification(self.ids_specification)
+        self.my_spec=IdsOps.addSpecInfo(self.ids_specification)
 
 
     def backIdsList(self):
@@ -434,16 +451,16 @@ class ManageIdsWindow(QMainWindow):
         self.list_ids_mgmnt.maxFileList+=1
     
     def clickNewEditorWindow(self): 
-        self.idsEditor_window = IdsEditorWindow()
+        self.idsEditor_window = IdsEditorWindow(my_ids=None) #Pass my_ids as None when clicking on New
         self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
         self.hide()  # Hide the main window
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
     
-    def clickExistingEditorWindow(self): #TODO: Clear IDS Instance and populate it with data from selected IDS
+    def clickExistingEditorWindow(self):
         if self.idsEditor_window is None:
-            self.idsEditor_window = IdsEditorWindow()
+            self.idsEditor_window = IdsEditorWindow(my_ids= None) #TODO:load selected ids in list and pass it to constructor of IdsEditorWindow
             self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
         self.hide()  # Hide the main window
         self.idsEditor_window.show()

@@ -17,7 +17,11 @@ class byAttribute(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"name= {self.txt_name.text()}, value={self.txt_value.text()}"
+        dict_data= {
+            "name": self.txt_name.text() ,
+            "value": self.txt_value.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)
 
 class byClass(QMainWindow):
     def __init__(self, parent=None):
@@ -34,7 +38,11 @@ class byClass(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"name= {self.txt_name.text()}, type={self.txt_type.text()}"
+        dict_data= {
+            "name": self.txt_name.text() ,
+            "predef_type": self.txt_type.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)
 
 class byClassification(QMainWindow):
     def __init__(self, parent=None):
@@ -52,7 +60,12 @@ class byClassification(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"system= {self.txt_system.text()}, value={self.txt_value.text()}, uri={self.txt_uri.text()} "
+        dict_data= {
+            "system": self.txt_system.text() ,
+            "value": self.txt_value.text(),
+            "uri": self.txt_uri.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)
 
 class byMaterial(QMainWindow):
     def __init__(self, parent=None):
@@ -69,7 +82,11 @@ class byMaterial(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"value= {self.txt_value.text()}, uri={self.txt_uri.text()}"
+        dict_data= {
+            "value": self.txt_value.text(),
+            "uri": self.txt_uri.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)
 
 class byPartOf(QMainWindow):
     def __init__(self, parent=None):
@@ -81,12 +98,18 @@ class byPartOf(QMainWindow):
         # Define and load Widgets
         main_widget_setup = {
             "txt_entity": QLineEdit,
+            "txt_predef_type": QLineEdit,
             "txt_relation": QLineEdit
         }
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"entity= {self.txt_entity.text()}, relation={self.txt_relation.text()}"
+        dict_data= {
+            "name": self.txt_entity.text(),
+            "predef_type": self.txt_predef_type.text(),
+            "relation": self.txt_relation.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)
 
 class byProperty(QMainWindow):
     def __init__(self, parent=None):
@@ -106,4 +129,11 @@ class byProperty(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
     def getData(self):
-        return f"pset= {self.txt_pset.text()}, name={self.txt_name.text()}, data_type={self.txt_data_type.text()}, value={self.txt_value.text()}, uri={self.txt_uri.text()}"
+        dict_data= {
+            "name": self.txt_name.text(),
+            "pset": self.txt_pset.text(),
+            "data_type": self.txt_data_type.text(),
+            "value" :self.txt_value.text(),
+            "uri" : self.txt_uri.text()
+        }
+        return Ops.dictEmptyValueToNone(dict_data)

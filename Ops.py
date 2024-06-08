@@ -45,16 +45,26 @@ class Ops():
         return window_instance
 
     @staticmethod
-    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None):
+    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, ids_instance= None):
         if window_instance is None or window_instance.isClosed:
-            sub_window = QMdiSubWindow()
-            window_instance = window_class()
-            sub_window.setWidget(window_instance)
-            sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
-            mdi_area.addSubWindow(sub_window)
-            window_instance.isClosed = False
-            sub_window.showMaximized()
+            if ids_instance is None:
+                sub_window = QMdiSubWindow()
+                window_instance = window_class()
+                sub_window.setWidget(window_instance)
+                sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
+                mdi_area.addSubWindow(sub_window)
+                window_instance.isClosed = False
+                sub_window.showMaximized()
             
+            else:
+                sub_window = QMdiSubWindow()
+                window_instance = window_class(ids_instance)
+                sub_window.setWidget(window_instance)
+                sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
+                mdi_area.addSubWindow(sub_window)
+                window_instance.isClosed = False
+                sub_window.showMaximized()
+
             if setup_signals:
                 setup_signals(window_instance)
 
@@ -67,6 +77,13 @@ class Ops():
     def dateToIsoFormat(date):
         iso_date=date.date().toString(Qt.ISODate)
         return iso_date
+    
+    @staticmethod
+    def dictEmptyValueToNone(dict_data):
+        for key, value in dict_data.items():
+            if value == "":
+                dict_data[key] = None
+        return dict_data
 
     @staticmethod
     def msgError(self,title, msg):

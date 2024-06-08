@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -181,17 +181,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Add filter by part of</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>Add filter by attribute</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Add filter by property</string>
        </property>
       </item>
       <item>
@@ -201,7 +191,17 @@
       </item>
       <item>
        <property name="text">
+        <string>Add filter by property</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Add filter by material</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add filter by part of</string>
        </property>
       </item>
      </widget>
@@ -308,17 +308,7 @@
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by part of</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>Add requirement by attribute</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Add requirement by property</string>
        </property>
       </item>
       <item>
@@ -328,7 +318,17 @@
       </item>
       <item>
        <property name="text">
+        <string>Add requirement by property</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>Add requirement by material</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Add requirement by part of</string>
        </property>
       </item>
      </widget>

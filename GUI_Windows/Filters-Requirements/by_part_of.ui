@@ -54,7 +54,7 @@
       <x>20</x>
       <y>30</y>
       <width>241</width>
-      <height>52</height>
+      <height>82</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -64,6 +64,13 @@
         <widget class="QLabel" name="lbl_entity">
          <property name="text">
           <string>Entity *</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Predefined type</string>
          </property>
         </widget>
        </item>
@@ -80,6 +87,9 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLineEdit" name="txt_entity"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txt_predef_type"/>
        </item>
        <item>
         <widget class="QLineEdit" name="txt_relation"/>

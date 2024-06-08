@@ -4,37 +4,65 @@ import uuid
 
 class IdsOps():
     @staticmethod
-    def createIds(dict_info):
-        my_ids = ids.Ids(**dict_info)
+    def createIds():
+        my_ids= ids.Ids()
+        return my_ids
+
+    @staticmethod
+    def createSpec():
+        my_spec= ids.Specification()
+        return my_spec
+
+    @staticmethod
+    def addIdsInfo(my_ids, dict_info):
+        my_ids = my_ids.Ids(**dict_info)
         return my_ids
     
     @staticmethod
-    def createSpecification(dict_spec):
+    def addSpecInfo(dict_spec_info):
         my_spec= ids.Specification(
-            name=dict_spec["name"],
-            identifier=dict_spec["identifier"],
-            description=dict_spec["description"],
-            instructions=dict_spec["instructions"]
-            #TODO: get list of facets for applicability and for requirments
-        )   
+            name=dict_spec_info["name"],
+            identifier=uuid.uuid4(),
+            description=dict_spec_info["description"],
+            instructions=dict_spec_info["instructions"]
+        )
+        return my_spec   
     
     @staticmethod
-    def createFacet(type):
+    def createFacet(spec_type, dict_data):
         #TODO:Create facets by facet type based in combobox text
-        # match type:
-        #     case "Add filter by class":
-                
-        #     case "Add filter by part of":
-        #         #self.by_part_of_window = Ops.openSubWindow(mdi_area, filters.byPartOf, self.by_part_of_window, setup_signals=None)
-        #         self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
-        #     case "Add filter by attribute":
-        #         self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None)
-        #     case "Add filter by property":
-        #         self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None)
-        #     case "Add filter by classification":
-        #         self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None)
-        #     case "Add filter by material":
-        #         self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None)
-        #     case _:
-        #         Ops.msgError(self,"Error","Text in ComboBox does not match any type of filter")
-        pass
+        if  spec_type == "Add filter by class" or spec_type == "Add requirement by class":
+            facet= ids.Entity(name = dict_data["name"], predefinedType = dict_data["predef_type"])
+
+        elif spec_type == "Add filter by attribute" or spec_type == "Add requirement by attribute":
+            #TODO:Define Cardinality from combobox
+            facet= ids.Attribute(name = dict_data["name"], value = dict_data["value"], cardinality = 'required', instructions= None) 
+
+        elif spec_type == "Add filter by classification" or spec_type == "Add requirement by classification":
+            #TODO:Define Cardinality from combobox
+            facet= ids.Classification(system = dict_data["system"], value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+
+        elif spec_type == "Add filter by property" or spec_type == "Add requirement by property":
+            #TODO:Define Cardinality from combobox
+            facet= ids.Property(propertySet= dict_data["pset"], baseName = dict_data["name"], dataType= dict_data["data_type"], value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+
+        elif spec_type == "Add filter by material" or spec_type == "Add requirement by material":
+            #TODO:Define Cardinality from combobox
+            facet= ids.Material(value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+
+        elif spec_type == "Add filter by part of" or spec_type == "Add requirement by part of":
+            #TODO:Define Cardinality from combobox
+            facet= ids.PartOf(name = dict_data["name"], predefinedType=  dict_data["predef_type"], relation= dict_data["relation"], cardinality = 'required', instructions= None) 
+        
+        else:
+            print("Chosen filter/requirement, does not correspont to a valid facet type")
+
+        return facet
+
+    @staticmethod
+    def addFacetApplicability(my_spec, facet):
+        my_spec.applicability.append(facet)
+
+    @staticmethod
+    def addFacetRequirement(my_spec, facet):
+        my_spec.requirements.append(facet)
