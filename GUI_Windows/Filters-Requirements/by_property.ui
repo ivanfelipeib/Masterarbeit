@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>579</width>
-    <height>187</height>
+    <height>217</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>160</y>
+      <y>188</y>
       <width>91</width>
       <height>19</height>
      </rect>
@@ -52,7 +52,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>32</y>
+      <y>60</y>
       <width>381</width>
       <height>138</height>
      </rect>
@@ -117,6 +117,44 @@
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QComboBox" name="combo_optionality">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>30</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>MUST have (Required)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>CAN have (Optional)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>MUST NOT have (Prohibited)</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>55</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Optionality</string>
+    </property>
    </widget>
   </widget>
  </widget>

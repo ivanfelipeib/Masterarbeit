@@ -45,9 +45,9 @@ class Ops():
         return window_instance
 
     @staticmethod
-    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, ids_instance= None):
+    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, my_ids_instance= None, my_spec_instance= None):
         if window_instance is None or window_instance.isClosed:
-            if ids_instance is None:
+            if my_ids_instance is None:
                 sub_window = QMdiSubWindow()
                 window_instance = window_class()
                 sub_window.setWidget(window_instance)
@@ -58,7 +58,7 @@ class Ops():
             
             else:
                 sub_window = QMdiSubWindow()
-                window_instance = window_class(ids_instance)
+                window_instance = window_class(my_ids_instance, my_spec_instance)
                 sub_window.setWidget(window_instance)
                 sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
                 mdi_area.addSubWindow(sub_window)

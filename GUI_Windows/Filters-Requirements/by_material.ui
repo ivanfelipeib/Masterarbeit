@@ -52,7 +52,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>30</y>
+      <y>60</y>
       <width>241</width>
       <height>54</height>
      </rect>
@@ -87,6 +87,44 @@
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QComboBox" name="combo_optionality">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>30</y>
+      <width>181</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>MUST have (Required)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>CAN have (Optional)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>MUST NOT have (Prohibited)</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>30</y>
+      <width>55</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Optionality</string>
+    </property>
    </widget>
   </widget>
  </widget>

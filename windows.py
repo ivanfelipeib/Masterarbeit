@@ -188,7 +188,7 @@ class IdsSpecEditorWindow(QMainWindow):
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(current_text, dict_data)
-        self.list_requirements.addItem(facet.to_string(clause_type= "requirement"))
+        self.list_requirements.addItem(facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=None))
         self.opened_window.close()
 
     def save_filters_data(self):
@@ -308,7 +308,7 @@ class IdsEditorWindow(QMainWindow):
         hint = self.mdi_list.minimumSizeHint()
         self.mdi_list.resize(hint)
         self.mdi_editor.showMaximized()
-        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None, ids_instance= self.my_ids)
+        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None, my_ids_instance= self.my_ids)
 
     def setIdsInfo(self):
      #Create ids intance and pass ids_info to ids.info
