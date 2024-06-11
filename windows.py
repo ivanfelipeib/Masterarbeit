@@ -129,9 +129,12 @@ class IdsSpecEditorWindow(QMainWindow):
         #If no spec was passed from SpecList a new instance is created:
         self.my_spec= my_spec
         if self.my_spec is None:
-            self.my_spec=IdsOps.createIds()
+            self.my_spec=IdsOps.createSpec()
         else: 
             pass
+        #Set list to storage facets (requirements or filters)
+        self.requirements_list=[]
+        self.filters_list=[]
     
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
@@ -188,14 +191,17 @@ class IdsSpecEditorWindow(QMainWindow):
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(current_text, dict_data)
-        self.list_requirements.addItem(facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=None))
+        self.requirements_list.append(facet)
+        #TODO: FOrked repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
+        self.list_requirements.addItem(facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet))
         self.opened_window.close()
 
     def save_filters_data(self):
         current_text = self.combo_add_filter.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(current_text, dict_data)
-        self.list_filters.addItem(facet.to_string(clause_type= "applicability"))
+        self.filters_list.append(facet)
+        self.list_filters.addItem(facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None))
         self.opened_window.close()
  
     def clickDeleteRequirement(self, Type):
@@ -215,12 +221,14 @@ class IdsSpecEditorWindow(QMainWindow):
     def saveSpecification(self):
         self.close()
         #TODO: finish this section, Save specification
-        spec_info = {
-            "name": self.txt_name.text(),
-            "description": self.text_description.text(),
-            "instructions": self.txt_instructions.text(),
-        }
-        self.my_spec=IdsOps.addSpecInfo(spec_info)
+        # spec_info = {
+        #     "name": self.txt_name.text(),
+        #     "description": self.text_description.text(),
+        #     "instructions": self.txt_instructions.text(),
+        # }
+        print(self.filters_list)
+        print(self.filters_list)
+        # self.my_spec=IdsOps.addSpecInfo(spec_info)
 
         # applicability_data = []
         # for i in range(self.list.count()):
@@ -266,7 +274,7 @@ class IdsEditorWindow(QMainWindow):
         self.spec_editor_window= None
         self.audit_window= None
 
-        #If no ids was passed from IdsManager a new instance is created:
+        #If no ids was passed from IdsManagerWindow a new instance is created:
         self.my_ids= my_ids
         if self.my_ids is None:
             self.my_ids=IdsOps.createIds()

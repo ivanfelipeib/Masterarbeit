@@ -109,12 +109,12 @@
     </property>
     <item>
      <property name="text">
-      <string>MUST have (Required)</string>
+      <string>required</string>
      </property>
     </item>
     <item>
      <property name="text">
-      <string>MUST NOT have (Prohibited)</string>
+      <string>prohibited</string>
      </property>
     </item>
    </widget>

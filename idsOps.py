@@ -36,23 +36,23 @@ class IdsOps():
 
         elif spec_type == "Add filter by attribute" or spec_type == "Add requirement by attribute":
             #TODO:Define Cardinality from combobox
-            facet= ids.Attribute(name = dict_data["name"], value = dict_data["value"], cardinality = 'required', instructions= None) 
+            facet= ids.Attribute(name = dict_data["name"], value = dict_data["value"], cardinality = dict_data["optionality"], instructions= None) 
 
         elif spec_type == "Add filter by classification" or spec_type == "Add requirement by classification":
             #TODO:Define Cardinality from combobox
-            facet= ids.Classification(system = dict_data["system"], value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+            facet= ids.Classification(system = dict_data["system"], value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
         elif spec_type == "Add filter by property" or spec_type == "Add requirement by property":
             #TODO:Define Cardinality from combobox
-            facet= ids.Property(propertySet= dict_data["pset"], baseName = dict_data["name"], dataType= dict_data["data_type"], value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+            facet= ids.Property(propertySet= dict_data["pset"], baseName = dict_data["name"], dataType= dict_data["data_type"], value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
         elif spec_type == "Add filter by material" or spec_type == "Add requirement by material":
             #TODO:Define Cardinality from combobox
-            facet= ids.Material(value = dict_data["value"], uri = dict_data["uri"], cardinality = 'required', instructions= None) 
+            facet= ids.Material(value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
         elif spec_type == "Add filter by part of" or spec_type == "Add requirement by part of":
             #TODO:Define Cardinality from combobox
-            facet= ids.PartOf(name = dict_data["name"], predefinedType=  dict_data["predef_type"], relation= dict_data["relation"], cardinality = 'required', instructions= None) 
+            facet= ids.PartOf(name = dict_data["name"], predefinedType=  dict_data["predef_type"], relation= dict_data["relation"], cardinality = dict_data["optionality"], instructions= None) 
         
         else:
             print("Chosen filter/requirement, does not correspont to a valid facet type")
