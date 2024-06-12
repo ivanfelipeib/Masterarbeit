@@ -151,17 +151,17 @@
       </property>
       <item>
        <property name="text">
-        <string>MUST have</string>
+        <string>required</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>CAN have</string>
+        <string>optional</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>MUST NOT have</string>
+        <string>prohibited</string>
        </property>
       </item>
      </widget>

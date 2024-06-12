@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit,QDateEdit, QTextBrowser
-from PyQt5.QtCore import Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal, QVariant
 from myWidgets import CustomListWidget
 from Ops import Ops
 from idsOps import IdsOps
@@ -132,9 +132,9 @@ class IdsSpecEditorWindow(QMainWindow):
             self.my_spec=IdsOps.createSpec()
         else: 
             pass
-        #Set list to storage facets (requirements or filters)
-        self.requirements_list=[]
-        self.filters_list=[]
+        #Set dictionaries to storage entries in lists and related facet (Key, Value).
+        self.dic_requirements={}
+        self.dic_filters={}
     
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
@@ -191,60 +191,55 @@ class IdsSpecEditorWindow(QMainWindow):
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(current_text, dict_data)
-        self.requirements_list.append(facet)
-        #TODO: FOrked repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
-        self.list_requirements.addItem(facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet))
+        item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)#TODO: Fork repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
+        self.dic_requirements[item]= facet
+        self.list_requirements.addItem(item)
         self.opened_window.close()
 
     def save_filters_data(self):
         current_text = self.combo_add_filter.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(current_text, dict_data)
-        self.filters_list.append(facet)
-        self.list_filters.addItem(facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None))
+        item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
+        self.dic_filters[item]= facet
+        self.list_filters.addItem(item)
         self.opened_window.close()
- 
-    def clickDeleteRequirement(self, Type):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_requirements.currentRow()
-        self.list_requirements.takeItem(row)
-        #Updates maxFileList value
+
+    def clickDeleteRequirement(self):
+        index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            facet = self.dic_requirements.pop(item)  # Remove the entry and get the associated object
+            self.list_requirements.model().removeRow(index.row())
+            del facet
         self.list_requirements.maxFileList+=1
 
-    def clickDeleteFilter(self, Type):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_filters.currentRow()
-        self.list_filters.takeItem(row)
-        #Updates maxFileList value
+    def clickDeleteFilter(self):
+        index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            facet = self.dic_filters.pop(item)  # Remove the entry and get the associated object
+            self.list_filters.model().removeRow(index.row())
+            del facet
         self.list_filters.maxFileList+=1
 
     def saveSpecification(self):
+        # Set cardinality of Applicability section
+        optionality = self.combo_mandatory.currentText()
+        self.my_spec.set_usage(optionality) 
+        #add Specification Info to Specification instance
+        spec_info = {
+            "name": self.txt_name.text(),
+            "description": self.text_description.text(),
+            "instructions": self.txt_instructions.text(),
+        }
+        self.my_spec=IdsOps.addSpecInfo(spec_info)
+        #Set Applicability and Requirments to specification instance
+        self.my_spec.applicability = self.dic_filters.values()
+        self.my_spec.requirements = self.dic_requirements.values()
         self.close()
-        #TODO: finish this section, Save specification
-        # spec_info = {
-        #     "name": self.txt_name.text(),
-        #     "description": self.text_description.text(),
-        #     "instructions": self.txt_instructions.text(),
-        # }
-        print(self.filters_list)
-        print(self.filters_list)
-        # self.my_spec=IdsOps.addSpecInfo(spec_info)
+        #TODO: Add specification to Specification list and implement analog approach as mit dic_filter in filters_list to delete intance when corresponding row in list is deleted
 
-        # applicability_data = []
-        # for i in range(self.list.count()):
-        #     applicability_data.append(self.list_requirements.item(i).text())
-
-        # requirements_data = []
-        # for i in range(self.list_filters.count()):
-        #     requirements_data.append(self.list_filters.item(i).text())
-
-        # spec_data = {
-        #     "Description": spec_info,
-        #     "Applicability": applicability_data,
-        #     "Requirements": requirements_data
-        # }
-
-        # self.spec_list_window.add_specification(spec_data)       
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
