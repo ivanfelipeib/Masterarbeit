@@ -187,6 +187,11 @@ class IdsSpecEditorWindow(QMainWindow):
                 self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None)
             case _:
                 Ops.msgError(self,"Error","Text in ComboBox does not match any type of filter")
+        
+        if text != "Add filter by class":
+            self.opened_window.combo_optionality.hide()
+            self.opened_window.lbl_optionality.hide()
+        else: pass
 
     def openRequirementSubWindow(self, text):
         mdi_area = self.mdi_requirement
@@ -207,6 +212,11 @@ class IdsSpecEditorWindow(QMainWindow):
                 self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None)
             case _:
                 Ops.msgError(self,"Error","Text in ComboBox does not match any type of requirements")
+        
+        if text != "Add requirement by class":
+            self.opened_window.combo_optionality.show()
+            self.opened_window.lbl_optionality.show()
+        else: pass
 
     def save_requirements_data(self):
         current_text = self.combo_add_requirement.currentText()

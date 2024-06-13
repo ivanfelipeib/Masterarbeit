@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow
+from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLabel
 from Ops import Ops
 
 
@@ -13,6 +13,7 @@ class byAttribute(QMainWindow):
         main_widget_setup = {
             "txt_name": QLineEdit,
             "txt_value": QLineEdit,
+            "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
         Ops.loadWidgets(self, main_widget_setup)
@@ -58,6 +59,7 @@ class byClassification(QMainWindow):
             "txt_system": QLineEdit,
             "txt_value": QLineEdit,
             "txt_uri": QLineEdit,
+            "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
         Ops.loadWidgets(self, main_widget_setup)
@@ -82,6 +84,7 @@ class byMaterial(QMainWindow):
         main_widget_setup = {
             "txt_value": QLineEdit,
             "txt_uri": QLineEdit,
+            "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
         Ops.loadWidgets(self, main_widget_setup)
@@ -106,6 +109,7 @@ class byPartOf(QMainWindow):
             "txt_entity": QLineEdit,
             "txt_predef_type": QLineEdit,
             "txt_relation": QLineEdit,
+            "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
         Ops.loadWidgets(self, main_widget_setup)
@@ -133,6 +137,7 @@ class byProperty(QMainWindow):
             "txt_data_type": QLineEdit,
             "txt_value": QLineEdit,
             "txt_uri": QLineEdit,
+            "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
         Ops.loadWidgets(self, main_widget_setup)
