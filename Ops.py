@@ -46,7 +46,7 @@ class Ops():
 
     @staticmethod
     def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, my_ids_instance= None, my_spec_instance= None):
-        if window_instance is None or window_instance.isClosed:
+        if window_instance is None or window_instance.isClosed: #If window_instance set as None, a new Instance is created
             if my_ids_instance is None:
                 sub_window = QMdiSubWindow()
                 window_instance = window_class()
@@ -68,7 +68,7 @@ class Ops():
             if setup_signals:
                 setup_signals(window_instance)
 
-        else:
+        else: #If window_instance set as an existing instance, existing instance is loaded and no new intance is created. 
             window_instance.showMaximized()
 
         return window_instance

@@ -56,7 +56,7 @@ class IdsInfoWindow(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
 class IdsSpecListWindow(QMainWindow):
-    open_spec_editor= pyqtSignal()
+    open_spec_editor= pyqtSignal() #Signal when clicking on New Specification go to method OpenSpecEditor method in IdsEditorWindow class
 
     def __init__(self, parent= None):
         super(IdsSpecListWindow, self).__init__(parent)
@@ -75,24 +75,43 @@ class IdsSpecListWindow(QMainWindow):
         #Create instance of Subwindows
         self.spec_editor_window=None
 
+        #Create dictionary of specifications' names(Key) and Specification instances (Values) to handele list_ids_spec
+        self.dic_specifications = {}
+
         # Connect handlers
         handlers = {
             "btn_new_spec": self.clickNew,
             "btn_delete_spec": self.clickDelete
         }
         Ops.connectHandlers(self, handlers)
+      
 
     def clickNew(self):
         self.open_spec_editor.emit()
     
     def clickDelete(self):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_ids_spec.currentRow()
-        self.list_ids_spec.takeItem(row)
-        #Updates maxFileList value
+        index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            spec = self.dic_specifications.pop(item)  # Remove the entry and get the associated object
+            self.list_ids_spec.model().removeRow(index.row())
+            del spec
         self.list_ids_spec.maxFileList+=1
+        print(self.dic_specifications)
+
+    
+    def updateSpecList(self):
+        #Save specification in List in SpecListWindow
+        my_spec = self.spec_editor_window.my_spec
+        item= my_spec.name
+        self.dic_specifications[item]=my_spec
+        self.list_ids_spec.addItem(item)
+        print(self.dic_specifications)
+       
 
 class IdsSpecEditorWindow(QMainWindow):
+    add_spec_to_list= pyqtSignal() #Signal when clicking on Save Specification
+
     def __init__(self, my_ids, my_spec, parent=None):
         super(IdsSpecEditorWindow, self).__init__(parent)
         #Load UI
@@ -230,16 +249,17 @@ class IdsSpecEditorWindow(QMainWindow):
         #add Specification Info to Specification instance
         spec_info = {
             "name": self.txt_name.text(),
-            "description": self.text_description.text(),
-            "instructions": self.txt_instructions.text(),
+            "description": self.txt_description.toPlainText(),
+            "instructions": self.txt_instructions.toPlainText(),
         }
         self.my_spec=IdsOps.addSpecInfo(spec_info)
         #Set Applicability and Requirments to specification instance
         self.my_spec.applicability = self.dic_filters.values()
         self.my_spec.requirements = self.dic_requirements.values()
-        self.close()
         #TODO: Add specification to Specification list and implement analog approach as mit dic_filter in filters_list to delete intance when corresponding row in list is deleted
-
+        self.add_spec_to_list.emit()
+        self.close()
+        print(self.my_spec.name)
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
@@ -266,7 +286,7 @@ class IdsEditorWindow(QMainWindow):
         #Create instance of Subwindows
         self.info_window=None
         self.spec_list_window=None
-        self.spec_editor_window= None
+        #self.spec_editor_window= None
         self.audit_window= None
 
         #If no ids was passed from IdsManagerWindow a new instance is created:
@@ -275,7 +295,7 @@ class IdsEditorWindow(QMainWindow):
             self.my_ids=IdsOps.createIds()
         else: 
             pass
-        
+
         # Connect handlers
         handlers = {
             "btn_ids_info": self.openInfoWindow,
@@ -285,7 +305,7 @@ class IdsEditorWindow(QMainWindow):
         }
         Ops.connectHandlers(self, handlers)
 
-    
+
     def openInfoWindow(self):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
@@ -293,8 +313,7 @@ class IdsEditorWindow(QMainWindow):
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
-            window_instance.open_spec_editor.connect(self.openSpecEditorWindow) #Connect with signal in IdsSpecEditorWindow Button:New
-
+            window_instance.open_spec_editor.connect(self.openSpecEditorWindow) #Connect signal in IdsSpecListWindow Button:New, with method
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals)
@@ -308,10 +327,12 @@ class IdsEditorWindow(QMainWindow):
         #self.my_ids
      
     def openSpecEditorWindow(self):
+        def setup_signals(window_instance):
+            window_instance.add_spec_to_list.connect(self.spec_list_window.updateSpecList) #Connect signal in IdsSpecEditorWindow Button:Save Specification, with method
         hint = self.mdi_list.minimumSizeHint()
         self.mdi_list.resize(hint)
         self.mdi_editor.showMaximized()
-        self.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, None, my_ids_instance= self.my_ids)
+        self.spec_list_window.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, setup_signals=setup_signals, my_ids_instance= self.my_ids)
 
     def setIdsInfo(self):
      #Create ids intance and pass ids_info to ids.info
@@ -340,6 +361,9 @@ class IdsEditorWindow(QMainWindow):
         #TODO: Add facet lits to applicability and facet list to requirements
         self.my_spec=IdsOps.addSpecInfo(self.ids_specification)
 
+    def addSpecToSpecList(self):
+        self.spec_editor_window.my_spec.name
+        pass
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()

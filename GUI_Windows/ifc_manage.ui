@@ -78,7 +78,7 @@
   <customwidget>
    <class>CustomListWidget</class>
    <extends>QListView</extends>
-   <header>myWidgets.h</header>
+   <header location="global">myWidgets.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
