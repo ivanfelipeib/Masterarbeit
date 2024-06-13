@@ -14,8 +14,15 @@ class IdsOps():
         return my_spec
 
     @staticmethod
-    def addIdsInfo(my_ids, dict_info):
-        my_ids = my_ids.Ids(**dict_info)
+    def addIdsInfo(my_ids : ids.Ids, dict_info: dict) ->ids.Ids:
+        my_ids.info["title"] = dict_info["title"]
+        my_ids.info["copyright"] = dict_info["copyright"]
+        my_ids.info["version"] = dict_info["version"]
+        my_ids.info["description"] = dict_info["description"]
+        my_ids.info["author"] = dict_info["author"]
+        my_ids.info["date"] = dict_info["date"]
+        my_ids.info["purpose"] = dict_info["purpose"]
+        my_ids.info["milestone"] = dict_info["milestone"]
         return my_ids
     
     @staticmethod

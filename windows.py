@@ -117,7 +117,7 @@ class IdsSpecEditorWindow(QMainWindow):
         #Load UI
         Ops.load_ui("idsEditor_spec_editor.ui", self)
 
-        # Define Widgets
+        # Define an load Widgets
         main_widget_setup = {
             #Tab Description
             "txt_name": QLineEdit,
@@ -140,7 +140,6 @@ class IdsSpecEditorWindow(QMainWindow):
             #General
             "btn_save_specification": QPushButton
         }
-        # Load Widgets
         Ops.loadWidgets(self, main_widget_setup)
 
         #Create instance for subwindow and ids
@@ -159,11 +158,15 @@ class IdsSpecEditorWindow(QMainWindow):
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
         self.combo_add_requirement.currentTextChanged.connect(self.openRequirementSubWindow)
-        self.btn_save_requirement.clicked.connect(self.save_requirements_data)
-        self.btn_save_filter.clicked.connect(self.save_filters_data)
-        self.btn_delete_filter.clicked.connect(self.clickDeleteFilter)
-        self.btn_delete_requirement.clicked.connect(self.clickDeleteRequirement)
-        self.btn_save_specification.clicked.connect(self.saveSpecification)
+        #Connect buttons with handlers
+        handlers = {
+            "btn_save_requirement": self.save_requirements_data,
+            "btn_save_filter": self.save_filters_data,
+            "btn_delete_filter": self.clickDeleteFilter,
+            "btn_delete_requirement": self.clickDeleteRequirement,
+            "btn_save_specification": self.saveSpecification
+        }
+        Ops.connectHandlers(self, handlers)
     
     def openFilterSubWindow(self, text):
         mdi_area = self.mdi_filter
@@ -173,7 +176,6 @@ class IdsSpecEditorWindow(QMainWindow):
             case "Add filter by class":
                 self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None)
             case "Add filter by part of":
-                #self.by_part_of_window = Ops.openSubWindow(mdi_area, filters.byPartOf, self.by_part_of_window, setup_signals=None)
                 self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
             case "Add filter by attribute":
                 self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None)
@@ -194,7 +196,6 @@ class IdsSpecEditorWindow(QMainWindow):
             case "Add requirement by class":
                 self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None)
             case "Add requirement by part of":
-                #self.by_part_of_window = Ops.openSubWindow(mdi_area, filters.byPartOf, self.by_part_of_window, setup_signals=None)
                 self.opened_window= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
             case "Add requirement by attribute":
                 self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None)
@@ -251,14 +252,14 @@ class IdsSpecEditorWindow(QMainWindow):
         spec_info = {
             "name": self.txt_name.text(),
             "ifcVersion": self.combo_ifc_version.currentText(),
-            "identifier": uuid.uuid4(),
+            "identifier": str(uuid.uuid4()),
             "description": self.txt_description.toPlainText(),
             "instructions": self.txt_instructions.toPlainText(),
         }
         self.my_spec=IdsOps.addSpecInfo(spec_info)
         #Add Applicability and Requirments to specification instance
-        self.my_spec.applicability = self.dic_filters.values()
-        self.my_spec.requirements = self.dic_requirements.values()
+        self.my_spec.applicability = list(self.dic_filters.values())
+        self.my_spec.requirements = list(self.dic_requirements.values())
         #Add populated specification to Specification list. See openSpecList method in class IdsEditorWindow
         self.add_spec_to_list.emit()
         self.close()
@@ -320,14 +321,6 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals)
-
-    def openAuditWindow(self):
-        self.mdi_editor.hide()
-        self.mdi_list.resize(800,832)
-        self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        self.setIdsInfo()
-        #self.setIdsSpecification()
-        #self.my_ids
      
     def openSpecEditorWindow(self):
         def setup_signals(window_instance):
@@ -337,8 +330,15 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.showMaximized()
         self.spec_list_window.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, setup_signals=setup_signals, my_ids_instance= self.my_ids)
 
-    def setIdsInfo(self):
-     #Create ids intance and pass ids_info to ids.info
+    def openAuditWindow(self):
+        self.mdi_editor.hide()
+        self.mdi_list.resize(800,832)
+        self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
+        self.addIdsInfo()
+        self.addIdsSpecifications()
+        print(self.my_ids.to_xml("ResultadoIDS.xml"))
+
+    def addIdsInfo(self):
         self.ids_info = {
             "title": self.info_window.txt_title.text(),
             "copyright": self.info_window.txt_copyright.text(),
@@ -351,9 +351,11 @@ class IdsEditorWindow(QMainWindow):
         }
         self.my_ids=IdsOps.addIdsInfo(self.my_ids, self.ids_info)
     
-    def setIdsSpecification(self):
-        pass
-
+    def addIdsSpecifications(self):
+        specifications= list(self.spec_list_window.dic_specifications.values())
+        for element in specifications:
+            self.my_ids.specifications.append(element)
+        
     def backIdsList(self):
         self.back_to_manage_ids.emit()
         self.hide()
