@@ -121,6 +121,7 @@ class IdsSpecEditorWindow(QMainWindow):
         main_widget_setup = {
             #Tab Description
             "txt_name": QLineEdit,
+            "combo_ifc_version": QComboBox,
             "text_description": QPlainTextEdit,
             "txt_instructions": QPlainTextEdit,
             #Tab Applicability
@@ -249,14 +250,16 @@ class IdsSpecEditorWindow(QMainWindow):
         #add Specification Info to Specification instance
         spec_info = {
             "name": self.txt_name.text(),
+            "ifcVersion": self.combo_ifc_version.currentText(),
+            "identifier": uuid.uuid4(),
             "description": self.txt_description.toPlainText(),
             "instructions": self.txt_instructions.toPlainText(),
         }
         self.my_spec=IdsOps.addSpecInfo(spec_info)
-        #Set Applicability and Requirments to specification instance
+        #Add Applicability and Requirments to specification instance
         self.my_spec.applicability = self.dic_filters.values()
         self.my_spec.requirements = self.dic_requirements.values()
-        #TODO: Add specification to Specification list and implement analog approach as mit dic_filter in filters_list to delete intance when corresponding row in list is deleted
+        #Add populated specification to Specification list. See openSpecList method in class IdsEditorWindow
         self.add_spec_to_list.emit()
         self.close()
         print(self.my_spec.name)
@@ -349,20 +352,6 @@ class IdsEditorWindow(QMainWindow):
         self.my_ids=IdsOps.addIdsInfo(self.my_ids, self.ids_info)
     
     def setIdsSpecification(self):
-        self.ids_specification= {
-            "name": self.spec_editor_window.txt_name.text(),
-            "ifcVersion": ["IFC2X3", "IFC4"],
-            "identifier": uuid.uuid4(),
-            "description": self.spec_editor_window.txt_description.toPlainText(),
-            "instructions": self.spec_editor_window.txt_instructions.toPlainText(),
-            "applicability": None, #'List[Facets]'
-            "requirements": None  #'List[Facets]'
-        }
-        #TODO: Add facet lits to applicability and facet list to requirements
-        self.my_spec=IdsOps.addSpecInfo(self.ids_specification)
-
-    def addSpecToSpecList(self):
-        self.spec_editor_window.my_spec.name
         pass
 
     def backIdsList(self):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>786</width>
-    <height>545</height>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -47,7 +47,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>60</y>
+        <y>80</y>
         <width>111</width>
         <height>16</height>
        </rect>
@@ -73,9 +73,9 @@
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>60</y>
+        <y>80</y>
         <width>641</width>
-        <height>151</height>
+        <height>141</height>
        </rect>
       </property>
      </widget>
@@ -98,6 +98,39 @@
         <height>22</height>
        </rect>
       </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>50</y>
+        <width>111</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>IFC version</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="combo_ifc_version">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>50</y>
+        <width>131</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <item>
+       <property name="text">
+        <string>IFC2X3</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>IFC4</string>
+       </property>
+      </item>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_applicability">
@@ -390,7 +423,6 @@
     </property>
    </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
   <customwidget>

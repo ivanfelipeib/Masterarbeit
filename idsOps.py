@@ -22,7 +22,8 @@ class IdsOps():
     def addSpecInfo(dict_spec_info):
         my_spec= ids.Specification(
             name=dict_spec_info["name"],
-            identifier=uuid.uuid4(),
+            ifcVersion= dict_spec_info["ifcVersion"],
+            identifier= dict_spec_info["identifier"],
             description=dict_spec_info["description"],
             instructions=dict_spec_info["instructions"]
         )
