@@ -48,7 +48,7 @@
       <x>20</x>
       <y>20</y>
       <width>130</width>
-      <height>166</height>
+      <height>211</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -84,7 +84,20 @@
      <item>
       <widget class="QPushButton" name="btn_ids_audit">
        <property name="text">
-        <string>Audit and Save</string>
+        <string>Audit</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btn_ids_save">
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>28</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Save IDS</string>
        </property>
       </widget>
      </item>

@@ -277,6 +277,7 @@ class IdsSpecEditorWindow(QMainWindow):
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
+    add_ids_to_list= pyqtSignal()
 
     def __init__(self, my_ids, parent= None ):
         super(IdsEditorWindow, self).__init__(parent)
@@ -289,6 +290,7 @@ class IdsEditorWindow(QMainWindow):
             "btn_ids_info": QPushButton,
             "btn_ids_specifications": QPushButton,
             "btn_ids_audit": QPushButton,
+            "btn_ids_save": QPushButton,
             "btn_back": QPushButton,
             "mdi_list": QMdiArea,
             "mdi_editor": QMdiArea
@@ -300,7 +302,6 @@ class IdsEditorWindow(QMainWindow):
         #Create instance of Subwindows
         self.info_window=None
         self.spec_list_window=None
-        #self.spec_editor_window= None
         self.audit_window= None
 
         #If no ids was passed from IdsManagerWindow a new instance is created:
@@ -365,10 +366,14 @@ class IdsEditorWindow(QMainWindow):
         specifications= list(self.spec_list_window.dic_specifications.values())
         for element in specifications:
             self.my_ids.specifications.append(element)
-        
+    
+    def saveIds(self):
+        self.add_ids_to_list.emit()
+        self.close()
+
     def backIdsList(self):
         self.back_to_manage_ids.emit()
-        self.hide()
+        self.close()
 
 class ManageIfcWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -441,6 +446,9 @@ class ManageIdsWindow(QMainWindow):
         #Create instance of Subwindows
         self.idsEditor_window=None
 
+        #Set dictionary to storage entries in ids lists(Key) and corresponding ids instance (value)
+        self.dic_ids={}
+
         # Connect handlers
         handlers = {
             "btn_import_ids": self.clickImport,
@@ -480,7 +488,8 @@ class ManageIdsWindow(QMainWindow):
     
     def clickNewEditorWindow(self): 
         self.idsEditor_window = IdsEditorWindow(my_ids=None) #Pass my_ids as None when clicking on New
-        self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
+        self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
+        self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
         self.hide()  # Hide the main window
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
@@ -494,7 +503,28 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
+
+    def updateIdsList(self):
+        my_ids = self.idsEditor_window.my_ids
+        item= my_ids.info["title"]
+        self.dic_ids[item]=my_ids
+        self.list_ids_mgmnt.addItem(item)
+        print(self.dic_ids)
     
+    def deleteIds(self): #TODO:Connect this method with button delete, but first populate dic_ids with imported ids files
+        index = self.list_ids_mgmnt.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            ids = self.dic_ids.pop(item)  # Remove the entry and get the associated object
+            self.list_ids_mgmnt.model().removeRow(index.row())
+            del ids
+        self.list_ids_mgmnt.maxFileList+=1
+        print(self.dic_ids)
+    
+    def parseImportedIds(self):
+        #TODO:Add functionality to convert imported ids in dictionary and parse dictionaries to ids instances. Add intances to dic_ids 
+        pass
+
     def showManageIds(self):
         self.show()
         
