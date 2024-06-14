@@ -257,7 +257,7 @@ class IdsSpecEditorWindow(QMainWindow):
     def saveSpecification(self):
         # Set cardinality of Applicability section
         optionality = self.combo_mandatory.currentText()
-        self.my_spec.set_usage(optionality) 
+        self.my_spec.set_usage(usage=optionality) 
         #add Specification Info to Specification instance
         spec_info = {
             "name": self.txt_name.text(),
@@ -316,6 +316,7 @@ class IdsEditorWindow(QMainWindow):
             "btn_ids_info": self.openInfoWindow,
             "btn_ids_specifications": self.openSpecListWindow,
             "btn_ids_audit": self.openAuditWindow,
+            "btn_ids_save": self.saveIds,
             "btn_back": self.backIdsList
         }
         Ops.connectHandlers(self, handlers)
@@ -345,9 +346,6 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        self.addIdsInfo()
-        self.addIdsSpecifications()
-        print(self.my_ids.to_xml("ResultadoIDS.xml"))
 
     def addIdsInfo(self):
         self.ids_info = {
@@ -368,8 +366,11 @@ class IdsEditorWindow(QMainWindow):
             self.my_ids.specifications.append(element)
     
     def saveIds(self):
-        self.add_ids_to_list.emit()
+        self.addIdsInfo()
+        self.addIdsSpecifications()
+        self.add_ids_to_list.emit() #Activate signal see class ManageIdsWindow method updateIdsList 
         self.close()
+    
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
@@ -504,9 +505,33 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
 
-    def updateIdsList(self):
+    def saveIds(self, my_ids):
+        self.filter="IDS files (*.ids)"
+        self.title= "Save IDS file"
+        self.fileDialog = QFileDialog()
+        self.fileDialog.setAcceptMode(QFileDialog.AcceptSave)
+        self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
+        if self.file_path:
+            if len(self.list_ids_mgmnt.findItems(self.file_path, Qt.MatchExactly)) == 0:
+                    self.list_ids_mgmnt.addItem(self.file_path)
+                    self.list_ids_mgmnt.maxFileList-=1
+                    print(f"File will be saved to: {self.file_path}")
+
+                    #Save IDS File
+                    my_ids.filepath=self.file_path
+                    my_ids.to_xml(self.file_path)
+                    #Parse Element to dictionary
+                    #parse dictionary to ids instance
+                    #add instance to dictionary
+
+            else: print(f"filepath already in list. {self.file_path}")
+        else:
+            print("No file selected to save")
+
+    def updateIdsList(self): #FIXME: Dsiplay to IDs in list even though just one has been created 
         my_ids = self.idsEditor_window.my_ids
-        item= my_ids.info["title"]
+        self.saveIds(my_ids)
+        item= my_ids.filepath
         self.dic_ids[item]=my_ids
         self.list_ids_mgmnt.addItem(item)
         print(self.dic_ids)

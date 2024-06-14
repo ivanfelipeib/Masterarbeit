@@ -37,7 +37,7 @@ class IdsOps():
         return my_spec   
     
     @staticmethod
-    def createFacet(spec_type, dict_data):
+    def createFacet(spec_type, dict_data): #TODO: Include combobox applicability for cardinality
         #TODO:Create facets by facet type based in combobox text
         if  spec_type == "Add filter by class" or spec_type == "Add requirement by class":
             facet= ids.Entity(name = dict_data["name"], predefinedType = dict_data["predef_type"])

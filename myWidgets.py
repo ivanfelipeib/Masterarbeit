@@ -54,26 +54,3 @@ class CustomListWidget(QListWidget):
             self.items.append(os.path.basename(self.item(x).text()))
         return self.items
 
-# class CustomComboBox(QComboBox):
-#     #TODO: Fix override of paintEvent to display correctly ComboBox Placeholder
-#     # See https://stackoverflow.com/questions/65826378/how-do-i-use-qcombobox-setplaceholdertext/65830989#65830989
-#     def paintEvent(self, event):
-        
-#         painter = QStylePainter(self)
-#         painter.setPen(self.palette().color(QtGui.QPalette.Text))
-
-#         # draw the combobox frame, focusrect and selected etc.
-#         opt = QStyleOptionComboBox()
-#         self.initStyleOption(opt)
-#         painter.drawComplexControl(QStyle.CC_ComboBox, opt)
-
-#         if self.currentIndex() < 0:
-#             opt.palette.setBrush(
-#                 QtGui.QPalette.ButtonText,
-#                 opt.palette.brush(QtGui.QPalette.ButtonText).color().lighter(),
-#             )
-#             if self.placeholderText():
-#                 opt.currentText = self.placeholderText()
-
-#         # draw the icon and text
-#         painter.drawControl(QStyle.CE_ComboBoxLabel, opt)
