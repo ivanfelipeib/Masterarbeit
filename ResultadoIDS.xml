@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/0.9.7/ids.xsd">
+    <info>
+        <title>titulo</title>
+        <copyright>copyright</copyright>
+        <version>1</version>
+        <description>descc</description>
+        <author>ivan@hotmail.com</author>
+        <date>2022-05-21</date>
+        <purpose>purpose</purpose>
+        <milestone>milestone</milestone>
+    </info>
+    <specifications>
+        <specification name="specff1" ifcVersion="IFC2X3" identifier="2cdae93c-e5ca-4f29-98d1-d96fe6535a17" description="desciption 1" instructions="instruction 1">
+            <applicability minOccurs="0" maxOccurs="unbounded">
+                <attribute>
+                    <name>
+                        <simpleValue>Color</simpleValue>
+                    </name>
+                    <value>
+                        <simpleValue>Red</simpleValue>
+                    </value>
+                </attribute>
+            </applicability>
+            <requirements>
+                <material cardinality="prohibited">
+                    <value>
+                        <simpleValue>Concrete</simpleValue>
+                    </value>
+                </material>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>
