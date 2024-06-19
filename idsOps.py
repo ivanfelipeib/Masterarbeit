@@ -1,6 +1,24 @@
 import ifcopenshell
 from ifctester import ids, reporter
-import uuid 
+import uuid
+import sys
+import clr
+import os
+from pathlib import 
+import ctypes
+DIRECTORY_IDS_AUDIT_DLL= "IdsAudit/bin/debug/net8.0/IdsAudit.dll" #TODO: how can I update the directory when there other .Net version installed
+root_dir = Path(__file__).resolve().parent
+filepath = root_dir / DIRECTORY_IDS_AUDIT_DLL
+# Add the path to the compiled DLL
+sys.path.append(os.path.abspath(filepath))
+# Load the C# DLL
+clr.AddReference("IdsAuditLIb")
+# Import the namespace
+from IdsAuditLib import IdsAudit
+
+# filepath ="C:\Users\iibanez\OneDrive - Schüßler-Plan GmbH\Docs trabajo\4- Masterarbeit\Repo\IdsAudit\bin\Debug\net8.0\IdsAudit.dll"
+# checkIds=ctypes.cdll.LoadLibrary(filepath)
+# checkIds
 
 class IdsOps():
     @staticmethod
