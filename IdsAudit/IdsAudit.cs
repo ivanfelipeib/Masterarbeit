@@ -20,7 +20,7 @@ namespace IdsAuditLib
             }
 
             // Specify the absolute path for the log file
-            string logFilePath = @"C:\Users\iibanez\Pictures\log.txt";
+            string logFilePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt";
 
             // Configure Serilog
             Log.Logger = new LoggerConfiguration()
