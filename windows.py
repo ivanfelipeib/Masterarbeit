@@ -221,7 +221,7 @@ class IdsSpecEditorWindow(QMainWindow):
     def save_requirements_data(self):
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
-        facet= IdsOps.createFacet(current_text, dict_data)
+        facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
         item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)#TODO: Fork repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
         self.dic_requirements[item]= facet
         self.list_requirements.addItem(item)
@@ -230,7 +230,9 @@ class IdsSpecEditorWindow(QMainWindow):
     def save_filters_data(self):
         current_text = self.combo_add_filter.currentText()
         dict_data = self.opened_window.getData()
-        facet= IdsOps.createFacet(current_text, dict_data)
+        cardinality = self.combo_mandatory.currentText()
+        print(cardinality)
+        facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
         item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
         self.dic_filters[item]= facet
         self.list_filters.addItem(item)
@@ -255,9 +257,6 @@ class IdsSpecEditorWindow(QMainWindow):
         self.list_filters.maxFileList+=1
 
     def saveSpecification(self):
-        # Set cardinality of Applicability section
-        optionality = self.combo_mandatory.currentText()
-        self.my_spec.set_usage(usage=optionality) 
         #add Specification Info to Specification instance
         spec_info = {
             "name": self.txt_name.text(),
@@ -270,6 +269,9 @@ class IdsSpecEditorWindow(QMainWindow):
         #Add Applicability and Requirments to specification instance
         self.my_spec.applicability = list(self.dic_filters.values())
         self.my_spec.requirements = list(self.dic_requirements.values())
+        # Set cardinality of Applicability section
+        optionality = self.combo_mandatory.currentText()
+        self.my_spec.set_usage(usage=optionality) 
         #Add populated specification to Specification list. See openSpecEditor method in class IdsEditorWindow
         self.add_spec_to_list.emit()
         self.close()
@@ -347,11 +349,11 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        #Save IDS in tem_files folder
-        self.my_ids= None #clear Ids each time button is clicked to load again modifications made by user
+        #Save IDS in tem_files folder #TODO: Implement method encompassing lines below
+        self.my_ids= IdsOps.createIds() #clear Ids each time button is clicked to load again modifications made by user
         self.addIdsInfo()
         self.addIdsSpecifications()
-        filepath= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\IdsHola.ids"
+        filepath= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids"
         self.my_ids.filepath= filepath
         self.my_ids.to_xml(filepath)
         IdsOps.auditIds()
