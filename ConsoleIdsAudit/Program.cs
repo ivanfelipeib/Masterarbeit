@@ -12,7 +12,7 @@ class Program
     static void Main()
     {
         // Specify the absolute path for the log file and clear any previous results
-        string logFilePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt";
+        string logFilePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt";//TODO: Use relative paths
         File.WriteAllText(logFilePath, string.Empty);
 
         // Configure Serilog
@@ -33,7 +33,7 @@ class Program
         Microsoft.Extensions.Logging.ILogger logger = loggerFactory.CreateLogger<Program>();
 
         // Correct the file path
-        string filePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids";
+        string filePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids"; //TODO: Use relative paths
 
         // Create a stream for the IDS file
         using (FileStream idsStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))

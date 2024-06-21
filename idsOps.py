@@ -1,11 +1,6 @@
-import ifcopenshell
 from ifctester import ids, reporter
 import uuid
-import sys
-#import os
 from pathlib import Path
-#import ctypes
-#import clr
 import subprocess
 
 class IdsOps():
@@ -81,48 +76,9 @@ class IdsOps():
         my_spec.requirements.append(facet)
     
     @staticmethod
-    def loadCSharpFile(self):
-         # Define the directory and DLL path
-        DIRECTORY_IDS_AUDIT_DLL = "IdsAudit/bin/Debug/net8.0/IdsAudit.dll"
-        root_dir = Path(__file__).resolve().parent
-        filepath = root_dir / DIRECTORY_IDS_AUDIT_DLL
-        #filepath = r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\IdsAudit\bin\Debug\net8.0\IdsAudit.dll"
-        # Check if the DLL exists at the specified path
-        if not filepath.is_file():
-            raise FileNotFoundError(f"Cannot find DLL at {filepath}")
-        else:
-            # Add the directory containing the DLL to the sys.path
-            #sys.path.append(str(filepath.parent))
-            sys.path.append(r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\IdsAudit\bin\Debug\net8.0")
-            import clr
-            # Load the C# DLL
-            #clr.AddReference(str(filepath))
-            clr.AddReference("IdsAudit")
-
-            # Import the namespace and class
-            from IdsAuditLib import IdsAudit
-            self.IdsAudit = IdsAudit
-            print(f"DLL in: {filepath}  was uploaded sucessfully")
-
-    @staticmethod
-    def run_audit(self, filepathStr: str, idsVersionStr: str) -> str :
-        filePath = filepathStr
-        idsVersion = idsVersionStr
-
-        if not filePath or not idsVersion:
-            self.logOutput.append("File path and IDS Version must be provided.")
-            return
-
-        try:
-            # Run the audit
-            result = self.IdsAudit.RunAudit(filePath, idsVersion)
-            self.logOutput.append(result)
-        except Exception as e:
-            self.logOutput.append(f"Error: {str(e)}")
-    
     def auditIds():
         try:
-            # Run the C# console application
+            # Run the C# console application 'TODO: Handle filepath with constants file
             result = subprocess.run(
                 [r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\ConsoleIdsAudit\bin\Release\net8.0\ConsoleIdsAudit.exe"],
             )

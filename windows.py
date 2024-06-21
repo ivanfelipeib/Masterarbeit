@@ -108,7 +108,6 @@ class IdsSpecListWindow(QMainWindow):
         self.list_ids_spec.addItem(item)
         print(self.dic_specifications)
        
-
 class IdsSpecEditorWindow(QMainWindow):
     add_spec_to_list= pyqtSignal() #Signal when clicking on Save Specification
 
@@ -345,19 +344,26 @@ class IdsEditorWindow(QMainWindow):
         self.spec_list_window.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, setup_signals=setup_signals, my_ids_instance= self.my_ids)
 
     def openAuditWindow(self):
-        #Open Window
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        #Save IDS in tem_files folder #TODO: Implement method encompassing lines below
-        self.my_ids= IdsOps.createIds() #clear Ids each time button is clicked to load again modifications made by user
+        self.generateIdsFile() #generate IDS file in temp_files folder each time Audit button is clicked
+        self.runAudit() #Audit Report of IDS file
+        
+    def generateIdsFile(self):
+        self.my_ids= IdsOps.createIds() 
         self.addIdsInfo()
         self.addIdsSpecifications()
-        filepath= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids"
+        self.idsToXML()
+
+    def idsToXML(self):
+        filepath= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids" #TODO: Add constants file to handle directories and fix files
         self.my_ids.filepath= filepath
-        self.my_ids.to_xml(filepath)
-        IdsOps.auditIds()
+        self.my_ids.to_xml(filepath) #Convert IDS in xml structure and save it in filepath
+
+    def runAudit(self):
         filepathLog= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt"
+        IdsOps.auditIds() #run c# script to run IDS Audit
         with open(filepathLog, 'r') as file:
                 content = file.read()
                 self.audit_window.textBrowser_audit.setText(content)
@@ -381,12 +387,10 @@ class IdsEditorWindow(QMainWindow):
             self.my_ids.specifications.append(element)
     
     def saveIds(self):
-        self.addIdsInfo()
-        self.addIdsSpecifications()
-        self.add_ids_to_list.emit() #Activate signal see class ManageIdsWindow method updateIdsList 
+        self.generateIdsFile()
+        self.add_ids_to_list.emit() #Activate signal in class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
         self.close()
     
-
     def backIdsList(self):
         self.back_to_manage_ids.emit()
         self.close()
@@ -520,7 +524,7 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
 
-    def saveIds(self, my_ids):
+    def setFilepathIds(self, my_ids):
         self.filter="IDS files (*.ids)"
         self.title= "Save IDS file"
         self.fileDialog = QFileDialog()
@@ -528,27 +532,23 @@ class ManageIdsWindow(QMainWindow):
         self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
         if self.file_path:
             if len(self.list_ids_mgmnt.findItems(self.file_path, Qt.MatchExactly)) == 0:
-                    self.list_ids_mgmnt.addItem(self.file_path)
-                    self.list_ids_mgmnt.maxFileList-=1
-                    print(f"File will be saved to: {self.file_path}")
-
                     #Save IDS File
                     my_ids.filepath=self.file_path
                     my_ids.to_xml(self.file_path)
+                    print(f"File saved in: {self.file_path}")
                     #TODO: Reverse process, parse Element to dictionary
-                    #parse dictionary to ids instance
-                    #add instance to dictionary and display in IDS Editor
+                    #TODO: parse dictionary to ids instance
+                    #TODO: add instance to dictionary and display in IDS Editor
 
             else: print(f"filepath already in list. {self.file_path}")
         else:
             print("No file selected to save")
 
-    def updateIdsList(self): #FIXME: Display two IDs in list even though just one IDS has been created 
+    def updateIdsList(self):
         my_ids = self.idsEditor_window.my_ids
-        self.saveIds(my_ids)
-        #Display created IDS in list widget
+        self.setFilepathIds(my_ids)
         item= my_ids.filepath
-        self.dic_ids[item]=my_ids
+        self.dic_ids[item]=my_ids #Key= Filepath, Value= ids.Ids() instance
         self.list_ids_mgmnt.addItem(item)
         print(self.dic_ids)
     
