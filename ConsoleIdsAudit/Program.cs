@@ -11,9 +11,22 @@ class Program
 {
     static void Main()
     {
-        // Specify the absolute path for the log file and clear any previous results
-        string logFilePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt";//TODO: Use relative paths
-        File.WriteAllText(logFilePath, string.Empty);
+        // Determine the root directory of the project
+        string rootFolder = AppContext.BaseDirectory;
+
+        // Specify the relative paths for the log file and IDS file
+        string logFilePath = Path.Combine(rootFolder, "temp_files", "log.txt");
+        string filePath = Path.Combine(rootFolder, "temp_files", "TempIds.ids");
+
+        // Check if log file exists; if not, create it. If file exists clear log
+        if (!File.Exists(logFilePath))
+        {
+            File.WriteAllText(logFilePath, string.Empty);
+        }
+        else
+        {
+            File.WriteAllText(logFilePath, string.Empty);
+        }
 
         // Configure Serilog
         Log.Logger = new LoggerConfiguration()
@@ -32,9 +45,15 @@ class Program
 
         Microsoft.Extensions.Logging.ILogger logger = loggerFactory.CreateLogger<Program>();
 
-        // Correct the file path
-        string filePath = @"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids"; //TODO: Use relative paths
-
+        // Check if the IDS file exists; if not, throw an exception
+        if (!File.Exists(filePath))
+        {
+            string errorMessage = "The IDS file 'TempIds.ids' does not exist.";
+            logger.LogError(errorMessage);
+            Console.WriteLine(errorMessage);
+            throw new FileNotFoundException(errorMessage);
+        }
+        
         // Create a stream for the IDS file
         using (FileStream idsStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
         {
@@ -49,7 +68,7 @@ class Program
             Status result = Audit.Run(idsStream, options, logger);
             // Log the audit result
             logger.LogInformation($"Audit result: {result}");
-            // display the audit result in console
+            // Display the audit result in console
             Console.WriteLine($"Audit result: {result}");
         }
     }

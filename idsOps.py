@@ -2,6 +2,7 @@ from ifctester import ids, reporter
 import uuid
 from pathlib import Path
 import subprocess
+import constants
 
 class IdsOps():
     @staticmethod
@@ -80,7 +81,7 @@ class IdsOps():
         try:
             # Run the C# console application 'TODO: Handle filepath with constants file
             result = subprocess.run(
-                [r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\ConsoleIdsAudit\bin\Release\net8.0\ConsoleIdsAudit.exe"],
+                [constants.AUDIT_SCRIPT_DIR],
             )
         except Exception as e:
             print(e)

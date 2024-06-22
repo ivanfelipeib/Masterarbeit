@@ -4,7 +4,9 @@ from myWidgets import CustomListWidget
 from Ops import Ops
 from idsOps import IdsOps
 import filters 
-import uuid 
+import uuid
+import shutil
+import constants
 
 class IdsEditorAuditWindow(QMainWindow):
     def __init__(self, parent= None):
@@ -16,7 +18,6 @@ class IdsEditorAuditWindow(QMainWindow):
         # Define and load Widgets
         main_widget_setup = {
             "textBrowser_audit": QTextBrowser,
-            "btn_save": QPushButton,
             "btn_export": QPushButton
         }
         Ops.loadWidgets(self, main_widget_setup)
@@ -24,16 +25,21 @@ class IdsEditorAuditWindow(QMainWindow):
         
         # Connect handlers
         handlers = {
-            "btn_save": self.save,
             "btn_export": self.export
         }
         Ops.connectHandlers(self, handlers)
-
-    def save(self):
-        pass#TODO:Configure both buttons in class IdsEditorAuditWindow
     
     def export(self):
-        pass
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", "All Files (*)", options=options)
+        if destination_file:
+            print(f"Destination file path: {destination_file}")
+            try:
+                shutil.copy(constants.TEMP_IDS_DIR, destination_file)
+                QMessageBox.information(self, "Success", f"File exported to {destination_file}")
+            except Exception as e:
+                QMessageBox.critical(self, "Error", f"Failed to export file: {e}")
 
 class IdsInfoWindow(QMainWindow):
     def __init__(self, parent= None):
@@ -357,12 +363,12 @@ class IdsEditorWindow(QMainWindow):
         self.idsToXML()
 
     def idsToXML(self):
-        filepath= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids" #TODO: Add constants file to handle directories and fix files
+        filepath= constants.TEMP_IDS_DIR 
         self.my_ids.filepath= filepath
         self.my_ids.to_xml(filepath) #Convert IDS in xml structure and save it in filepath
 
     def runAudit(self):
-        filepathLog= r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\log.txt"
+        filepathLog= constants.TEMP_LOG_DIR
         IdsOps.auditIds() #run c# script to run IDS Audit
         with open(filepathLog, 'r') as file:
                 content = file.read()
