@@ -3,6 +3,8 @@ import uuid
 from pathlib import Path
 import subprocess
 import constants
+import xmlschema
+import xml.etree.ElementTree as ET
 
 class IdsOps():
     @staticmethod
@@ -86,5 +88,81 @@ class IdsOps():
         except Exception as e:
             print(e)
     
+    @staticmethod
+    def getIdsVersionXML(file_path: str) -> str:
+        try:
+            # Parse the XML file
+            tree = ET.parse(file_path)
+            xml_root = tree.getroot()
+            
+            # Get the schemaLocation attribute
+            schema_location = xml_root.attrib.get('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation')
+            
+            if schema_location:
+                # The schemaLocation attribute contains a space-separated list of URIs
+                parts = schema_location.split()
+                if len(parts) > 1:
+                    # Extract the version from the second URI in the list
+                    version_uri = parts[1]
+                    version = version_uri.rsplit('/', 2)[-2]
+                    return version
+            return None
+        except ET.ParseError as e:
+            print(f"Error parsing XML file: {e}")
+        except FileNotFoundError as e:
+            print(f"File not found: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+        return None
+    
+    @staticmethod
+    def parseXmlToDict(xml_path:str = None)->dict:
+        try:
+            # Extract the version
+            version = IdsOps.getIdsVersionXML(xml_path)
+            
+            if not version:
+                raise ValueError("Could not determine the IDS version or the version is unsupported.")
+            
+            # Determine the appropriate schema path based on the version
+            schema_path = ''
+            if version == "0.9.7":
+                schema_path = constants.IDS_097_SCHEMA
+            elif version == "1.0.0":
+                schema_path = constants.IDS_SCHEMA
+            else:
+                raise ValueError("Only IDS Versions 1.0.0 and 0.9.7 are supported")
+            
+            # Load the XML schema
+            schema = xmlschema.XMLSchema(schema_path)
+            
+            # Convert XML to dictionary
+            data_dict = schema.to_dict(xml_path)
+            return data_dict
+    
+        except ValueError as e:
+            print(f"ValueError: {e}")
+        except xmlschema.XMLSchemaException as e:
+            print(f"XMLSchemaException: {e}")
+        except FileNotFoundError as e:
+            print(f"File not found: {e}")
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+        return {}
 
-
+    @staticmethod
+    def parseDictToIds(ids_as_dict: dict)->ids.Ids:
+        my_ids= ids.Ids()
+        my_ids.parse(ids_as_dict)
+        return my_ids
+    
+        # my_ids= IdsOps.createIds()
+        # #Add Ids Info
+        # info_dict= ids_as_dict["info"]
+        # my_ids= IdsOps.addIdsInfo()
+        # #Add Specifications Info
+        # spec_dict= ids_as_dict["specifications"]["specification"]
+        # for specification in spec_dict:
+        #     my_spec=IdsOps.addSpecInfo(specification)
+        #     for app_items in specification["applicability"]:
+        

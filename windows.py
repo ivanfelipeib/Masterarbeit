@@ -61,6 +61,8 @@ class IdsInfoWindow(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
+
+
 class IdsSpecListWindow(QMainWindow):
     open_spec_editor= pyqtSignal() #Signal when clicking on New Specification go to method OpenSpecEditor method in IdsEditorWindow class
 
@@ -311,11 +313,13 @@ class IdsEditorWindow(QMainWindow):
         self.spec_list_window=None
         self.audit_window= None
 
-        #If no ids was passed from IdsManagerWindow a new instance is created:
+        #If no ids was passed from IdsManagerWindow a new instance is created and flag reamins False:
+        self.flag_load_data = False
         self.my_ids= my_ids
         if self.my_ids is None:
             self.my_ids=IdsOps.createIds()
-        else: 
+        else:
+            self.flag_load_data=True
             pass
 
         # Connect handlers
@@ -333,6 +337,10 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None)
+        if self.flag_load_data:
+            self.loadInfo()
+        else:
+            pass
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
@@ -396,6 +404,9 @@ class IdsEditorWindow(QMainWindow):
         self.generateIdsFile()
         self.add_ids_to_list.emit() #Activate signal in class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
         self.close()
+    
+    def loadInfo(self):
+        
     
     def backIdsList(self):
         self.back_to_manage_ids.emit()
@@ -475,15 +486,15 @@ class ManageIdsWindow(QMainWindow):
         #Set dictionary to storage entries in ids lists(Key) and corresponding ids instance (value)
         self.dic_ids={}
 
-        # Connect handlers
+        # Connect handlers 
         handlers = {
             "btn_import_ids": self.clickImport,
             "btn_delete_ids": self.clickDelete,
-            "btn_ids_edit": self.clickExistingEditorWindow,
+            "btn_ids_edit": self.clickEdit,
             "btn_ids_new": self.clickNewEditorWindow,
         }
         Ops.connectHandlers(self, handlers)
-                
+        
     def clickImport(self):
         #Adds filepath from selected element to a list
         self.filter="IDS-Dateien (*.ids)"
@@ -520,15 +531,18 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
-    
-    def clickExistingEditorWindow(self):
-        if self.idsEditor_window is None:
-            self.idsEditor_window = IdsEditorWindow(my_ids= None) #TODO:load selected ids in list and pass it to constructor of IdsEditorWindow
-            self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds)
+
+    def clickEdit(self):
+        ids_as_dict=self.parseImportedIds()
+        my_ids= IdsOps.parseDictToIds(ids_as_dict)
+        self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
+        self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
+        self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
         self.hide()  # Hide the main window
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
+
 
     def setFilepathIds(self, my_ids):
         self.filter="IDS files (*.ids)"
@@ -569,8 +583,13 @@ class ManageIdsWindow(QMainWindow):
         print(self.dic_ids)
     
     def parseImportedIds(self):
-        #TODO:Add functionality to convert imported ids in dictionary and parse dictionaries to ids instances. Add intances to dic_ids 
-        pass
+        selected_item= self.list_ids_mgmnt.selectedItems()
+        if selected_item:
+            file_path=selected_item.text()
+            ids_parsed_dic=IdsOps.parseXmlToDict(file_path)
+            return ids_parsed_dic
+        else:
+            self.selected_label.setText('No element from IDS List was selected')
 
     def showManageIds(self):
         self.show()

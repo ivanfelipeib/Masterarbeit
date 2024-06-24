@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/0.9.7/ids.xsd">
+    <info>
+        <title>Titulo</title>
+        <copyright>Copyright</copyright>
+        <version>Version</version>
+        <description>desc</description>
+        <author>ivan@ivan.com</author>
+        <date>2000-01-01</date>
+        <purpose>purpose</purpose>
+        <milestone>miles</milestone>
+    </info>
+    <specifications>
+        <specification name="Specification 1" ifcVersion="IFC2X3" identifier="30d95bcc-df72-4107-b330-0d7fb3fb9c35" description="Descr" instructions="Instructions">
+            <applicability minOccurs="1" maxOccurs="unbounded">
+                <attribute>
+                    <name>
+                        <simpleValue>Color</simpleValue>
+                    </name>
+                    <value>
+                        <simpleValue>Red</simpleValue>
+                    </value>
+                </attribute>
+            </applicability>
+            <requirements>
+                <material cardinality="required">
+                    <value>
+                        <simpleValue>Concrete</simpleValue>
+                    </value>
+                </material>
+            </requirements>
+        </specification>
+        <specification name="Spec 2" ifcVersion="IFC2X3" identifier="4c47d6f3-429a-4445-b7d1-52e712d45329" description="Description" instructions="instructions">
+            <applicability minOccurs="1" maxOccurs="unbounded">
+                <material>
+                    <value>
+                        <simpleValue>Concrete</simpleValue>
+                    </value>
+                </material>
+            </applicability>
+            <requirements>
+                <attribute cardinality="prohibited">
+                    <name>
+                        <simpleValue>Strength</simpleValue>
+                    </name>
+                </attribute>
+            </requirements>
+        </specification>
+    </specifications>
+</ids>

@@ -1,23 +1,17 @@
 from PyQt5.QtWidgets import QMdiSubWindow, QMessageBox
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from pathlib import Path
-
-DIRECTORY_GUI= "GUI_Windows"
-DIRECTORY_GUI_FILTERS ="Filters-Requirements"
+import constants
 
 class Ops():
     @staticmethod
     def load_ui(filename, window, filter= False):
-        #UI Elements in filters-requirements folder
         if filter:
-            root_dir = Path(__file__).resolve().parent
-            filepath = root_dir / DIRECTORY_GUI / DIRECTORY_GUI_FILTERS / filename
+            filepath = constants.GUI_FACETS_DIR / filename #UI Elements in filters-requirements folder
             uic.loadUi(filepath, window)
-        #UI in GUI_Windows folder
+        
         else:
-            root_dir = Path(__file__).resolve().parent
-            filepath = root_dir / DIRECTORY_GUI / filename
+            filepath = constants.GUI_DIR / filename #UI in GUI_Windows folder
             uic.loadUi(filepath, window)
 
     @staticmethod

@@ -3,9 +3,12 @@ from Ops import Ops
 
 
 class byAttribute(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, my_ids=None):
         super(byAttribute, self).__init__(parent)
 
+        #Load IDS if passed from IDS Editor Window
+        self.my_ids=my_ids
+        
         # Load UI file
         Ops.load_ui("by_attribute.ui",self, filter=True)
 
@@ -25,6 +28,10 @@ class byAttribute(QMainWindow):
             "optionality": self.combo_optionality.currentText()
         }
         return Ops.dictEmptyValueToNone(dict_data)
+    
+    def loadData(self):
+        #TODO:Load information from given IDS
+        pass
 
 class byClass(QMainWindow):
     def __init__(self, parent=None):

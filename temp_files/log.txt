@@ -1,0 +1,6 @@
+2024-06-24 11:01:11 [Warning] Version Ids0_9_7 is transitional, update to 1.0 before circulating.
+2024-06-24 11:01:11 [Information] The file schema version is: Ids0_9_7
+2024-06-24 11:01:11 [Error] Error 103: Invalid "attribute name" `"Color"` (954 accepted values exist, starting with ["Contents", "Name", "Description", "RelatingDraughtingCallout", "RelatedDraughtingCallout"]...) in the context of Ifc2x3 on "`simpleValue` element at line 18, position 26".
+2024-06-24 11:01:11 [Error] Error 103: Invalid "attribute name" `"Strength"` (954 accepted values exist, starting with ["AcidityConcentration", "ActingRole", "ActionID", "ActionSource", "ActionType"]...) in the context of Ifc2x3 on "`simpleValue` element at line 44, position 26".
+2024-06-24 11:01:11 [Information] Completed reading 76 xml elements.
+2024-06-24 11:01:11 [Information] Audit result: IdsContentError
