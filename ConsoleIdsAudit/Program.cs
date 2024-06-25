@@ -12,8 +12,10 @@ class Program
     static void Main()
     {
         // Determine the root directory of the project
-        string rootFolder = AppContext.BaseDirectory;
-
+        string baseDirectory = AppContext.BaseDirectory;
+        string rootFolder = Path.Combine(baseDirectory,"..", "..","..",".."); //navigate up to root directory
+        rootFolder= Path.GetFullPath(rootFolder);
+        
         // Specify the relative paths for the log file and IDS file
         string logFilePath = Path.Combine(rootFolder, "temp_files", "log.txt");
         string filePath = Path.Combine(rootFolder, "temp_files", "TempIds.ids");

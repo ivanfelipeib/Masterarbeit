@@ -7,11 +7,11 @@ class Ops():
     @staticmethod
     def load_ui(filename, window, filter= False):
         if filter:
-            filepath = constants.GUI_FACETS_DIR / filename #UI Elements in filters-requirements folder
+            filepath = constants.GUI_FACETS_DIR + "/" + filename #UI Elements in filters-requirements folder
             uic.loadUi(filepath, window)
         
         else:
-            filepath = constants.GUI_DIR / filename #UI in GUI_Windows folder
+            filepath = constants.GUI_DIR + "/"+ filename #UI in GUI_Windows folder
             uic.loadUi(filepath, window)
 
     @staticmethod

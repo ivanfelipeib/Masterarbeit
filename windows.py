@@ -376,8 +376,8 @@ class IdsEditorWindow(QMainWindow):
         self.my_ids.to_xml(filepath) #Convert IDS in xml structure and save it in filepath
 
     def runAudit(self):
-        filepathLog= constants.TEMP_LOG_DIR
         IdsOps.auditIds() #run c# script to run IDS Audit
+        filepathLog= constants.TEMP_LOG_DIR
         with open(filepathLog, 'r') as file:
                 content = file.read()
                 self.audit_window.textBrowser_audit.setText(content)
@@ -406,7 +406,7 @@ class IdsEditorWindow(QMainWindow):
         self.close()
     
     def loadInfo(self):
-        
+        pass
     
     def backIdsList(self):
         self.back_to_manage_ids.emit()
