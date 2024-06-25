@@ -406,7 +406,14 @@ class IdsEditorWindow(QMainWindow):
         self.close()
     
     def loadInfo(self):
-        pass
+        self.info_window.txt_title.setText(self.my_ids.info["title"])
+        self.mdi_editor.hide()
+        self.mdi_list.resize(800,832)
+        self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None)
+        if self.flag_load_data:
+            self.loadInfo()
+        else:
+            pass
     
     def backIdsList(self):
         self.back_to_manage_ids.emit()
