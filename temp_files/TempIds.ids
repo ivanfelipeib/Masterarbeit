@@ -1,36 +1,17 @@
 <?xml version='1.0' encoding='utf-8'?>
 <ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/0.9.7/ids.xsd">
     <info>
-        <title>Titulo</title>
-        <copyright>Copyright</copyright>
-        <version>Version</version>
-        <description>desc</description>
-        <author>ivan@ivan.com</author>
+        <title>dasd</title>
+        <copyright>dasd</copyright>
+        <version>1</version>
+        <description>dsaddsa</description>
+        <author>ivan@hotmail.com</author>
         <date>2000-01-01</date>
-        <purpose>purpose</purpose>
-        <milestone>miles</milestone>
+        <purpose>asda</purpose>
+        <milestone>dasd</milestone>
     </info>
     <specifications>
-        <specification name="Specification 1" ifcVersion="IFC2X3" identifier="30d95bcc-df72-4107-b330-0d7fb3fb9c35" description="Descr" instructions="Instructions">
-            <applicability minOccurs="1" maxOccurs="unbounded">
-                <attribute>
-                    <name>
-                        <simpleValue>Color</simpleValue>
-                    </name>
-                    <value>
-                        <simpleValue>Red</simpleValue>
-                    </value>
-                </attribute>
-            </applicability>
-            <requirements>
-                <material cardinality="required">
-                    <value>
-                        <simpleValue>Concrete</simpleValue>
-                    </value>
-                </material>
-            </requirements>
-        </specification>
-        <specification name="Spec 2" ifcVersion="IFC2X3" identifier="4c47d6f3-429a-4445-b7d1-52e712d45329" description="Description" instructions="instructions">
+        <specification name="Spec1" ifcVersion="IFC2X3" identifier="c9c8381e-8a71-4418-b49c-a57740e1866d" description="dedede" instructions="instru instru">
             <applicability minOccurs="1" maxOccurs="unbounded">
                 <material>
                     <value>
@@ -39,12 +20,28 @@
                 </material>
             </applicability>
             <requirements>
-                <attribute cardinality="prohibited">
+                <attribute cardinality="required">
                     <name>
-                        <simpleValue>Strength</simpleValue>
+                        <simpleValue>Color</simpleValue>
                     </name>
+                    <value>
+                        <simpleValue>Blue</simpleValue>
+                    </value>
                 </attribute>
             </requirements>
+        </specification>
+        <specification name="Spec 2" ifcVersion="IFC2X3" identifier="2bdd0633-6260-4c27-b61c-d259d262f6d6" description="" instructions="">
+            <applicability minOccurs="0" maxOccurs="0">
+                <property>
+                    <propertySet>
+                        <simpleValue>PSet1</simpleValue>
+                    </propertySet>
+                    <baseName>
+                        <simpleValue>Color</simpleValue>
+                    </baseName>
+                </property>
+            </applicability>
+            <requirements />
         </specification>
     </specifications>
 </ids>
