@@ -209,10 +209,8 @@ class IdsSpecEditorWindow(QMainWindow):
         else:
             self.loadInfo()
             self.loadFilters()
-            #self.loadRequirements()
-            pass
-
-
+            self.loadRequirements()
+            self.loadCardinality()
     
         # Set subwindow in mdiArea when currentText change in ComboBox 
         self.combo_add_filter.currentTextChanged.connect(self.openFilterSubWindow)
@@ -340,7 +338,30 @@ class IdsSpecEditorWindow(QMainWindow):
         else:
             self.combo_ifc_version.setCurrentIndex(index)
             print(f"Value '{self.my_spec.ifcVersion}' set successfully in the combo box for{self.my_spec}")
-        pass
+        
+    def loadCardinality(self):
+        #Set cardinality according with IDS documentation https://github.com/buildingSMART/IDS/blob/development/Documentation/specifications.md
+        min_ocurrs_val=self.my_spec.minOccurs
+        max_ocurrs_val=self.my_spec.maxOccurs
+        
+        if min_ocurrs_val == 1 and max_ocurrs_val == "unbounded":
+            cardinality= "required"
+            index = self.combo_mandatory.findText(cardinality)
+        elif min_ocurrs_val == 0 and max_ocurrs_val == "unbounded":
+            cardinality= "optional"
+            index = self.combo_mandatory.findText(cardinality)
+        elif min_ocurrs_val == 0 and max_ocurrs_val == 0:
+            cardinality= "prohibited"
+            index = self.combo_mandatory.findText(cardinality)
+        else:
+            Ops.msgError(self,"Cardinality Error","The cardinality of the imported IDS file cannot be read, it might be corrupt.")
+        
+        #Set combobox value depending on cardinality
+        if index == -1:  # Value not found
+            Ops.msgError(self,"Cardinality Error","The cardinality found does not match elements in comboBox")
+        else:
+            self.combo_mandatory.setCurrentIndex(index)
+            print(f"Value '{cardinality}' set successfully in the combo box for{self.my_spec}")
 
     def saveSpecification(self):
         #add Specification Info to Specification instance
@@ -489,7 +510,7 @@ class IdsEditorWindow(QMainWindow):
         self.close()
     
     def loadInfo(self):
-
+        #TODO:Get rid of this method and check it does not affect something else
         pass
     
     def backIdsList(self):
