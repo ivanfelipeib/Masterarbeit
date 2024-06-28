@@ -41,7 +41,7 @@ class Ops():
     @staticmethod
     def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, my_ids_instance= None, my_spec_instance= None):
         if window_instance is None or window_instance.isClosed: #If window_instance set as None, a new Instance is created
-            if my_ids_instance is None:
+            if my_ids_instance is None and my_spec_instance is None: #If no ids was passed a new one is created
                 sub_window = QMdiSubWindow()
                 window_instance = window_class()
                 sub_window.setWidget(window_instance)
@@ -50,9 +50,9 @@ class Ops():
                 window_instance.isClosed = False
                 sub_window.showMaximized()
             
-            else:
+            else: # if ids or spec were passed, it is used to load data
                 sub_window = QMdiSubWindow()
-                window_instance = window_class(my_ids_instance, my_spec_instance)
+                window_instance = window_class(None, my_ids_instance, my_spec_instance)
                 sub_window.setWidget(window_instance)
                 sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
                 mdi_area.addSubWindow(sub_window)
@@ -78,6 +78,17 @@ class Ops():
             if value == "":
                 dict_data[key] = None
         return dict_data
+
+    @staticmethod
+    def set_combobox_value(self, comboName, value):
+        # Find the index of the value in the combo box
+        index = self.comboBox.findText(value)
+        
+        if index == -1:  # Value not found
+           print(f"The value '{value}' is not available in the combo box.")
+        else:
+            self.comboBox.setCurrentIndex(index)
+            print(f"Value '{value}' set successfully in the combo box.")
 
     @staticmethod
     def msgError(self,title, msg):

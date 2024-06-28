@@ -1,9 +1,10 @@
 from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLabel
 from Ops import Ops
+from ifctester import ids
 
 
 class byAttribute(QMainWindow):
-    def __init__(self, parent=None, my_ids=None):
+    def __init__(self, parent=None, my_ids: ids.Ids=None):
         super(byAttribute, self).__init__(parent)
 
         #Load IDS if passed from IDS Editor Window
