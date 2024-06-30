@@ -43,7 +43,7 @@ class IdsEditorAuditWindow(QMainWindow):
                 QMessageBox.critical(self, "Error", f"Failed to export file: {e}")
 
 class IdsInfoWindow(QMainWindow):
-    def __init__(self, parent= None, my_ids= None, my_spec= None):
+    def __init__(self, parent= None, my_ids= None, my_spec= None, my_facet=None):
         super(IdsInfoWindow, self).__init__(parent)
         
         self.my_ids=my_ids 
@@ -87,7 +87,7 @@ class IdsInfoWindow(QMainWindow):
 class IdsSpecListWindow(QMainWindow):
     open_spec_editor= pyqtSignal() #Signal when clicking on New Specification go to method OpenSpecEditor in class IdsEditorWindow
 
-    def __init__(self, parent= None, my_ids:ids.Ids = None, my_spec:ids.Specification = None):
+    def __init__(self, parent= None, my_ids:ids.Ids = None, my_spec:ids.Specification = None, my_facet:ids.Facet=None):
         super(IdsSpecListWindow, self).__init__(parent)
 
         # Load UI file
@@ -151,7 +151,6 @@ class IdsSpecListWindow(QMainWindow):
         if index.isValid():
             item = index.data()
             self.my_spec = self.dic_specifications[item]
-            print(self.my_spec)
         self.open_spec_editor.emit()
         pass
     
@@ -166,7 +165,7 @@ class IdsSpecListWindow(QMainWindow):
 class IdsSpecEditorWindow(QMainWindow):
     add_spec_to_list= pyqtSignal() #Signal when clicking on Save Specification
 
-    def __init__(self, parent=None, my_ids=None, my_spec=None):
+    def __init__(self, parent=None, my_ids=None, my_spec=None, my_facet=None):
         super(IdsSpecEditorWindow, self).__init__(parent)
         #Load UI
         Ops.load_ui("idsEditor_spec_editor.ui", self)
@@ -185,12 +184,14 @@ class IdsSpecEditorWindow(QMainWindow):
             "mdi_filter": QMdiArea,
             "btn_delete_filter": QPushButton,
             "btn_save_filter": QPushButton,
+            "btn_edit_filter": QPushButton,
             #Tab Requirements
             "combo_add_requirement": QComboBox,
             "list_requirements": CustomListWidget,
             "mdi_requirement": QMdiArea,
             "btn_delete_requirement": QPushButton,
             "btn_save_requirement": QPushButton,
+            "btn_edit_requirement": QPushButton,
             #General
             "btn_save_specification": QPushButton
         }
@@ -206,10 +207,10 @@ class IdsSpecEditorWindow(QMainWindow):
         #If no spec was passed from SpecList a new instance is created:
         if self.my_spec is None:
             self.my_spec=IdsOps.createSpec()
-        else:
+        else: # If spec was passed, load information
             self.loadInfo()
-            self.loadFilters()
-            self.loadRequirements()
+            self.loadFiltersList()
+            self.loadRequirementsList()
             self.loadCardinality()
     
         # Set subwindow in mdiArea when currentText change in ComboBox 
@@ -220,56 +221,64 @@ class IdsSpecEditorWindow(QMainWindow):
         handlers = {
             "btn_save_requirement": self.save_requirements_data,
             "btn_save_filter": self.save_filters_data,
+            "btn_edit_filter": self.loadFilSubWindow,
+            "btn_edit_requirement": self.loadReqSubWindow,
             "btn_delete_filter": self.clickDeleteFilter,
             "btn_delete_requirement": self.clickDeleteRequirement,
             "btn_save_specification": self.saveSpecification
         }
         Ops.connectHandlers(self, handlers)
+
+        #Connect buttons with methods that do take arguments
+        # self.btn_edit_filter.clicked.connect(lambda: self.loadFilSubWindow('parameter1', 'parameter2'))
+        # self.btn_edit_requirement.clicked.connect(lambda: self.loadReqSubWindow('parameter1', 'parameter2'))
     
-    def openFilterSubWindow(self, text):
+    def openFilterSubWindow(self, text, facet_to_load = None):
         mdi_area = self.mdi_filter
         mdi_area.closeAllSubWindows()
+        facet_to_load=facet_to_load
 
         match text:
             case "Add filter by class":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None)
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by part of":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by attribute":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by property":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None)
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by classification":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by material":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
-                Ops.msgError(self,"Error","Text in ComboBox does not match any type of filter")
+                Ops.msgError(self, "Error","Text in ComboBox does not match any type of filter")
         
         if text != "Add filter by class":
             self.opened_window.combo_optionality.hide()
             self.opened_window.lbl_optionality.hide()
         else: pass
 
-    def openRequirementSubWindow(self, text):
+    def openRequirementSubWindow(self, text, facet_to_load=None):
         mdi_area = self.mdi_requirement
         mdi_area.closeAllSubWindows()
+        facet_to_load=facet_to_load
 
         match text:
             case "Add requirement by class":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None)
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by part of":
-                self.opened_window= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None)
+                self.opened_window= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by attribute":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by property":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None)
+                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by classification":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by material":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None)
+                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
-                Ops.msgError(self,"Error","Text in ComboBox does not match any type of requirements")
+                Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
         if text != "Add requirement by class":
             self.opened_window.combo_optionality.show()
@@ -314,31 +323,47 @@ class IdsSpecEditorWindow(QMainWindow):
             del facet
         self.list_filters.maxFileList+=1
     
-    def loadRequirements(self):
+    def loadRequirementsList(self):
         for requirement_load in self.my_spec.requirements:
-            print(requirement_load)
             item= requirement_load.to_string(clause_type= "requirement", specification=self.my_spec, requirement=requirement_load)
-            self.dic_filters[item]= requirement_load
+            self.dic_requirements[item]= requirement_load
             self.list_requirements.addItem(item)
+            print(self.dic_requirements)
 
-    def loadFilters(self):
+    def loadFiltersList(self):
         for filter_load in self.my_spec.applicability:
             item= filter_load.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
             self.dic_filters[item]= filter_load
             self.list_filters.addItem(item)
+            print(self.dic_filters)
 
     def loadInfo(self):
         self.txt_name.setText(self.my_spec.name)
         self.txt_description.setPlainText(self.my_spec.description)
         self.txt_instructions.setPlainText(self.my_spec.instructions)
-        
-        index = self.combo_ifc_version.findText(self.my_spec.ifcVersion[0])
-        if index == -1:  # Value not found
-           print(f"The value '{self.my_spec.ifcVersion}' is not available in the combo box.")
-        else:
-            self.combo_ifc_version.setCurrentIndex(index)
-            print(f"Value '{self.my_spec.ifcVersion}' set successfully in the combo box for{self.my_spec}")
-        
+        ifc_version=self.my_spec.ifcVersion[0]
+        Ops.setTextComboBox(self,"combo_ifc_version", ifc_version)
+    
+    def loadReqSubWindow(self):
+        index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            req_selected = self.dic_requirements[item]
+            facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
+            text = "Add requirement by "+ facet_class
+            Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
+        self.openRequirementSubWindow(text, req_selected)
+
+    def loadFilSubWindow(self):
+        index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
+        if index.isValid():
+            item = index.data()
+            filter_selected = self.dic_filters[item]
+            facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
+            text = "Add filter by "+ facet_class
+            Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
+        self.openFilterSubWindow(text, filter_selected)
+    
     def loadCardinality(self):
         #Set cardinality according with IDS documentation https://github.com/buildingSMART/IDS/blob/development/Documentation/specifications.md
         min_ocurrs_val=self.my_spec.minOccurs
@@ -354,11 +379,11 @@ class IdsSpecEditorWindow(QMainWindow):
             cardinality= "prohibited"
             index = self.combo_mandatory.findText(cardinality)
         else:
-            Ops.msgError(self,"Cardinality Error","The cardinality of the imported IDS file cannot be read, it might be corrupt.")
+            Ops.msgError(self, "Cardinality Error","The cardinality of the imported IDS file cannot be read, it might be corrupt.")
         
         #Set combobox value depending on cardinality
         if index == -1:  # Value not found
-            Ops.msgError(self,"Cardinality Error","The cardinality found does not match elements in comboBox")
+            Ops.msgError(self, "Cardinality Error","The cardinality found does not match elements in comboBox")
         else:
             self.combo_mandatory.setCurrentIndex(index)
             print(f"Value '{cardinality}' set successfully in the combo box for{self.my_spec}")
@@ -457,8 +482,7 @@ class IdsEditorWindow(QMainWindow):
         hint = self.mdi_list.minimumSizeHint()
         self.mdi_list.resize(hint)
         self.mdi_editor.showMaximized()
-        my_spec= self.spec_list_window.my_spec #retrieve my_spec from selected spec in SpecListWindow
-        print(my_spec.name)
+        my_spec= self.spec_list_window.my_spec #retrieve my_spec from selected spec in SpecListWindow and pass it to new SpecEditorWindow 
         self.spec_list_window.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, setup_signals=setup_signals, my_spec_instance= my_spec)
 
     def openAuditWindow(self):
@@ -785,7 +809,7 @@ class MainWindow(QMainWindow):
             self.check_window.raise_()
             self.check_window.activateWindow()
         else:
-            Ops.msgError(self,"Error","You have not uploaded any files yet")
+            Ops.msgError(self, "Error","You have not uploaded any files yet")
 
     def show_main_window(self):
         self.show()

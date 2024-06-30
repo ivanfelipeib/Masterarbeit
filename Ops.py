@@ -39,9 +39,9 @@ class Ops():
         return window_instance
 
     @staticmethod
-    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, my_ids_instance= None, my_spec_instance= None):
+    def openSubWindow(mdi_area, window_class, window_instance, setup_signals=None, my_ids_instance= None, my_spec_instance= None, my_facet_instance=None):
         if window_instance is None or window_instance.isClosed: #If window_instance set as None, a new Instance is created
-            if my_ids_instance is None and my_spec_instance is None: #If no ids was passed a new one is created
+            if my_ids_instance is None and my_spec_instance is None and my_facet_instance is None: #If no IDS/Spec/Facet instance was passed a new one is created
                 sub_window = QMdiSubWindow()
                 window_instance = window_class()
                 sub_window.setWidget(window_instance)
@@ -50,9 +50,9 @@ class Ops():
                 window_instance.isClosed = False
                 sub_window.showMaximized()
             
-            else: # if ids or spec were passed, it is used to load data
+            else: # if ids/spec/facet were passed, it is used to load data
                 sub_window = QMdiSubWindow()
-                window_instance = window_class(None, my_ids_instance, my_spec_instance)
+                window_instance = window_class(None, my_ids_instance, my_spec_instance, my_facet_instance)
                 sub_window.setWidget(window_instance)
                 sub_window.setWindowFlags(Qt.FramelessWindowHint | Qt.WindowSystemMenuHint) # Frameless window
                 mdi_area.addSubWindow(sub_window)
@@ -80,15 +80,19 @@ class Ops():
         return dict_data
 
     @staticmethod
-    def set_combobox_value(self, comboName, value):
-        # Find the index of the value in the combo box
-        index = self.comboBox.findText(value)
+    def setTextComboBox(window, combo_box_name:str= "comboBox", text:str="Text to search"):
+        combo_box_widget = getattr(window, combo_box_name, None)
+
+        if combo_box_widget is None:
+            Ops.msgError(window,"Error", f"ComboBox '{combo_box_name}' not found")
+            return
         
+        index = combo_box_widget.findText(text)
         if index == -1:  # Value not found
-           print(f"The value '{value}' is not available in the combo box.")
+            Ops.msgError(window, "Error", f"Value: '{text}' was not found within the ComboBox {combo_box_name} available values.")
         else:
-            self.comboBox.setCurrentIndex(index)
-            print(f"Value '{value}' set successfully in the combo box.")
+            combo_box_widget.setCurrentIndex(index)
+            print(f"Value '{text}' set successfully in {combo_box_name}.")
 
     @staticmethod
     def msgError(self,title, msg):

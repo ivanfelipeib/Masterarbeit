@@ -261,6 +261,19 @@
        <string>Save filter</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="btn_edit_filter">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>150</y>
+        <width>181</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit filter</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_requirements">
      <attribute name="title">
@@ -365,6 +378,19 @@
        </property>
       </item>
      </widget>
+     <widget class="QPushButton" name="btn_edit_requirement">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>150</y>
+        <width>191</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Edit requirement</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -373,7 +399,7 @@
       <x>20</x>
       <y>20</y>
       <width>211</width>
-      <height>26</height>
+      <height>27</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -388,7 +414,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Editing:</string>
+        <string>Specification Editor</string>
        </property>
       </widget>
      </item>
@@ -403,7 +429,7 @@
         </font>
        </property>
        <property name="text">
-        <string>&lt;Spec Name&gt;</string>
+        <string/>
        </property>
       </widget>
      </item>
