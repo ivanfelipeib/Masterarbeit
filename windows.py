@@ -158,6 +158,15 @@ class IdsSpecListWindow(QMainWindow):
         #Save specification in List in SpecListWindow
         my_spec = self.spec_editor_window.my_spec
         item= my_spec.name
+
+        # Check if the item already exists in the dictionary, Find and remove the existing item from the list widget 
+        # TODO:uuid not supported by IDS schema, which approach for replacing elements in list, Just string in list??
+        if item in self.dic_specifications:
+            matching_items = self.list_ids_spec.findItems(item, Qt.MatchExactly)
+            for match in matching_items:
+                row = self.list_ids_spec.row(match)
+                self.list_ids_spec.takeItem(row)
+
         self.dic_specifications[item]=my_spec
         self.list_ids_spec.addItem(item)
         print(self.dic_specifications)
@@ -203,6 +212,8 @@ class IdsSpecEditorWindow(QMainWindow):
         #Set dictionaries to storage entries in lists (Key= facet string, Value= facet).
         self.dic_requirements={}
         self.dic_filters={}
+        #Set element to handle facet in edition
+        self.facet_in_edition=None
 
         #If no spec was passed from SpecList a new instance is created:
         if self.my_spec is None:
@@ -286,21 +297,35 @@ class IdsSpecEditorWindow(QMainWindow):
         else: pass
 
     def save_requirements_data(self):
+        #Create new facet
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
         item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)#TODO: Fork repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
+        
+        #if there was and element in edition, delete element from dictionary and list
+        del self.dic_requirements[self.facet_in_edition]
+        Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
+        self.facet_in_edition= None
+
+        #Add newfacet to dictionary and list
         self.dic_requirements[item]= facet
         self.list_requirements.addItem(item)
         self.opened_window.close()
 
     def save_filters_data(self):
+        #Create new facet
         current_text = self.combo_add_filter.currentText()
         dict_data = self.opened_window.getData()
         cardinality = self.combo_mandatory.currentText()
-        print(cardinality)
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
         item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
+
+        #if there was and element in edition, delete element from dictionary and list
+        del self.dic_filters[self.facet_in_edition]
+        Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
+        self.facet_in_edition= None
+
         self.dic_filters[item]= facet
         self.list_filters.addItem(item)
         self.opened_window.close()
@@ -348,6 +373,7 @@ class IdsSpecEditorWindow(QMainWindow):
         index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
         if index.isValid():
             item = index.data()
+            self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
             req_selected = self.dic_requirements[item]
             facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
             text = "Add requirement by "+ facet_class
@@ -358,6 +384,7 @@ class IdsSpecEditorWindow(QMainWindow):
         index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
         if index.isValid():
             item = index.data()
+            self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
             filter_selected = self.dic_filters[item]
             facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
             text = "Add filter by "+ facet_class
@@ -404,7 +431,7 @@ class IdsSpecEditorWindow(QMainWindow):
         # Set cardinality of Applicability section
         optionality = self.combo_mandatory.currentText()
         self.my_spec.set_usage(usage=optionality) 
-        #Add populated specification to Specification list. See openSpecEditor method in class IdsEditorWindow
+        #Add populated specification to Specification list. Emit signal to method openSpecEditor in class IdsEditorWindow
         self.add_spec_to_list.emit()
         self.close()
         print(self.my_spec.name)
@@ -530,7 +557,7 @@ class IdsEditorWindow(QMainWindow):
     
     def saveIds(self):
         self.generateIdsFile()
-        self.add_ids_to_list.emit() #Activate signal in class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
+        self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
         self.close()
     
     def loadInfo(self):
@@ -685,10 +712,6 @@ class ManageIdsWindow(QMainWindow):
                     my_ids.filepath=self.file_path
                     my_ids.to_xml(self.file_path)
                     print(f"File saved in: {self.file_path}")
-                    #TODO: Reverse process, parse Element to dictionary
-                    #TODO: parse dictionary to ids instance
-                    #TODO: add instance to dictionary and display in IDS Editor
-
             else: print(f"filepath already in list. {self.file_path}")
         else:
             print("No file selected to save")
@@ -697,6 +720,14 @@ class ManageIdsWindow(QMainWindow):
         my_ids = self.idsEditor_window.my_ids
         self.setFilepathIds(my_ids)
         item= my_ids.filepath
+         # Check if the item already exists in the dictionary, Find and remove the existing item from the list widget 
+        # TODO:uuid not supported by IDS schema, which approach for replacing elements in list, Just string translation?
+        if item in self.dic_ids:
+            matching_items = self.list_ids_mgmnt.findItems(item, Qt.MatchExactly)
+            for match in matching_items:
+                row = self.list_ids_mgmnt.row(match)
+                self.list_ids_mgmnt.takeItem(row)
+
         self.dic_ids[item]=my_ids #Key= Filepath, Value= ids.Ids() instance
         self.list_ids_mgmnt.addItem(item)
         print(self.dic_ids)

@@ -94,6 +94,20 @@ class Ops():
             combo_box_widget.setCurrentIndex(index)
             print(f"Value '{text}' set successfully in {combo_box_name}.")
 
+    def deleteItemInList(window, list_widget_name, text):
+        list_widget = getattr(window, list_widget_name, None)
+        if not list_widget:
+            print(f"Error: {list_widget_name} is not a valid attribute of {window}.")
+            return False
+        
+        for i in range(list_widget.count()):
+            item = list_widget.item(i)
+            if item.text() == text:
+                list_widget.takeItem(i)
+                return True  # Return True if item is found and deleted
+    
+        return False  # Return False if item with given text is not found
+
     @staticmethod
     def msgError(self,title, msg):
         self.msgError= QMessageBox()
