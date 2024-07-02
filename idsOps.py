@@ -135,9 +135,14 @@ class IdsOps():
             
             # Load the XML schema
             schema = xmlschema.XMLSchema(schema_path)
-            
             # Convert XML to dictionary
             data_dict = schema.to_dict(xml_path)
+            # Convert IDS Versions to String since IDS Schema defines IFC Version as list an returns in previous step IDs version 1-element lists. 
+            specifications = data_dict.get('specifications', {})
+            specification_list = specifications.get('specification', [])
+            for spec in specification_list:
+                if '@ifcVersion' in spec and isinstance(spec['@ifcVersion'], list) and len(spec['@ifcVersion']) == 1:
+                    spec['@ifcVersion'] = spec['@ifcVersion'][0]
             return data_dict
     
         except ValueError as e:

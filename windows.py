@@ -85,7 +85,7 @@ class IdsInfoWindow(QMainWindow):
 
 
 class IdsSpecListWindow(QMainWindow):
-    open_spec_editor= pyqtSignal() #Signal when clicking on New Specification go to method OpenSpecEditor in class IdsEditorWindow
+    open_spec_editor= pyqtSignal() # emit signal when clicking on New Specification, go to method OpenSpecEditor in class IdsEditorWindow
 
     def __init__(self, parent= None, my_ids:ids.Ids = None, my_spec:ids.Specification = None, my_facet:ids.Facet=None):
         super(IdsSpecListWindow, self).__init__(parent)
@@ -304,9 +304,10 @@ class IdsSpecEditorWindow(QMainWindow):
         item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)#TODO: Fork repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
         
         #if there was and element in edition, delete element from dictionary and list
-        del self.dic_requirements[self.facet_in_edition]
-        Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
-        self.facet_in_edition= None
+        if self.facet_in_edition:
+            del self.dic_requirements[self.facet_in_edition]
+            Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
+            self.facet_in_edition= None
 
         #Add newfacet to dictionary and list
         self.dic_requirements[item]= facet
@@ -322,9 +323,10 @@ class IdsSpecEditorWindow(QMainWindow):
         item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
 
         #if there was and element in edition, delete element from dictionary and list
-        del self.dic_filters[self.facet_in_edition]
-        Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
-        self.facet_in_edition= None
+        if self.facet_in_edition:
+            del self.dic_filters[self.facet_in_edition]
+            Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
+            self.facet_in_edition= None
 
         self.dic_filters[item]= facet
         self.list_filters.addItem(item)
@@ -366,7 +368,7 @@ class IdsSpecEditorWindow(QMainWindow):
         self.txt_name.setText(self.my_spec.name)
         self.txt_description.setPlainText(self.my_spec.description)
         self.txt_instructions.setPlainText(self.my_spec.instructions)
-        ifc_version=self.my_spec.ifcVersion[0]
+        ifc_version=self.my_spec.ifcVersion
         Ops.setTextComboBox(self,"combo_ifc_version", ifc_version)
     
     def loadReqSubWindow(self):
@@ -484,7 +486,6 @@ class IdsEditorWindow(QMainWindow):
         }
         Ops.connectHandlers(self, handlers)
 
-
     def openInfoWindow(self):
         my_ids= self.my_ids
         self.mdi_editor.hide()
@@ -520,7 +521,7 @@ class IdsEditorWindow(QMainWindow):
         self.runAudit() #Audit Report of IDS file
         
     def generateIdsFile(self):
-        self.my_ids= IdsOps.createIds() 
+        self.my_ids= IdsOps.createIds() #TODO: Add try catch, to handle when user clicks automatically in audit before clicking on info and specifications
         self.addIdsInfo()
         self.addIdsSpecifications()
         self.idsToXML()
