@@ -1,4 +1,4 @@
-from idsOps import IdsOps
+from Operations.idsOps import IdsOps
 
 version=IdsOps.getIdsVersionXML(r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids")
 print(version)

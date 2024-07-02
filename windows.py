@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit,QDateEdit, QTextBrowser
 from PyQt5.QtCore import Qt, pyqtSignal, QVariant
 from myWidgets import CustomListWidget
-from Ops import Ops
-from idsOps import IdsOps
+from Operations.Ops import Ops
+from Operations.idsOps import IdsOps
+from Operations.ifcOps import IfcOps
 from ifctester import ids
 import filters 
 import uuid
