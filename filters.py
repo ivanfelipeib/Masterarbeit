@@ -24,7 +24,7 @@ class byAttribute(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
         #populate QLineEdit with ifc classes
-        IfcOps.populateClasses(self, "IFC 4", "txt_name")
+        IfcOps.populateClasses(self, "IFC4", "txt_name")
         
         #If facet was passed, load data in Window
         if self.my_facet:

@@ -471,11 +471,11 @@ class IdsEditorWindow(QMainWindow):
         #If no ids was passed from IdsManagerWindow a new instance is created and flag reamins False:
         self.flag_load_data = False
         self.my_ids= my_ids
-        if self.my_ids is None:
-            self.my_ids=IdsOps.createIds()
-        else:
-            self.flag_load_data=True
-            pass
+        # if self.my_ids is None:
+        #     self.my_ids=IdsOps.createIds()
+        # else:
+        #     self.flag_load_data=True
+        #     pass
 
         # Connect handlers
         handlers = {
@@ -493,10 +493,10 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
 
-        if self.flag_load_data:
-            self.loadInfo() #TODO: Get rid of this flag and the associated method as well
-        else:
-            pass
+        # if self.flag_load_data:
+        #     self.loadInfo() #TODO: Get rid of this flag and the associated method as well
+        # else:
+        #     pass
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
