@@ -570,6 +570,85 @@ class IdsEditorWindow(QMainWindow):
         self.back_to_manage_ids.emit()
         self.close()
 
+class IfcInfoWindow(QMainWindow):
+    def __init__(self, parent=None, ifc_file_path:str="ifc_model.ifc"):
+        super(IfcInfoWindow, self).__init__(parent)
+
+        self.ifc_file_path=ifc_file_path
+        self.my_IfcOps = IfcOps(self.ifc_file_path) #Instantiate class IfcOps
+        self.my_model= self.my_IfcOps.model
+
+        # Load UI file
+        Ops.load_ui("ifc_info_checker.ui",self)
+
+        # Define Widgets
+        main_widget_setup = {
+            #Basic Information
+            "txt_base_point": QLineEdit,
+            "txt_coordinate_sys": QLineEdit,
+            "txt_ifc_schema": QLineEdit,
+            "txt_software": QLineEdit,
+            "txt_num_elements": QLineEdit,
+            "txt_list_attributes": QLineEdit,
+            #Project-related Information
+            "txt_prj_description": QLineEdit,
+            "txt_section": QLineEdit,
+            "txt_client": QLineEdit,
+            "txt_author": QLineEdit,
+            #Custom Query
+            "combo_entity": QComboBox,
+            "combo_element": QComboBox,
+            "combo_attribute": QComboBox,
+            "txt_value": QLineEdit,
+            "btn_search": QPushButton,
+            "btn_clear": QPushButton
+        }
+        # Load Widgets
+        Ops.loadWidgets(self, main_widget_setup )
+
+        # Connect handlers
+        handlers = {
+            "btn_search": self.searchElements,
+            "btn_clear": self.clearComboBxs
+        }
+        Ops.connectHandlers(self, handlers)
+        self.loadIfcInfo()
+
+    def searchElements(self):
+        pass
+
+    def loadIfcInfo(self):
+        schema= self.my_model.schema
+        # project = self.my_model.by_type("IfcProject")[0]
+        # coord_sys = self.my_model.by_type("IfcCoordinateReferenceSystem")[0]
+        # authoring_app= self.my_model.by_type("IfcApplication")[0]
+
+        #Basic Information
+        self.txt_base_point.setText(str(IfcOps.get_info(self.my_IfcOps, "IfcProject")["RepresentationContexts"][0]["WorldCoordinateSystem"]["Location"]["Coordinates"]))
+        # self.txt_coordinate_sys.setText(IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Description"]+
+        #                                 " //"+
+        #                                 IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Name"])
+        self.txt_ifc_schema.setText(schema)
+        self.txt_software.setText(IfcOps.get_info(self.my_IfcOps, "IfcApplication")["ApplicationFullName"])
+        self.txt_num_elements.setText("TODO")#TODO
+        self.txt_list_attributes.setText("TODO")#TODO
+        #Project-related Information
+        self.txt_prj_description.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["Description"])
+        self.txt_section.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["Phase"])
+        self.txt_client.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["TheOrganization"]["Name"])
+        # self.txt_author.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["FamilyName"]+
+        #                         " , "+
+        #                         IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["GivenName"])
+        #Custom Query
+        # "combo_entity": QComboBox,
+        # "combo_element": QComboBox,
+        # "combo_attribute": QComboBox,
+        # "txt_value": QLineEdit,
+        # "btn_search": QPushButton,
+        # "btn_clear": QPushButton
+    def clearComboBxs(self):
+        pass
+
 class ManageIfcWindow(QMainWindow):
     def __init__(self, parent=None):
         super(ManageIfcWindow, self).__init__(parent)
@@ -589,9 +668,13 @@ class ManageIfcWindow(QMainWindow):
         # Connect handlers
         handlers = {
             "btn_import_ifc": self.clickImport,
-            "btn_delete_ifc": self.clickDelete
+            "btn_delete_ifc": self.clickDelete,
+            "btn_check_ifc": self.checkIfc
         }
         Ops.connectHandlers(self, handlers)
+
+        #Set instance of IfcCheckerWindow
+        self.ifc_checker_window=None
     
     def clickImport(self):
         #Adds filepath from selected element to a list
@@ -620,6 +703,13 @@ class ManageIfcWindow(QMainWindow):
         self.list_ifc.takeItem(row)
         #Updates maxFileList value
         self.list_ifc.maxFileList+=1
+    
+    def checkIfc(self):
+        ifc_file_path= self.list_ifc.currentIndex().data()
+        if ifc_file_path:
+            self.ifc_checker_window=Ops.openWindow(IfcInfoWindow,window_instance=None,setup_signals=None, ifc_file_path=ifc_file_path)
+            self.ifc_checker_window.show()
+        pass
 
 class ManageIdsWindow(QMainWindow):
     def __init__(self, parent=None):

@@ -1,44 +1,68 @@
 import ifcopenshell
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QCompleter
+from collections import defaultdict
+from Operations.Ops import Ops
 
-class IfcOps():
-    @staticmethod
-    def populateClasses(window, ifc_schema:str = "IFC4", qline_name:str = "Qline_name"):
-        qline_edit = window.findChild(QLineEdit, qline_name)
-        schema= ifcopenshell.ifcopenshell_wrapper.schema_by_name(ifc_schema) #TODO: Which enum types are availabe IFC 4 raise exception 
-        ifc_classes= schema.declared_types()
-        print(ifc_classes)
-        #Creates and set completer for autoprediction in QLineEdit
-        completer = QCompleter(ifc_classes)
-        qline_edit.setCompleter(completer)
+class IfcOps:
+    def __init__(self, ifc_file_path: str = "Folder/ifc_file.ifc"):
+        self.model = ifcopenshell.open(ifc_file_path)
+
+    def get_detailed_info(entity_instance):
+        def recursive_info(entity):
+            info = {}
+            # Add the attributes of the current entity
+            current_info = entity.get_info(recursive=False)
+            entity_type = entity.is_a()
+            for key, value in current_info.items():
+                # Add context by including the class name
+                contextual_key = f"{entity_type}::{key}" #keys returned include both class name and atribute name. This ensures that attributes with the same name but different contexts are uniquely identifiable.
+                info[contextual_key] = value
+            
+            # Recurse through related objects (attributes that are also entities)
+            for key, value in current_info.items():
+                if isinstance(value, ifcopenshell.entity_instance):
+                    related_info = recursive_info(value)
+                    info.update(related_info)
+                elif isinstance(value, list):
+                    for item in value:
+                        if isinstance(item, ifcopenshell.entity_instance):
+                            related_info = recursive_info(item)
+                            info.update(related_info)
+            
+            return info
+
+        return recursive_info(entity_instance)
+
+    def get_attribute(self, entity_instance, attribute_name):
+        # Fetch detailed information including inherited attributes
+        info = self.get_detailed_info(entity_instance)
+        
+        # Search for the attribute in the info
+        for key, value in info.items():
+            if key.endswith(f"::{attribute_name}"):
+                return value
+        raise AttributeError(f"Attribute '{attribute_name}' not found in entity '{entity_instance.is_a()}'")
     
-    @staticmethod
-    def populateTypesCombo(window, ifc_schema:str="IFC 4", combobox_class_str:str="combobox_class", combobox_type_str:str="combobox_type"):
-        combobox_class=getattr(window,combobox_class_str)
-        selected_class= combobox_class.currentText()
+    def get_info(self,ifc_entity)->dict:
+        my_entity = self.model.by_type(ifc_entity)[0]
+        info = my_entity.get_info(recursive=True)
+        return info
+    
+    def get_value_from_path(dictionary, path):
+        # Split the path into keys
+        keys = path.split('.')
+        
+        # Iterate through the keys to navigate the dictionary
+        current_dict = dictionary
+        for key in keys:
+            if isinstance(current_dict, dict) and key in current_dict:
+                current_dict = current_dict[key]
+            else:
+                return None  # If any key is not found, return None
+        
+        return current_dict
+    
 
-        combobox_type=getattr(window, combobox_type_str)
-        schema= ifcopenshell.ifcopenshell_wrapper.schema_by_name(ifc_schema) #load schema
-        ifc_class= schema.entity(selected_class)
 
-        if ifc_class:
-            type_names = ifc_class.attributes.keys()
-            combobox_type.addItems(type_names)
 
-    @staticmethod
-    def populateDataTypesCombo(window, ifc_schema:str="IFC 4", combobox_class_str:str="combobox_class"):
-        schema = ifcopenshell.ifcopenshell_wrapper.schema_by_name(ifc_schema)
-        declared_types = schema.declared_types()
-
-        # Lists to store data types and enumerations
-        datatypes_and_enum = []
-        enumerations = []
-
-        # Iterate through declared types to categorize them
-        for type_name in declared_types:
-            schema_type = schema.get(type_name)
-            if schema_type.is_select_type() or schema_type.is_enum_type() or schema_type.is_simple_type():
-                    datatypes_and_enum.append(type_name)
-
-        return datatypes_and_enum
 

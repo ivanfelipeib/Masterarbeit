@@ -1,26 +1,21 @@
 <?xml version='1.0' encoding='utf-8'?>
 <ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/0.9.7/ids.xsd">
     <info>
-        <title>titulo mdoificado</title>
-        <copyright>copy mdoificado</copyright>
-        <version>11 mdoificado</version>
-        <description>descrmdoificado</description>
-        <author>ivan@hotmail.com mdoificado</author>
-        <date>1995-05-22</date>
-        <purpose>purpoamdoificado</purpose>
-        <milestone>milestomdoificado</milestone>
+        <title>titulo</title>
+        <copyright>copy</copyright>
+        <version>11</version>
+        <description>descr</description>
+        <author>ivan@hotmail.com</author>
+        <date>2000-01-01</date>
+        <purpose>purpoa</purpose>
+        <milestone>milesto</milestone>
     </info>
     <specifications>
-        <specification name="Spec1" ifcVersion="IFC4" identifier="2bacf374-6508-4ca8-9fcd-59a0404b2146" description="dededemdoificado" instructions="instru instrumdoificado">
-            <applicability minOccurs="1" maxOccurs="unbounded">
+        <specification name="Spec1" ifcVersion="IFC4" description="dedede" instructions="instru instru">
+            <applicability minOccurs="0" maxOccurs="unbounded">
                 <material>
                     <value>
-                        <simpleValue>Madera</simpleValue>
-                    </value>
-                </material>
-                <material>
-                    <value>
-                        <simpleValue>Concreto nuevo</simpleValue>
+                        <simpleValue>Concrete</simpleValue>
                     </value>
                 </material>
             </applicability>
@@ -30,20 +25,9 @@
                         <simpleValue>Color</simpleValue>
                     </name>
                     <value>
-                        <simpleValue>Rojooo</simpleValue>
+                        <simpleValue>Blue</simpleValue>
                     </value>
                 </attribute>
-                <property dataType="INTEGER" cardinality="optional">
-                    <propertySet>
-                        <simpleValue>Pset modifica</simpleValue>
-                    </propertySet>
-                    <baseName>
-                        <simpleValue>Attributo modifica</simpleValue>
-                    </baseName>
-                    <value>
-                        <simpleValue>22</simpleValue>
-                    </value>
-                </property>
             </requirements>
         </specification>
         <specification name="Spec 2" ifcVersion="IFC2X3" description="" instructions="">

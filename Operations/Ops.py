@@ -27,13 +27,20 @@ class Ops():
 
 
     @staticmethod
-    def openWindow(window_class, window_instance, setup_signals=None):
+    def openWindow(window_class, window_instance, setup_signals=None, ifc_file_path:str=None):
         if window_instance is None or window_instance.isClosed:
-            window_instance = window_class()
-            window_instance.isClosed = False
-            window_instance.show()
-            if setup_signals:
-                setup_signals(window_instance)
+            if ifc_file_path: #Case IfcCheckerWindow where ifc_file_path is passed
+                window_instance = window_class(None, ifc_file_path)
+                window_instance.isClosed = False
+                window_instance.show()
+                if setup_signals:
+                    setup_signals(window_instance) 
+            else:
+                window_instance = window_class()
+                window_instance.isClosed = False
+                window_instance.show()
+                if setup_signals:
+                    setup_signals(window_instance)
         else:
             window_instance.show()
         return window_instance

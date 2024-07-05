@@ -1,6 +1,5 @@
-2024-07-02 12:43:28 [Warning] Version Ids0_9_7 is transitional, update to 1.0 before circulating.
-2024-07-02 12:43:28 [Information] The file schema version is: Ids0_9_7
-2024-07-02 12:43:29 [Error] Error 103: Invalid "attribute name" `"Color"` (887 accepted values exist, starting with ["ApplicationDeveloper", "Version", "ApplicationFullName", "ApplicationIdentifier", "OwningUser"]...) in the context of Ifc4 on "`simpleValue` element at line 30, position 26".
-2024-07-02 12:43:29 [Error] Error 103: Invalid "dataType" `"INTEGER"` (325 accepted values exist, starting with ["IFCABSORBEDDOSEMEASURE", "IFCACCELERATIONMEASURE", "IFCACTIONREQUESTTYPEENUM", "IFCACTIONSOURCETYPEENUM", "IFCACTIONTYPEENUM"]...) in the context of Ifc4 on "`property` element at line 36, position 18".
-2024-07-02 12:43:29 [Information] Completed reading 97 xml elements.
-2024-07-02 12:43:29 [Information] Audit result: IdsContentError
+2024-07-02 19:43:44 [Warning] Version Ids0_9_7 is transitional, update to 1.0 before circulating.
+2024-07-02 19:43:44 [Information] The file schema version is: Ids0_9_7
+2024-07-02 19:43:45 [Error] Error 103: Invalid "attribute name" `"Color"` (887 accepted values exist, starting with ["ApplicationDeveloper", "Version", "ApplicationFullName", "ApplicationIdentifier", "OwningUser"]...) in the context of Ifc4 on "`simpleValue` element at line 25, position 26".
+2024-07-02 19:43:45 [Information] Completed reading 73 xml elements.
+2024-07-02 19:43:45 [Information] Audit result: IdsContentError

@@ -1,68 +1,112 @@
-from Operations.idsOps import IdsOps
+import sys
+import ifcopenshell
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QPushButton, QLineEdit, QLabel, QFileDialog, QMessageBox
 
-version=IdsOps.getIdsVersionXML(r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids")
-print(version)
-diccionario= IdsOps.parseXmlToDict(r"C:\Users\ivanf\OneDrive\Desktop\Masterarbeit\0-Repo_Thesis\BIMQA_Quick_Checker\temp_files\TempIds.ids")
-print(diccionario)
+class IfcApp(QWidget):
+    def __init__(self):
+        super().__init__()
 
-# import sys
-# from PyQt5.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget, QListWidget, QPushButton, QLabel, QFileDialog, QListWidgetItem
+        # Set window title
+        self.setWindowTitle("IFC Importer")
 
+        # Instance variable to store the model
+        self.model = None
 
-# class MainWindow(QMainWindow):
-#     def __init__(self):
-#         super().__init__()
+        # Create the main vertical layout
+        main_layout = QVBoxLayout()
 
-#         self.setWindowTitle('File List Example')
+        # Create horizontal layout for the import button and add it to the main layout
+        button_layout = QHBoxLayout()
+        self.import_button = QPushButton("Import_Ifc")
+        self.import_button.clicked.connect(self.import_ifc_file)  # Connect the button to the method
+        button_layout.addWidget(self.import_button)
+        main_layout.addLayout(button_layout)
 
-#         # Main widget and layout
-#         main_widget = QWidget()
-#         self.setCentralWidget(main_widget)
-#         layout = QVBoxLayout(main_widget)
+        # Create horizontal layout for entities combobox and label and add them to the main layout
+        entities_layout = QHBoxLayout()
+        self.entities_label = QLabel("Entities under IfcProject:")
+        entities_layout.addWidget(self.entities_label)
+        self.entities_combo = QComboBox()
+        entities_layout.addWidget(self.entities_combo)
+        main_layout.addLayout(entities_layout)
 
-#         # List view widget
-#         self.list_view = QListWidget()
-#         layout.addWidget(self.list_view)
+        # Create horizontal layout for entity instances combobox and label and add them to the main layout
+        entity_instances_layout = QHBoxLayout()
+        self.entity_instances_label = QLabel("Entity Instances:")
+        entity_instances_layout.addWidget(self.entity_instances_label)
+        self.entity_instances_combo = QComboBox()
+        entity_instances_layout.addWidget(self.entity_instances_combo)
+        main_layout.addLayout(entity_instances_layout)
 
-#         # Button to add files
-#         self.add_button = QPushButton('Add Files')
-#         self.add_button.clicked.connect(self.add_files)
-#         layout.addWidget(self.add_button)
+        # Create horizontal layout for attributes combobox and label and add them to the main layout
+        attributes_layout = QHBoxLayout()
+        attributes_label = QLabel("Attributes:")
+        self.attributes_combo = QComboBox()
+        attributes_layout.addWidget(attributes_label)
+        attributes_layout.addWidget(self.attributes_combo)
+        main_layout.addLayout(attributes_layout)
 
-#         # Button to show selected label
-#         self.show_label_button = QPushButton('ShowLabel')
-#         self.show_label_button.clicked.connect(self.update_label)
-#         layout.addWidget(self.show_label_button)
+        # Create horizontal layout for line edit and label and add them to the main layout
+        line_edit_layout = QHBoxLayout()
+        line_edit_label = QLabel("Value:")
+        self.line_edit = QLineEdit()
+        line_edit_layout.addWidget(line_edit_label)
+        line_edit_layout.addWidget(self.line_edit)
+        main_layout.addLayout(line_edit_layout)
 
-#         # Label to display selected file path
-#         self.selected_label = QLabel('Selected File:')
-#         layout.addWidget(self.selected_label)
+        # Set the main layout to the main window
+        self.setLayout(main_layout)
 
-#     def add_files(self):
-#         file_dialog = QFileDialog(self)
-#         file_dialog.setFileMode(QFileDialog.ExistingFiles)
+    def import_ifc_file(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_name, _ = QFileDialog.getOpenFileName(self, "Import IFC File", "", "IFC Files (*.ifc);;All Files (*)", options=options)
+        if file_name:
+            self.load_ifc_file(file_name)
 
-#         if file_dialog.exec_():
-#             file_paths = file_dialog.selectedFiles()
-#             for file_path in file_paths:
-#                 item = QListWidgetItem(file_path)  # Create a QListWidgetItem
-#                 self.list_view.addItem(item)
+    def load_ifc_file(self, file_name):
+        try:
+            self.model = ifcopenshell.open(file_name)
+            ifc_project = self.get_ifc_project()
+            if ifc_project is not None:
+                entity_types = self.get_entities_under(ifc_project)
+                self.entities_combo.addItems(sorted(entity_types))
+                QMessageBox.information(self, "File Loaded", f"Successfully loaded file: {file_name}")
+            else:
+                QMessageBox.warning(self, "Warning", "No IfcProject found in the file.")
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Failed to load file: {str(e)}")
 
-#     def update_label(self):
-#         selected_items = self.list_view.selectedItems()
-#         if selected_items:
-#             selected_item = selected_items[0]
-#             self.selected_label.setText(f'Selected File: {selected_item.text()}')
-#         else:
-#             self.selected_label.setText('Selected File:')
+    def get_ifc_project(self):
+        # Find and return the IfcProject instance
+        if self.model is None:
+            return None
+        for entity in self.model.by_type("IfcProject"):
+            return entity
+        return None
 
-#     def closeEvent(self, event):
-#         # Override closeEvent to clean up resources if needed
-#         super().closeEvent(event)
+    def get_entities_under(self, ifc_entity):
+        entity_types = set()
+        self.collect_entity_types(ifc_entity, entity_types)
+        return entity_types
 
+    def collect_entity_types(self, ifc_entity, entity_types):
+        # Collect all entity types under the given ifc_entity hierarchically
+        for attr_name in dir(ifc_entity):
+            if attr_name.startswith("Is"):
+                related_entities = getattr(ifc_entity, attr_name)()
+                if isinstance(related_entities, list):
+                    for related_entity in related_entities:
+                        if related_entity.is_a() not in entity_types:
+                            entity_types.add(related_entity.is_a())
+                            self.collect_entity_types(related_entity, entity_types)
+                elif isinstance(related_entities, ifcopenshell.entity_instance):
+                    if related_entities.is_a() not in entity_types:
+                        entity_types.add(related_entities.is_a())
+                        self.collect_entity_types(related_entities, entity_types)
 
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     main_window = MainWindow()
-#     main_window.show()
-#     sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    mainWin = IfcApp()
+    mainWin.show()
+    sys.exit(app.exec_())
