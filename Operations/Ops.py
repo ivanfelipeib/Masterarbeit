@@ -114,6 +114,16 @@ class Ops():
                 return True  # Return True if item is found and deleted
     
         return False  # Return False if item with given text is not found
+    
+    def accessDictByPath(nested_dict, path):
+        keys = path.split('.')
+        value = nested_dict
+        try:
+            for key in keys:
+                value = value[key]
+            return value
+        except KeyError:
+            return None
 
     @staticmethod
     def msgError(self,title, msg):

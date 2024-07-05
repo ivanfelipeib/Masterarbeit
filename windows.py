@@ -577,6 +577,7 @@ class IfcInfoWindow(QMainWindow):
         self.ifc_file_path=ifc_file_path
         self.my_IfcOps = IfcOps(self.ifc_file_path) #Instantiate class IfcOps
         self.my_model= self.my_IfcOps.model
+        self.my_schema= self.my_model.schema
 
         # Load UI file
         Ops.load_ui("ifc_info_checker.ui",self)
@@ -612,30 +613,59 @@ class IfcInfoWindow(QMainWindow):
             "btn_clear": self.clearComboBxs
         }
         Ops.connectHandlers(self, handlers)
-        self.loadIfcInfo()
+        
+        #Load Info for corresponding schema
+        if self.my_schema=="IFC4":
+            self.loadIfc4Info()
+        elif self.my_schema == "IFC2X3":
+            self.loadIfc2X3Info()
+        else:
+            print("IFC Schema not supported")
 
     def searchElements(self):
         pass
 
-    def loadIfcInfo(self):
-        schema= self.my_model.schema
-        # project = self.my_model.by_type("IfcProject")[0]
-        # coord_sys = self.my_model.by_type("IfcCoordinateReferenceSystem")[0]
-        # authoring_app= self.my_model.by_type("IfcApplication")[0]
-
+    def loadIfc4Info(self):
+        #Basic Information
+        self.txt_base_point.setText(str(IfcOps.get_info(self.my_IfcOps, "IfcProject")["RepresentationContexts"][0]["WorldCoordinateSystem"]["Location"]["Coordinates"]))
+        self.txt_coordinate_sys.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_CRS_DESCRIPTION)+
+                                         " //"+
+                                        IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_CRS_NAME))
+        self.txt_ifc_schema.setText(self.my_schema)
+        self.txt_software.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_AUTHOR_SOFTWARE))
+        self.txt_num_elements.setText("TODO")#TODO
+        self.txt_list_attributes.setText("TODO")#TODO
+        #Project-related Information
+        self.txt_prj_description.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_DESCRIPTION)))
+        self.txt_section.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_PHASE)))
+        self.txt_client.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_ORG)))
+        self.txt_author.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_AUTHOR_LAST_NAME)+
+                                 " , "+
+                                 IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_AUTHOR_FIRST_NAME))
+        #Custom Query
+        # "combo_entity": QComboBox,
+        # "combo_element": QComboBox,
+        # "combo_attribute": QComboBox,
+        # "txt_value": QLineEdit,
+        # "btn_search": QPushButton,
+        # "btn_clear": QPushButton
+        pass
+    
+    def loadIfc2X3Info(self):
+        #TODO: coordinate system/ Author are different in 2x3, see and define path
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.get_info(self.my_IfcOps, "IfcProject")["RepresentationContexts"][0]["WorldCoordinateSystem"]["Location"]["Coordinates"]))
         # self.txt_coordinate_sys.setText(IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Description"]+
         #                                 " //"+
         #                                 IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Name"])
-        self.txt_ifc_schema.setText(schema)
-        self.txt_software.setText(IfcOps.get_info(self.my_IfcOps, "IfcApplication")["ApplicationFullName"])
+        self.txt_ifc_schema.setText(self.my_schema)
+        self.txt_software.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_AUTHOR_SOFTWARE))
         self.txt_num_elements.setText("TODO")#TODO
         self.txt_list_attributes.setText("TODO")#TODO
         #Project-related Information
-        self.txt_prj_description.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["Description"])
-        self.txt_section.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["Phase"])
-        self.txt_client.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["TheOrganization"]["Name"])
+        self.txt_prj_description.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_DESCRIPTION)))
+        self.txt_section.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_PHASE)))
+        self.txt_client.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_ORG)))
         # self.txt_author.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["FamilyName"]+
         #                         " , "+
         #                         IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["GivenName"])
@@ -646,6 +676,7 @@ class IfcInfoWindow(QMainWindow):
         # "txt_value": QLineEdit,
         # "btn_search": QPushButton,
         # "btn_clear": QPushButton
+
     def clearComboBxs(self):
         pass
 

@@ -48,19 +48,21 @@ class IfcOps:
         info = my_entity.get_info(recursive=True)
         return info
     
-    def get_value_from_path(dictionary, path):
+    def getInfoImproved(self, path):
         # Split the path into keys
         keys = path.split('.')
+        my_ifc_entity_class= keys.pop(0)
         
-        # Iterate through the keys to navigate the dictionary
-        current_dict = dictionary
-        for key in keys:
-            if isinstance(current_dict, dict) and key in current_dict:
-                current_dict = current_dict[key]
-            else:
-                return None  # If any key is not found, return None
+        my_entity = self.model.by_type(my_ifc_entity_class)[0]
+        info_dic = my_entity.get_info(recursive=True)
+        value= info_dic
         
-        return current_dict
+        try:
+            for key in keys:
+                value = value[key]
+            return value
+        except KeyError:
+            return None
     
 
 
