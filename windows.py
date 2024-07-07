@@ -627,21 +627,21 @@ class IfcInfoWindow(QMainWindow):
 
     def loadIfc4Info(self):
         #Basic Information
-        self.txt_base_point.setText(str(IfcOps.get_info(self.my_IfcOps, "IfcProject")["RepresentationContexts"][0]["WorldCoordinateSystem"]["Location"]["Coordinates"]))
-        self.txt_coordinate_sys.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_CRS_DESCRIPTION)+
-                                         " //"+
-                                        IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_CRS_NAME))
+        self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
+        self.txt_coordinate_sys.setText("Descrip.: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_DESCRIPTION)+
+                                         " / Code: "+
+                                        IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_NAME))
         self.txt_ifc_schema.setText(self.my_schema)
-        self.txt_software.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_AUTHOR_SOFTWARE))
+        self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
         self.txt_num_elements.setText("TODO")#TODO
         self.txt_list_attributes.setText("TODO")#TODO
         #Project-related Information
-        self.txt_prj_description.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_DESCRIPTION)))
-        self.txt_section.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_PHASE)))
-        self.txt_client.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_ORG)))
-        self.txt_author.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_AUTHOR_LAST_NAME)+
+        self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
+        self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
+        self.txt_client.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
+        self.txt_author.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
                                  " , "+
-                                 IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_AUTHOR_FIRST_NAME))
+                                 IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
         #Custom Query
         # "combo_entity": QComboBox,
         # "combo_element": QComboBox,
@@ -654,21 +654,19 @@ class IfcInfoWindow(QMainWindow):
     def loadIfc2X3Info(self):
         #TODO: coordinate system/ Author are different in 2x3, see and define path
         #Basic Information
-        self.txt_base_point.setText(str(IfcOps.get_info(self.my_IfcOps, "IfcProject")["RepresentationContexts"][0]["WorldCoordinateSystem"]["Location"]["Coordinates"]))
-        # self.txt_coordinate_sys.setText(IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Description"]+
-        #                                 " //"+
-        #                                 IfcOps.get_info(self.my_IfcOps, "IfcCoordinateReferenceSystem")["Name"])
+        self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
+        self.txt_coordinate_sys.setText("IFC2X3 Schema does not incorportate IfcCoordinateReferenceSystem")
         self.txt_ifc_schema.setText(self.my_schema)
-        self.txt_software.setText(IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_AUTHOR_SOFTWARE))
+        self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
         self.txt_num_elements.setText("TODO")#TODO
         self.txt_list_attributes.setText("TODO")#TODO
         #Project-related Information
-        self.txt_prj_description.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_DESCRIPTION)))
-        self.txt_section.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_PHASE)))
-        self.txt_client.setText((IfcOps.getInfoImproved(self.my_IfcOps,constants.IFC4_PROJ_OWNER_ORG)))
-        # self.txt_author.setText(IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["FamilyName"]+
-        #                         " , "+
-        #                         IfcOps.get_info(self.my_IfcOps,"IfcProject")["OwnerHistory"]["OwningUser"]["ThePerson"]["GivenName"])
+        self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
+        self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
+        self.txt_client.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
+        self.txt_author.setText("Last Name: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
+                                 " , First Name: "+
+                                 IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
         #Custom Query
         # "combo_entity": QComboBox,
         # "combo_element": QComboBox,

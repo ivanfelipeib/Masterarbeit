@@ -20,20 +20,19 @@ IDS_SCHEMA= os.path.join(BASE_DIR, 'Others','ids.xsd') #Version IDS 1.0
 IDS_097_SCHEMA= os.path.join(BASE_DIR, 'Others','ids_097.xsd') #Version IDS 0.9.7
 
 #IFC SCHEMA PATHS
-# #IFC4
 # # #Project base point
-IFC4_BASE_POINT= "IfcProject.RepresentationContexts.WorldCoordinateSystem.Location.Coordinates"
+IFC_BASE_POINT= "IfcProject.RepresentationContexts.0.WorldCoordinateSystem.Location.Coordinates" #0 in path to acces the tuple in RepresentationContext
 # # #Coordinate Reference System
-IFC4_CRS_NAME = "IfcCoordinateReferenceSystem.Name"
-IFC4_CRS_DESCRIPTION = "IfcCoordinateReferenceSystem.Description"
+IFC_CRS_NAME = "IfcCoordinateReferenceSystem.Name"
+IFC_CRS_DESCRIPTION = "IfcCoordinateReferenceSystem.Description"
 # # #Authoring Software
-IFC4_AUTHOR_SOFTWARE = "IfcApplication.ApplicationFullName"
+IFC_AUTHOR_SOFTWARE = "IfcApplication.ApplicationFullName"
 # # #Project Description
-IFC4_PROJ_DESCRIPTION = "IfcProject.Description"
+IFC_PROJ_DESCRIPTION = "IfcProject.Description"
 # # #Project phase
-IFC4_PROJ_PHASE = "IfcProject.Phase"
+IFC_PROJ_PHASE = "IfcProject.Phase"
 # # #Project Client
-IFC4_PROJ_OWNER_ORG = "IfcProject.OwnerHistory.OwningUser.TheOrganization.Name"
+IFC_PROJ_OWNER_ORG = "IfcProject.OwnerHistory.OwningUser.TheOrganization.Name"
 # # #Project Author
-IFC4_PROJ_OWNER_AUTHOR_LAST_NAME ="IfcProject.OwnerHistory.OwningUser.ThePerson.FamilyName"
-IFC4_PROJ_OWNER_AUTHOR_FIRST_NAME = "IfcProject.OwnerHistory.OwningUser.ThePerson.GivenName"
+IFC_PROJ_OWNER_AUTHOR_LAST_NAME ="IfcProject.OwnerHistory.OwningUser.ThePerson.FamilyName"
+IFC_PROJ_OWNER_AUTHOR_FIRST_NAME = "IfcProject.OwnerHistory.OwningUser.ThePerson.GivenName"
