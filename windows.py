@@ -598,9 +598,12 @@ class IfcInfoWindow(QMainWindow):
             "txt_author": QLineEdit,
             #Custom Query
             "combo_entity": QComboBox,
-            "combo_element": QComboBox,
+            "combo_instance": QComboBox,
             "combo_attribute": QComboBox,
-            "txt_value": QLineEdit,
+            "combo_psets": QComboBox,
+            "combo_props": QComboBox,
+            "txt_value_att": QLineEdit,
+            "txt_value_prop": QLineEdit,
             "btn_search": QPushButton,
             "btn_clear": QPushButton
         }
@@ -609,11 +612,19 @@ class IfcInfoWindow(QMainWindow):
 
         # Connect handlers
         handlers = {
-            "btn_search": self.searchElements,
+            #"btn_search": self.searchElements,
             "btn_clear": self.clearComboBxs
         }
         Ops.connectHandlers(self, handlers)
         
+        #Connects Handlers for comboboxes
+        self.combo_entity.currentIndexChanged.connect(self.updateInstances)
+        self.combo_instance.currentIndexChanged.connect(self.updatePsets)
+        self.combo_instance.currentIndexChanged.connect(self.updateAttributes)
+        self.combo_psets.currentIndexChanged.connect(self.updateProps)
+        self.combo_props.currentIndexChanged.connect(self.updateResultProp)
+        self.combo_attribute.currentIndexChanged.connect(self.updateResultAtt)
+
         #Load Info for corresponding schema
         if self.my_schema=="IFC4":
             self.loadIfc4Info()
@@ -621,9 +632,7 @@ class IfcInfoWindow(QMainWindow):
             self.loadIfc2X3Info()
         else:
             print("IFC Schema not supported")
-
-    def searchElements(self):
-        pass
+        self.loadEntities()
 
     def loadIfc4Info(self):
         #Basic Information
@@ -642,17 +651,8 @@ class IfcInfoWindow(QMainWindow):
         self.txt_author.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
                                  " , "+
                                  IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
-        #Custom Query
-        # "combo_entity": QComboBox,
-        # "combo_element": QComboBox,
-        # "combo_attribute": QComboBox,
-        # "txt_value": QLineEdit,
-        # "btn_search": QPushButton,
-        # "btn_clear": QPushButton
-        pass
     
     def loadIfc2X3Info(self):
-        #TODO: coordinate system/ Author are different in 2x3, see and define path
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
         self.txt_coordinate_sys.setText("IFC2X3 Schema does not incorportate IfcCoordinateReferenceSystem")
@@ -667,13 +667,74 @@ class IfcInfoWindow(QMainWindow):
         self.txt_author.setText("Last Name: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
                                  " , First Name: "+
                                  IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
-        #Custom Query
-        # "combo_entity": QComboBox,
-        # "combo_element": QComboBox,
-        # "combo_attribute": QComboBox,
-        # "txt_value": QLineEdit,
-        # "btn_search": QPushButton,
-        # "btn_clear": QPushButton
+      
+    def loadEntities(self):
+        self.combo_entity.clear()
+        entities = set()
+        for entity in self.my_model.by_type('IfcRoot'):
+            if hasattr(entity, 'IsDefinedBy'): #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/link/ifcobject.htm Assignment of property sets : IsDefinedBy - a definition relationship IfcRelDefinesByProperties that assignes property set definitions to the object occurrence.
+                entities.add(entity.is_a())
+        self.combo_entity.addItems(sorted(entities))
+
+    def updateInstances(self):
+        self.combo_instance.clear()
+        entity_type = self.combo_entity.currentText()
+        if entity_type:
+            instances = self.my_model.by_type(entity_type)
+            instance_ids = [str(instance.get_info()["GlobalId"]) for instance in instances]
+            self.combo_instance.addItems(instance_ids)
+
+    def updatePsets(self):
+        self.combo_psets.clear()
+        instance_id = self.combo_instance.currentText()
+        if instance_id:
+            instance = self.my_model.by_guid(instance_id)
+            # Iterate through the IsDefinedBy relationships
+            self.psets_dict={}
+            for definition in instance.IsDefinedBy:
+                if definition.is_a('IfcRelDefinesByProperties'):
+                    property_set = definition.RelatingPropertyDefinition
+                    if property_set.is_a('IfcPropertySet'):
+                        props_dict={}
+                        for prop in property_set.HasProperties:
+                            prop_value = '<not handled>'
+                            if prop.is_a('IfcPropertySingleValue'):
+                                prop_value = str(prop.NominalValue.wrappedValue)
+                                props_dict[prop.Name]= prop_value
+                        self.psets_dict[property_set.Name] = props_dict
+
+            self.combo_psets.addItems(self.psets_dict.keys())
+    
+    def updateProps(self):
+        self.combo_props.clear()
+        pset_name = self.combo_psets.currentText()
+        if pset_name:
+            props_names = [prop for prop in self.psets_dict[pset_name].keys()]
+            self.combo_props.addItems(props_names)
+
+    def updateResultProp(self):
+        pset_name = self.combo_psets.currentText()
+        prop_name= self.combo_props.currentText()
+        if prop_name and pset_name:
+            value = self.psets_dict[pset_name][prop_name]
+            self.txt_value_prop.setText(str(value))
+
+    def updateAttributes(self):
+        self.combo_attribute.clear()
+        instance_id = self.combo_instance.currentText()
+        if instance_id:
+            instance = self.my_model.by_guid(instance_id)
+            attributes = [attr for attr in instance.get_info(recursive=True).keys()]
+            self.combo_attribute.addItems(attributes)
+
+    def updateResultAtt(self):
+        instance_id = self.combo_instance.currentText()
+        attribute = self.combo_attribute.currentText()
+        if instance_id and attribute:
+            instance = self.my_model.by_guid(instance_id)
+            value = getattr(instance, attribute, None)
+            self.txt_value_att.setText(str(value))
+
 
     def clearComboBxs(self):
         pass
