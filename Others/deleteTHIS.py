@@ -1,95 +1,77 @@
 import sys
-import ifcopenshell
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QComboBox, QLineEdit, QFileDialog
-)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QComboBox, QLineEdit, QVBoxLayout, QDialog, QPlainTextEdit
+from PyQt5.QtGui import QCursor
 from PyQt5.QtCore import Qt
 
-class IFCApp(QWidget):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.model = None
-        self.initUI()
+        self.setWindowTitle("Nested Dictionary Viewer")
+        self.setGeometry(100, 100, 400, 200)
 
-    def initUI(self):
-        layout = QVBoxLayout()
+        self.nested_dict = {
+            'item1': 'value1',
+            'item2': {
+                'subitem1': 'subvalue1',
+                'subitem2': 'subvalue2'
+            },
+            'item3': 'value3'
+        }
 
-        # Import IFC button
-        self.import_ifc_btn = QPushButton('Import IFC')
-        self.import_ifc_btn.clicked.connect(self.import_ifc)
-        layout.addWidget(self.import_ifc_btn)
+        self.comboBox = QComboBox(self)
+        self.comboBox.setGeometry(50, 50, 200, 30)
+        self.comboBox.addItems(self.nested_dict.keys())
+        self.comboBox.currentIndexChanged.connect(self.display_value)
 
-        # Entity combobox and label
-        self.entity_label = QLabel('Entity:')
-        self.combo_entity = QComboBox()
-        self.combo_entity.currentIndexChanged.connect(self.update_instances)
-        layout.addWidget(self.entity_label)
-        layout.addWidget(self.combo_entity)
+        self.lineEdit = QLineEdit(self)
+        self.lineEdit.setGeometry(50, 100, 300, 30)
+        self.lineEdit.setReadOnly(True)
+        self.lineEdit.mousePressEvent = self.handle_link_click
 
-        # Instance combobox and label
-        self.instance_label = QLabel('Instance:')
-        self.combo_instance = QComboBox()
-        self.combo_instance.currentIndexChanged.connect(self.update_attributes)
-        layout.addWidget(self.instance_label)
-        layout.addWidget(self.combo_instance)
+    def display_value(self):
+        key = self.comboBox.currentText()
+        value = self.nested_dict[key]
+        
+        if isinstance(value, dict):
+            self.lineEdit.setText('Click to view dictionary')
+            self.lineEdit.setCursor(QCursor(Qt.PointingHandCursor))
+            self.current_value = value
+        else:
+            self.lineEdit.setText(value)
+            self.lineEdit.setCursor(QCursor(Qt.IBeamCursor))
 
-        # Attribute combobox and label
-        self.attribute_label = QLabel('Attribute:')
-        self.combo_attributes = QComboBox()
-        self.combo_attributes.currentIndexChanged.connect(self.update_result)
-        layout.addWidget(self.attribute_label)
-        layout.addWidget(self.combo_attributes)
+    def handle_link_click(self, event):
+        if isinstance(self.current_value, dict):
+            self.show_dictionary()
 
-        # Result QLineEdit and label
-        self.result_label = QLabel('Result:')
-        self.txt_result = QLineEdit()
-        layout.addWidget(self.result_label)
-        layout.addWidget(self.txt_result)
+    def show_dictionary(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Dictionary Contents")
+        
+        plainTextEdit = QPlainTextEdit(dialog)
+        formatted_text = self.format_dictionary(self.current_value)
+        plainTextEdit.setPlainText(formatted_text)
+        plainTextEdit.setReadOnly(True)
+        
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(plainTextEdit)
+        dialog.setLayout(layout)
+        
+        dialog.exec_()
 
-        self.setLayout(layout)
-        self.setWindowTitle('IFC Viewer')
-
-    def import_ifc(self):
-        options = QFileDialog.Options()
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open IFC File", "", "IFC Files (*.ifc)", options=options)
-        if file_name:
-            self.model = ifcopenshell.open(file_name)
-            self.load_entities()
-
-    def load_entities(self):
-        self.combo_entity.clear()
-        entities = set()
-        for entity in self.model.by_type('IfcRoot'):
-            entities.add(entity.is_a())
-        self.combo_entity.addItems(sorted(entities))
-
-    def update_instances(self):
-        self.combo_instance.clear()
-        entity_type = self.combo_entity.currentText()
-        if entity_type:
-            instances = self.model.by_type(entity_type)
-            instance_ids = [str(instance.id()) for instance in instances]
-            self.combo_instance.addItems(instance_ids)
-
-    def update_attributes(self):
-        self.combo_attributes.clear()
-        instance_id = self.combo_instance.currentText()
-        if instance_id:
-            instance = self.model.by_id(int(instance_id))
-            attributes = [attr for attr in instance.get_info(recursive=True).keys()]
-            self.combo_attributes.addItems(attributes)
-
-    def update_result(self):
-        instance_id = self.combo_instance.currentText()
-        attribute = self.combo_attributes.currentText()
-        if instance_id and attribute:
-            instance = self.model.by_id(int(instance_id))
-            value = getattr(instance, attribute, None)
-            self.txt_result.setText(str(value))
+    def format_dictionary(self, dictionary, level=0):
+        formatted_text = ""
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                formatted_text += f"{' ' * (level * 4)}{key}:\n"
+                formatted_text += self.format_dictionary(value, level + 1)
+            else:
+                formatted_text += f"{' ' * (level * 4)}{key}: {value}\n"
+        return formatted_text
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = IFCApp()
-    ex.show()
+    mainWindow = MainWindow()
+    mainWindow.show()
     sys.exit(app.exec_())

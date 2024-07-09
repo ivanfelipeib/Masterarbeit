@@ -8,7 +8,10 @@ FILEPATH_IFC2X3= r"D:\IFC Modelle\NBS DD-Prag\VP_2000_3TM_KIB_EU_031_AA_001.ifc"
 # Our Main function
 model = ifcopenshell.open(FILEPATH_IFC2X3)
 door = model.by_type("IfcProject")[0]
-print(door.get_info(recursive=True))
+#print(door.get_info(recursive=False))
+print(isinstance(door.get_info(recursive=True)["OwnerHistory"],dict))
+
+
 # elementos=door.get_info(recursive=True)
 # for attribute, value in elementos.items():
 #     print(f"{attribute}: {value}")

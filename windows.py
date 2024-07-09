@@ -1,5 +1,8 @@
-from PyQt5.QtWidgets import QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLineEdit, QPlainTextEdit,QDateEdit, QTextBrowser
+from PyQt5.QtWidgets import (QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox,
+                             QFileDialog, QMessageBox, QMdiSubWindow,QLineEdit, QPlainTextEdit,QDateEdit,
+                             QTextBrowser, QDialog, QVBoxLayout)
 from PyQt5.QtCore import Qt, pyqtSignal, QVariant
+from PyQt5.QtGui import QCursor
 from myWidgets import CustomListWidget
 from Operations.Ops import Ops
 from Operations.idsOps import IdsOps
@@ -578,6 +581,8 @@ class IfcInfoWindow(QMainWindow):
         self.my_IfcOps = IfcOps(self.ifc_file_path) #Instantiate class IfcOps
         self.my_model= self.my_IfcOps.model
         self.my_schema= self.my_model.schema
+        self.flag_psets=False #True if instance in customquery has Psets
+        self.nested_entity=None #Handle nested entities in custom search
 
         # Load UI file
         Ops.load_ui("ifc_info_checker.ui",self)
@@ -603,20 +608,12 @@ class IfcInfoWindow(QMainWindow):
             "combo_psets": QComboBox,
             "combo_props": QComboBox,
             "txt_value_att": QLineEdit,
-            "txt_value_prop": QLineEdit,
-            "btn_search": QPushButton,
-            "btn_clear": QPushButton
+            "txt_value_prop": QLineEdit
+           
         }
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup )
 
-        # Connect handlers
-        handlers = {
-            #"btn_search": self.searchElements,
-            "btn_clear": self.clearComboBxs
-        }
-        Ops.connectHandlers(self, handlers)
-        
         #Connects Handlers for comboboxes
         self.combo_entity.currentIndexChanged.connect(self.updateInstances)
         self.combo_instance.currentIndexChanged.connect(self.updatePsets)
@@ -624,6 +621,7 @@ class IfcInfoWindow(QMainWindow):
         self.combo_psets.currentIndexChanged.connect(self.updateProps)
         self.combo_props.currentIndexChanged.connect(self.updateResultProp)
         self.combo_attribute.currentIndexChanged.connect(self.updateResultAtt)
+        self.txt_value_att.mousePressEvent = self.handleLink
 
         #Load Info for corresponding schema
         if self.my_schema=="IFC4":
@@ -672,8 +670,7 @@ class IfcInfoWindow(QMainWindow):
         self.combo_entity.clear()
         entities = set()
         for entity in self.my_model.by_type('IfcRoot'):
-            if hasattr(entity, 'IsDefinedBy'): #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/link/ifcobject.htm Assignment of property sets : IsDefinedBy - a definition relationship IfcRelDefinesByProperties that assignes property set definitions to the object occurrence.
-                entities.add(entity.is_a())
+            entities.add(entity.is_a())
         self.combo_entity.addItems(sorted(entities))
 
     def updateInstances(self):
@@ -689,33 +686,39 @@ class IfcInfoWindow(QMainWindow):
         instance_id = self.combo_instance.currentText()
         if instance_id:
             instance = self.my_model.by_guid(instance_id)
-            # Iterate through the IsDefinedBy relationships
-            self.psets_dict={}
-            for definition in instance.IsDefinedBy:
-                if definition.is_a('IfcRelDefinesByProperties'):
-                    property_set = definition.RelatingPropertyDefinition
-                    if property_set.is_a('IfcPropertySet'):
-                        props_dict={}
-                        for prop in property_set.HasProperties:
-                            prop_value = '<not handled>'
-                            if prop.is_a('IfcPropertySingleValue'):
-                                prop_value = str(prop.NominalValue.wrappedValue)
-                                props_dict[prop.Name]= prop_value
-                        self.psets_dict[property_set.Name] = props_dict
+            if hasattr(instance, 'IsDefinedBy'): #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/link/ifcobject.htm Assignment of property sets : IsDefinedBy - a definition relationship IfcRelDefinesByProperties that assignes property set definitions to the object occurrence.
+                self.flag_psets=True
+                # Iterate through the IsDefinedBy relationships
+                self.psets_dict={}
+                for definition in instance.IsDefinedBy:
+                    if definition.is_a('IfcRelDefinesByProperties'):
+                        property_set = definition.RelatingPropertyDefinition
+                        if property_set.is_a('IfcPropertySet'):
+                            props_dict={}
+                            for prop in property_set.HasProperties:
+                                prop_value = '<not handled>'
+                                if prop.is_a('IfcPropertySingleValue'):
+                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                    props_dict[prop.Name]= prop_value
+                            self.psets_dict[property_set.Name] = props_dict
 
-            self.combo_psets.addItems(self.psets_dict.keys())
+                self.combo_psets.addItems(self.psets_dict.keys())
+            else:
+                self.flag_psets=False
+                value= f"Selected element does not have associated PSets"
+                self.combo_psets.addItem(value)
     
     def updateProps(self):
         self.combo_props.clear()
         pset_name = self.combo_psets.currentText()
-        if pset_name:
+        if pset_name and self.flag_psets: # If flag_psets is True, retrieve props otherwise not
             props_names = [prop for prop in self.psets_dict[pset_name].keys()]
             self.combo_props.addItems(props_names)
 
     def updateResultProp(self):
         pset_name = self.combo_psets.currentText()
         prop_name= self.combo_props.currentText()
-        if prop_name and pset_name:
+        if prop_name and pset_name and self.flag_psets:
             value = self.psets_dict[pset_name][prop_name]
             self.txt_value_prop.setText(str(value))
 
@@ -732,12 +735,36 @@ class IfcInfoWindow(QMainWindow):
         attribute = self.combo_attribute.currentText()
         if instance_id and attribute:
             instance = self.my_model.by_guid(instance_id)
-            value = getattr(instance, attribute, None)
-            self.txt_value_att.setText(str(value))
-
-
-    def clearComboBxs(self):
-        pass
+            #value = getattr(instance, attribute, None)
+            value = instance.get_info(recursive=True)[attribute]
+            if isinstance(value, dict):
+                self.txt_value_att.setText(f"{instance.Name} has nested information")
+                self.txt_value_att.setCursor(QCursor(Qt.PointingHandCursor))
+                self.txt_value_att.setStyleSheet("QLineEdit { color: blue; }")
+                self.nested_entity=value
+            else:
+                self.txt_value_att.setText(str(value))
+    
+    def showNestedEntity(self):
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Nested Entity Contents")
+        
+        plainTextEdit = QPlainTextEdit(dialog)
+        formatted_text = Ops.formatDictionary(self.nested_entity)
+        plainTextEdit.setPlainText(formatted_text)
+        plainTextEdit.setReadOnly(True)
+        
+        layout = QVBoxLayout(dialog)
+        layout.addWidget(plainTextEdit)
+        dialog.setLayout(layout)
+        
+        dialog.exec_()
+    
+    def handleLink(self, event):
+        if isinstance(self.nested_entity, dict):
+            self.showNestedEntity()
+    
+    
 
 class ManageIfcWindow(QMainWindow):
     def __init__(self, parent=None):

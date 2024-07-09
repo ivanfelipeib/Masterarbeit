@@ -25,7 +25,6 @@ class Ops():
         for btn, handler in handlers.items():
             getattr(window, btn).clicked.connect(handler)
 
-
     @staticmethod
     def openWindow(window_class, window_instance, setup_signals=None, ifc_file_path:str=None):
         if window_instance is None or window_instance.isClosed:
@@ -125,6 +124,16 @@ class Ops():
         except KeyError:
             return None
 
+    def formatDictionary(dictionary, level=0):
+        formatted_text = ""
+        for key, value in dictionary.items():
+            if isinstance(value, dict):
+                formatted_text += f"{' ' * (level * 4)}{key}:\n"
+                formatted_text += Ops.formatDictionary(value, level + 1)
+            else:
+                formatted_text += f"{' ' * (level * 4)}{key}: {value}\n"
+        return formatted_text
+    
     @staticmethod
     def msgError(self,title, msg):
         self.msgError= QMessageBox()
