@@ -12,6 +12,7 @@ import filters
 import uuid
 import shutil
 import constants
+import pandas as pd
 
 class IdsEditorAuditWindow(QMainWindow):
     def __init__(self, parent= None):
@@ -41,7 +42,7 @@ class IdsEditorAuditWindow(QMainWindow):
         if destination_file:
             print(f"Destination file path: {destination_file}")
             try:
-                shutil.copy(constants.TEMP_IDS_DIR, destination_file)
+                shutil.copy(constants.TEMP_IDS_DIR, destination_file) #copy file from Temp folder to selected filepath
                 QMessageBox.information(self, "Success", f"File exported to {destination_file}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Failed to export file: {e}")
@@ -594,8 +595,6 @@ class IfcInfoWindow(QMainWindow):
             "txt_coordinate_sys": QLineEdit,
             "txt_ifc_schema": QLineEdit,
             "txt_software": QLineEdit,
-            "txt_num_elements": QLineEdit,
-            "txt_list_attributes": QLineEdit,
             #Project-related Information
             "txt_prj_description": QLineEdit,
             "txt_section": QLineEdit,
@@ -608,8 +607,8 @@ class IfcInfoWindow(QMainWindow):
             "combo_psets": QComboBox,
             "combo_props": QComboBox,
             "txt_value_att": QLineEdit,
-            "txt_value_prop": QLineEdit
-           
+            "txt_value_prop": QLineEdit,
+            "btn_report": QPushButton
         }
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup )
@@ -622,6 +621,7 @@ class IfcInfoWindow(QMainWindow):
         self.combo_props.currentIndexChanged.connect(self.updateResultProp)
         self.combo_attribute.currentIndexChanged.connect(self.updateResultAtt)
         self.txt_value_att.mousePressEvent = self.handleLink
+        self.btn_report.clicked.connect(self.generateExcelRepot)
 
         #Load Info for corresponding schema
         if self.my_schema=="IFC4":
@@ -727,8 +727,8 @@ class IfcInfoWindow(QMainWindow):
         instance_id = self.combo_instance.currentText()
         if instance_id:
             instance = self.my_model.by_guid(instance_id)
-            attributes = [attr for attr in instance.get_info(recursive=True).keys()]
-            self.combo_attribute.addItems(attributes)
+            self.attributes = [attr for attr in instance.get_info(recursive=True).keys()]
+            self.combo_attribute.addItems(self.attributes)
 
     def updateResultAtt(self):
         instance_id = self.combo_instance.currentText()
@@ -764,7 +764,21 @@ class IfcInfoWindow(QMainWindow):
         if isinstance(self.nested_entity, dict):
             self.showNestedEntity()
     
+    def generateDataDict(self):
+        entity = self.combo_entity.currentText()
+        element = self.combo_instance.currentText()
+        data_dict={"Entity":entity,
+                   "Element": element,
+                   "Attributes":self.attributes,
+                   "PSets": self.psets_dict
+                   }
+        return(data_dict)
     
+    def generateExcelRepot(self):
+        data=self.generateDataDict()
+        filepath=Ops.filePathExport(self)
+        Ops.generateExcelReport(self, filepath, data)
+       
 
 class ManageIfcWindow(QMainWindow):
     def __init__(self, parent=None):

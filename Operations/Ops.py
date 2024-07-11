@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QMdiSubWindow, QMessageBox
+from PyQt5.QtWidgets import QMdiSubWindow, QMessageBox,QFileDialog
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
 import constants
+import xlsxwriter
 
 class Ops():
     @staticmethod
@@ -134,6 +135,55 @@ class Ops():
                 formatted_text += f"{' ' * (level * 4)}{key}: {value}\n"
         return formatted_text
     
+    def filePathExport(self):
+        options = QFileDialog.Options()
+        filter = "Excel files (*.xlsx)"
+        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", filter, options=options)
+        return destination_file
+
+    def generateExcelReport(self, filepath_excel:str, data_dict:dict):
+        filepath=filepath_excel
+        data=data_dict
+        # Create a workbook and add a worksheet
+        workbook = xlsxwriter.Workbook(filepath)
+        worksheet = workbook.add_worksheet()
+        #Add Styles
+        titles = workbook.add_format({'bold': True, 'font_size': 13})
+        bold = workbook.add_format({'bold': True})
+        # Fixed headers
+        worksheet.write(0, 0, "Contents of selected element:", titles)
+        worksheet.write(1, 0, "Entity", bold)
+        worksheet.write(2, 0, "Element", bold)
+        worksheet.write(4, 0, "Attributes", titles)
+        worksheet.write(4, 2, "Property Sets", titles)
+        # Write Entity and Element values
+        worksheet.write(1, 1, data["Entity"])
+        worksheet.write(2, 1, data["Element"])
+        # Write Attribute
+        if "Attributes" in data:
+            row_start=5
+            attributes=data["Attributes"]
+            for idx, attr in enumerate(attributes):
+                worksheet.write(row_start + idx, 0, attr)
+        # Write PSets
+        if "PSets" in data:
+            psets = data["PSets"]
+            row = 5
+            column_start=2
+            for key in psets.keys():
+                worksheet.write(row, column_start, key, bold)
+                properties= psets[key]
+                for idx, attr in enumerate(properties):
+                    worksheet.write(row_start+ 1 + idx, column_start, attr)
+                column_start+=1
+            last_column=column_start
+        #Adjust width
+        worksheet.set_column(0, last_column,30)
+        # Close the workbook
+        workbook.close()
+        print("Excel file 'output.xlsx' has been created successfully.")
+    
+
     @staticmethod
     def msgError(self,title, msg):
         self.msgError= QMessageBox()

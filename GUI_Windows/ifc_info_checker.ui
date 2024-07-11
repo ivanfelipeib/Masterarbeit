@@ -50,7 +50,7 @@
      </font>
     </property>
     <property name="text">
-     <string>IFC File -General Information</string>
+     <string>IFC File</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -58,8 +58,8 @@
      <rect>
       <x>40</x>
       <y>70</y>
-      <width>713</width>
-      <height>170</height>
+      <width>734</width>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -257,100 +257,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <widget class="QLabel" name="lbl_purpose">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Number of elements:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="txt_num_elements">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>580</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>580</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QLabel" name="lbl_milestone">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>List of existing attributes:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="txt_list_attributes">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>580</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>580</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
    </widget>
    <widget class="QLabel" name="lbl_ids_info_title_2">
@@ -378,7 +284,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>260</y>
+      <y>220</y>
       <width>251</width>
       <height>16</height>
      </rect>
@@ -399,7 +305,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>540</y>
+      <y>500</y>
       <width>251</width>
       <height>16</height>
      </rect>
@@ -413,14 +319,14 @@
      </font>
     </property>
     <property name="text">
-     <string>Custom Query</string>
+     <string>IFC Schema Explorer</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget_2">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>280</y>
+      <y>240</y>
       <width>711</width>
       <height>231</height>
      </rect>
@@ -474,7 +380,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Section:</string>
+          <string>Phase:</string>
          </property>
         </widget>
        </item>
@@ -645,7 +551,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>560</y>
+      <y>520</y>
       <width>711</width>
       <height>61</height>
      </rect>
@@ -736,8 +642,8 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>630</y>
-      <width>343</width>
+      <y>590</y>
+      <width>344</width>
       <height>54</height>
      </rect>
     </property>
@@ -827,7 +733,7 @@
     <property name="geometry">
      <rect>
       <x>390</x>
-      <y>630</y>
+      <y>590</y>
       <width>361</width>
       <height>83</height>
      </rect>
@@ -951,6 +857,19 @@
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="btn_report">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>670</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate Report</string>
+    </property>
    </widget>
   </widget>
  </widget>
