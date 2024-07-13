@@ -28,7 +28,6 @@ class IdsEditorAuditWindow(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        
         # Connect handlers
         handlers = {
             "btn_export": self.export
@@ -37,7 +36,6 @@ class IdsEditorAuditWindow(QMainWindow):
     
     def export(self):
         options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
         destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", "All Files (*)", options=options)
         if destination_file:
             print(f"Destination file path: {destination_file}")
@@ -270,10 +268,10 @@ class IdsSpecEditorWindow(QMainWindow):
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of filter")
         
-        if text != "Add filter by class":
-            self.opened_window.combo_optionality.hide()
-            self.opened_window.lbl_optionality.hide()
-        else: pass
+        # if text != "Add filter by class":
+        #     self.opened_window.combo_optionality.hide()
+        #     self.opened_window.lbl_optionality.hide()
+        # else: pass
 
     def openRequirementSubWindow(self, text, facet_to_load=None):
         mdi_area = self.mdi_requirement
@@ -296,19 +294,22 @@ class IdsSpecEditorWindow(QMainWindow):
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
-        if text != "Add requirement by class":
-            self.opened_window.combo_optionality.show()
-            self.opened_window.lbl_optionality.show()
-        else: pass
+        # if text != "Add requirement by class":
+        #     self.opened_window.combo_optionality.show()
+        #     self.opened_window.lbl_optionality.show()
+        # else: pass
 
     def save_requirements_data(self):
         #Create new facet
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData()
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
-        item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)#TODO: Fork repository from building smart to solve incoompatibility class Entity and to_string() method. Imported forked library as module
+        if isinstance(facet, ids.Entity):
+            item= IdsOps.entityToString(facet, "requirement") # Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
+        else:
+            item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
         
-        #if there was and element in edition, delete element from dictionary and list
+        #if there was and element in edition, delete old element from dictionary and list for adding edited element
         if self.facet_in_edition:
             del self.dic_requirements[self.facet_in_edition]
             Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
@@ -325,7 +326,10 @@ class IdsSpecEditorWindow(QMainWindow):
         dict_data = self.opened_window.getData()
         cardinality = self.combo_mandatory.currentText()
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
-        item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
+        if isinstance(facet, ids.Entity):
+            item= IdsOps.entityToString(facet,"applicability")
+        else:
+            item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
 
         #if there was and element in edition, delete element from dictionary and list
         if self.facet_in_edition:
@@ -380,9 +384,11 @@ class IdsSpecEditorWindow(QMainWindow):
         index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
         if index.isValid():
             item = index.data()
-            self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
+            self.facet_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
             req_selected = self.dic_requirements[item]
             facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
+            if facet_class=="entity":
+                facet_class = "class"
             text = "Add requirement by "+ facet_class
             Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
         self.openRequirementSubWindow(text, req_selected)
@@ -394,6 +400,8 @@ class IdsSpecEditorWindow(QMainWindow):
             self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
             filter_selected = self.dic_filters[item]
             facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
+            if facet_class=="entity":
+                facet_class = "class"
             text = "Add filter by "+ facet_class
             Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
         self.openFilterSubWindow(text, filter_selected)
@@ -475,13 +483,7 @@ class IdsEditorWindow(QMainWindow):
         #If no ids was passed from IdsManagerWindow a new instance is created and flag reamins False:
         self.flag_load_data = False
         self.my_ids= my_ids
-        # if self.my_ids is None:
-        #     self.my_ids=IdsOps.createIds()
-        # else:
-        #     self.flag_load_data=True
-        #     pass
-
-        # Connect handlers
+        
         handlers = {
             "btn_ids_info": self.openInfoWindow,
             "btn_ids_specifications": self.openSpecListWindow,
@@ -496,11 +498,6 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
-
-        # if self.flag_load_data:
-        #     self.loadInfo() #TODO: Get rid of this flag and the associated method as well
-        # else:
-        #     pass
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
@@ -565,10 +562,6 @@ class IdsEditorWindow(QMainWindow):
         self.generateIdsFile()
         self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
         self.close()
-    
-    def loadInfo(self):
-        #TODO:Get rid of this method and check it does not affect something else
-        pass
     
     def backIdsList(self):
         self.back_to_manage_ids.emit()
@@ -640,8 +633,7 @@ class IfcInfoWindow(QMainWindow):
                                         IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_NAME))
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
-        self.txt_num_elements.setText("TODO")#TODO
-        self.txt_list_attributes.setText("TODO")#TODO
+
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
         self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
@@ -656,8 +648,7 @@ class IfcInfoWindow(QMainWindow):
         self.txt_coordinate_sys.setText("IFC2X3 Schema does not incorportate IfcCoordinateReferenceSystem")
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
-        self.txt_num_elements.setText("TODO")#TODO
-        self.txt_list_attributes.setText("TODO")#TODO
+  
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
         self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
@@ -707,6 +698,8 @@ class IfcInfoWindow(QMainWindow):
                 self.flag_psets=False
                 value= f"Selected element does not have associated PSets"
                 self.combo_psets.addItem(value)
+                self.txt_value_prop.setText("")
+                self.psets_dict={}
     
     def updateProps(self):
         self.combo_props.clear()
@@ -743,7 +736,10 @@ class IfcInfoWindow(QMainWindow):
                 self.txt_value_att.setStyleSheet("QLineEdit { color: blue; }")
                 self.nested_entity=value
             else:
+                self.txt_value_att.setCursor(QCursor(Qt.ArrowCursor))
+                self.txt_value_att.setStyleSheet("")
                 self.txt_value_att.setText(str(value))
+                self.nested_entity=None
     
     def showNestedEntity(self):
         dialog = QDialog(self)
@@ -761,7 +757,7 @@ class IfcInfoWindow(QMainWindow):
         dialog.exec_()
     
     def handleLink(self, event):
-        if isinstance(self.nested_entity, dict):
+        if self.nested_entity and isinstance(self.nested_entity, dict):
             self.showNestedEntity()
     
     def generateDataDict(self):

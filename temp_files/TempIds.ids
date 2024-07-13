@@ -1,14 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/0.9.7/ids.xsd">
     <info>
-        <title>titulo</title>
-        <copyright>copy</copyright>
-        <version>11</version>
-        <description>descr</description>
-        <author>ivan@hotmail.com</author>
+        <title>titulo Edit</title>
+        <copyright>copyEdit</copyright>
+        <version>11Edit</version>
+        <description>descrEdit</description>
+        <author>ivanEdit@hotmail.com</author>
         <date>2000-01-01</date>
-        <purpose>purpoa</purpose>
-        <milestone>milesto</milestone>
+        <purpose>purpoaEdit</purpose>
+        <milestone>milestoEdit</milestone>
     </info>
     <specifications>
         <specification name="Spec1" ifcVersion="IFC4" description="dedede" instructions="instru instru">
@@ -30,18 +30,24 @@
                 </attribute>
             </requirements>
         </specification>
-        <specification name="Spec 2" ifcVersion="IFC2X3" description="" instructions="">
+        <specification name="Spec 2" ifcVersion="IFC4" identifier="e9a20a52-bdbd-44fd-836f-09e489582a15" description="" instructions="">
             <applicability minOccurs="0" maxOccurs="0">
-                <property>
+                <material>
+                    <value>
+                        <simpleValue>Concrete</simpleValue>
+                    </value>
+                </material>
+            </applicability>
+            <requirements>
+                <property cardinality="required">
                     <propertySet>
-                        <simpleValue>PSet1</simpleValue>
+                        <simpleValue>Pset_example</simpleValue>
                     </propertySet>
                     <baseName>
                         <simpleValue>Color</simpleValue>
                     </baseName>
                 </property>
-            </applicability>
-            <requirements />
+            </requirements>
         </specification>
     </specifications>
 </ids>

@@ -24,7 +24,7 @@ class byAttribute(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
         #populate QLineEdit with ifc classes
-        IfcOps.populateClasses(self, "IFC4", "txt_name")
+        #IfcOps.populateClasses(self, "IFC4", "txt_name")'TODO:Populate with ifc entities
         
         #If facet was passed, load data in Window
         if self.my_facet:
@@ -76,7 +76,7 @@ class byClass(QMainWindow):
     def loadData(self):
         self.txt_name.setText(self.my_facet.name) 
         self.txt_type.setText(self.my_facet.predefinedType)
-        #For class Entity there is no optionality to be provided in IDS Schema
+        #clas entity MUST be required, there is no optionality to be provided. https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
 
 class byClassification(QMainWindow):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet:ids.Classification=None):

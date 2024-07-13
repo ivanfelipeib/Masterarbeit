@@ -1,5 +1,7 @@
-2024-07-02 19:43:44 [Warning] Version Ids0_9_7 is transitional, update to 1.0 before circulating.
-2024-07-02 19:43:44 [Information] The file schema version is: Ids0_9_7
-2024-07-02 19:43:45 [Error] Error 103: Invalid "attribute name" `"Color"` (887 accepted values exist, starting with ["ApplicationDeveloper", "Version", "ApplicationFullName", "ApplicationIdentifier", "OwningUser"]...) in the context of Ifc4 on "`simpleValue` element at line 25, position 26".
-2024-07-02 19:43:45 [Information] Completed reading 73 xml elements.
-2024-07-02 19:43:45 [Information] Audit result: IdsContentError
+2024-07-12 15:19:59 [Warning] Version Ids0_9_7 is transitional, update to 1.0 before circulating.
+2024-07-12 15:19:59 [Information] The file schema version is: Ids0_9_7
+2024-07-12 15:19:59 [Error] Error 103: Invalid "attribute name" `"Color"` (887 accepted values exist, starting with ["ApplicationDeveloper", "Version", "ApplicationFullName", "ApplicationIdentifier", "OwningUser"]...) in the context of Ifc4 on "`simpleValue` element at line 25, position 26".
+2024-07-12 15:20:00 [Error] Error 401: Reserved prefix '"Pset_"' for "property set name" ("Pset_example") in the context of Ifc4 on "`property` element at line 42, position 18".
+2024-07-12 15:20:00 [Error] Error 204: Incompatible requirements on "`specification` element at line 33, position 10", "requirements are not allowed when applicability is prohibited.".
+2024-07-12 15:20:00 [Information] Completed reading 81 xml elements.
+2024-07-12 15:20:00 [Information] Audit result: IdsContentError

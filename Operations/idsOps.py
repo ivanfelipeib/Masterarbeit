@@ -161,13 +161,72 @@ class IdsOps():
         my_ids.parse(ids_as_dict)
         return my_ids
     
-        # my_ids= IdsOps.createIds()
-        # #Add Ids Info
-        # info_dict= ids_as_dict["info"]
-        # my_ids= IdsOps.addIdsInfo()
-        # #Add Specifications Info
-        # spec_dict= ids_as_dict["specifications"]["specification"]
-        # for specification in spec_dict:
-        #     my_spec=IdsOps.addSpecInfo(specification)
-        #     for app_items in specification["applicability"]:
+    def entityToString(entity_instance:ids.Entity, clause_type:str="requirement")->str:
+        entity = entity_instance
+        clause = clause_type
+        if clause_type == "requirement":
+            templates = entity.requirement_templates
+        elif clause_type == "applicability":
+            templates = entity.applicability_templates
+        elif clause_type == "prohibited":
+            templates = entity.prohibited_templates
+        else:
+            return None  # Invalid clause_type
+
+        if entity.predefinedType is None:
+            entity_str = templates[1].format(name=getattr(entity, 'name', ''))
+        else:
+            entity_str = templates[0].format(
+                name=getattr(entity, 'name', ''),
+                predefinedType=getattr(entity, 'predefinedType', '')
+            )
+        return entity_str
+        # match clause:
+        #     case "requirement":
+        #         if entity.predefinedType is None:
+        #             template = entity.requirement_templates[1]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             return template.format(name=name)
+        #         else:
+        #             template = entity.requirement_templates[0]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
+        #             template.format(name=name, predefinedType=predefinedType)
+
+        #     case "applicability":
+        #         if entity.predefinedType is None:
+        #             template = entity.applicability_templates[1]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             return template.format(name=name)
+        #         else:
+        #             template = entity.applicability_templates[0]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
+        #             template.format(name=name, predefinedType=predefinedType)
+        #     case "prohibited":
+        #         if entity.predefinedType is None:
+        #             template = entity.prohibited_templates[1]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             return template.format(name=name)
+        #         else:
+        #             template = entity.prohibited_templates[0]
+        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
+        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
+        #             template.format(name=name, predefinedType=predefinedType)   
+        #     case _:
+        #         print("Error accessing Entity's string templates")
+
+        # if clause == "requirement":
+        #     # Choose a template from applicability_templates
+        #     template = entity.applicability_templates[0]  # Choose the first template
+
+        # # Access necessary attributes (assuming these attributes are defined in Entity or Facet)
+        # name = self.baseName if hasattr(self, 'baseName') else ""
+        # predefinedType = self.value if hasattr(self, 'value') else ""
+
+        # # Format the template with the attributes
+        # return template.format(name=name, predefinedType=predefinedType)
+        # pass
+    
+   
         
