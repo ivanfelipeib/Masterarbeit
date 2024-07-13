@@ -27,6 +27,16 @@ class IfcOps:
         except (KeyError, IndexError, TypeError):
             return None
     
+    def numberElementbyEntity(self, ifc_entity:str)->str:
+        elements = self.model.by_type(ifc_entity)
+        names=[]
+        for element in elements:
+            name= element.is_a()
+            names.append(name)
+        return(str(len(names)))
+
+
+    
 
 
 

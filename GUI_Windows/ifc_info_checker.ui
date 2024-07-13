@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>idsGeneralInfoWindow</class>
- <widget class="QMainWindow" name="idsGeneralInfoWindow">
+ <class>IFCGeneralInfoWindow</class>
+ <widget class="QMainWindow" name="IFCGeneralInfoWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -29,15 +29,15 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>IDS General Information</string>
+   <string>IFC Information Checker</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="lbl_ids_info_title">
+   <widget class="QLabel" name="lbl_ifc_title">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>20</y>
-      <width>271</width>
+      <width>711</width>
       <height>16</height>
      </rect>
     </property>
@@ -58,8 +58,8 @@
      <rect>
       <x>40</x>
       <y>70</y>
-      <width>734</width>
-      <height>121</height>
+      <width>706</width>
+      <height>231</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -138,6 +138,100 @@
        </item>
        <item>
         <widget class="QLineEdit" name="txt_coordinate_sys">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <item>
+        <widget class="QLabel" name="lbl_copyright_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>---Ref.Latitude</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txt_latitude">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QLabel" name="lbl_copyright_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>---Ref. Longitude</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txt_longitude">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -257,6 +351,53 @@
        </item>
       </layout>
      </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_11">
+       <item>
+        <widget class="QLabel" name="lbl_copyright_5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>8</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Objects in model:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="txt_objects_number">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>21</height>
+          </size>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
    </widget>
    <widget class="QLabel" name="lbl_ids_info_title_2">
@@ -284,7 +425,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>220</y>
+      <y>320</y>
       <width>251</width>
       <height>16</height>
      </rect>
@@ -326,9 +467,9 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>240</y>
+      <y>340</y>
       <width>711</width>
-      <height>231</height>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -385,7 +526,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_section">
+        <widget class="QLineEdit" name="txt_phase">
          <property name="minimumSize">
           <size>
            <width>600</width>
@@ -415,12 +556,12 @@
           </font>
          </property>
          <property name="text">
-          <string>Client:</string>
+          <string>Organization:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_client">
+        <widget class="QLineEdit" name="txt_organization">
          <property name="minimumSize">
           <size>
            <width>600</width>
@@ -475,76 +616,6 @@
        </item>
       </layout>
      </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_11">
-       <item>
-        <widget class="QLabel" name="lbl_purpose_2">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>XXXXX</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="txt_author_5">
-         <property name="minimumSize">
-          <size>
-           <width>600</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>600</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_12">
-       <item>
-        <widget class="QLabel" name="lbl_milestone_2">
-         <property name="font">
-          <font>
-           <pointsize>8</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>XXXXX</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="txt_author_6">
-         <property name="minimumSize">
-          <size>
-           <width>600</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>600</width>
-           <height>21</height>
-          </size>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="layoutWidget_3">
@@ -552,7 +623,7 @@
      <rect>
       <x>40</x>
       <y>520</y>
-      <width>711</width>
+      <width>712</width>
       <height>61</height>
      </rect>
     </property>
@@ -628,7 +699,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>650</width>
+           <width>300</width>
            <height>21</height>
           </size>
          </property>

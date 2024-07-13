@@ -21,10 +21,13 @@ IDS_097_SCHEMA= os.path.join(BASE_DIR, 'Others','ids_097.xsd') #Version IDS 0.9.
 
 #IFC SCHEMA PATHS
 # # #Project base point
-IFC_BASE_POINT= "IfcProject.RepresentationContexts.0.WorldCoordinateSystem.Location.Coordinates" #0 in path to acces the tuple in RepresentationContext
+IFC_BASE_POINT= "IfcSite.ObjectPlacement.RelativePlacement.Location.Coordinates" #Acces location of IFcSite
 # # #Coordinate Reference System
 IFC_CRS_NAME = "IfcCoordinateReferenceSystem.Name"
 IFC_CRS_DESCRIPTION = "IfcCoordinateReferenceSystem.Description"
+# # #Latitude and Longitude 
+IFC_REF_LATITUDE= "IfcSite.RefLatitude"
+IFC_REF_LONGITUDE= "IfcSite.RefLongitude"
 # # #Authoring Software
 IFC_AUTHOR_SOFTWARE = "IfcApplication.ApplicationFullName"
 # # #Project Description

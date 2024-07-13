@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import (QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox,
                              QFileDialog, QMessageBox, QMdiSubWindow,QLineEdit, QPlainTextEdit,QDateEdit,
-                             QTextBrowser, QDialog, QVBoxLayout)
+                             QTextBrowser, QDialog, QVBoxLayout, QLabel)
 from PyQt5.QtCore import Qt, pyqtSignal, QVariant
 from PyQt5.QtGui import QCursor
 from myWidgets import CustomListWidget
@@ -8,6 +8,7 @@ from Operations.Ops import Ops
 from Operations.idsOps import IdsOps
 from Operations.ifcOps import IfcOps
 from ifctester import ids
+import os
 import filters 
 import uuid
 import shutil
@@ -583,19 +584,24 @@ class IfcInfoWindow(QMainWindow):
 
         # Define Widgets
         main_widget_setup = {
+            "lbl_ifc_title": QLabel,
             #Basic Information
             "txt_base_point": QLineEdit,
             "txt_coordinate_sys": QLineEdit,
+            "txt_latitude": QLineEdit,
+            "txt_longitude": QLineEdit,
             "txt_ifc_schema": QLineEdit,
             "txt_software": QLineEdit,
+            "txt_objects_number": QLineEdit,
             #Project-related Information
             "txt_prj_description": QLineEdit,
-            "txt_section": QLineEdit,
-            "txt_client": QLineEdit,
+            "txt_phase": QLineEdit,
+            "txt_organization": QLineEdit,
             "txt_author": QLineEdit,
             #Custom Query
             "combo_entity": QComboBox,
             "combo_instance": QComboBox,
+            "combo_instance_name": QComboBox,
             "combo_attribute": QComboBox,
             "combo_psets": QComboBox,
             "combo_props": QComboBox,
@@ -607,7 +613,7 @@ class IfcInfoWindow(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup )
 
         #Connects Handlers for comboboxes
-        self.combo_entity.currentIndexChanged.connect(self.updateInstances)
+        self.combo_entity.currentIndexChanged.connect(self.updateInstancesIds)
         self.combo_instance.currentIndexChanged.connect(self.updatePsets)
         self.combo_instance.currentIndexChanged.connect(self.updateAttributes)
         self.combo_psets.currentIndexChanged.connect(self.updateProps)
@@ -619,40 +625,53 @@ class IfcInfoWindow(QMainWindow):
         #Load Info for corresponding schema
         if self.my_schema=="IFC4":
             self.loadIfc4Info()
+            self.loadEntities()
         elif self.my_schema == "IFC2X3":
             self.loadIfc2X3Info()
+            self.loadEntities()
         else:
-            print("IFC Schema not supported")
-        self.loadEntities()
+            Ops.msgError(self,"IFC Schema not supported", "The file is not supported. Make sure you are using a file with schemas IFC4 or IFC2x3")
+            self.close()
+        
 
     def loadIfc4Info(self):
+        #Title
+        self.lbl_ifc_title.setText(f"IFC File: {os.path.basename(self.ifc_file_path)}")
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
         self.txt_coordinate_sys.setText("Descrip.: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_DESCRIPTION)+
                                          " / Code: "+
                                         IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_NAME))
+        self.txt_latitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LATITUDE)))
+        self.txt_longitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LONGITUDE)))
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
+        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcProduct")) #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
 
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
-        self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
-        self.txt_client.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
+        self.txt_phase.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
+        self.txt_organization.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
         self.txt_author.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
                                  " , "+
                                  IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
     
     def loadIfc2X3Info(self):
+        #Title
+        self.lbl_ifc_title.setText(f"IFC File: {os.path.basename(self.ifc_file_path)}")
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
         self.txt_coordinate_sys.setText("IFC2X3 Schema does not incorportate IfcCoordinateReferenceSystem")
+        self.txt_latitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LATITUDE)))
+        self.txt_longitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LONGITUDE)))
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
+        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcProduct")) #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
   
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
-        self.txt_section.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
-        self.txt_client.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
+        self.txt_phase.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
+        self.txt_organization.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
         self.txt_author.setText("Last Name: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
                                  " , First Name: "+
                                  IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
@@ -660,11 +679,11 @@ class IfcInfoWindow(QMainWindow):
     def loadEntities(self):
         self.combo_entity.clear()
         entities = set()
-        for entity in self.my_model.by_type('IfcRoot'):
+        for entity in self.my_model.by_type('IfcProduct'): #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
             entities.add(entity.is_a())
         self.combo_entity.addItems(sorted(entities))
-
-    def updateInstances(self):
+        
+    def updateInstancesIds(self):
         self.combo_instance.clear()
         entity_type = self.combo_entity.currentText()
         if entity_type:
@@ -763,12 +782,30 @@ class IfcInfoWindow(QMainWindow):
     def generateDataDict(self):
         entity = self.combo_entity.currentText()
         element = self.combo_instance.currentText()
-        data_dict={"Entity":entity,
+        basic_info={"base_point":self.txt_base_point.text(),
+                    "coord_system": self.txt_coordinate_sys.text(),
+                    "latitude": self.txt_latitude.text(),
+                     "longitude": self.txt_longitude.text(),
+                     "ifc_schema": self.txt_ifc_schema.text(),
+                     "software": self.txt_software.text(),
+                     "objects_num": self.txt_objects_number.text()
+                     }
+        project_info={"description":self.txt_prj_description.text(),
+                      "phase":self.txt_phase.text(),
+                      "organization": self.txt_organization.text(),
+                      "author": self.txt_author.text()
+                      }
+        ifc_info={"File": self.ifc_file_path,
+                   "Entity":entity,
                    "Element": element,
                    "Attributes":self.attributes,
                    "PSets": self.psets_dict
                    }
-        return(data_dict)
+        data={"basic_info":basic_info,
+              "project_info": project_info,
+              "ifc_info": ifc_info}
+
+        return(data)
     
     def generateExcelRepot(self):
         data=self.generateDataDict()

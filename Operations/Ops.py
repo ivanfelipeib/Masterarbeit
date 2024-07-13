@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMdiSubWindow, QMessageBox,QFileDialog
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
+from datetime import datetime
 import constants
 import xlsxwriter
 
@@ -141,48 +142,95 @@ class Ops():
         destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", filter, options=options)
         return destination_file
 
-    def generateExcelReport(self, filepath_excel:str, data_dict:dict):
-        filepath=filepath_excel
-        data=data_dict
+    def generateExcelReport(self, filepath:str, data:dict):
+        current_date = datetime.now().strftime('%d-%m-%Y')
         # Create a workbook and add a worksheet
         workbook = xlsxwriter.Workbook(filepath)
         worksheet = workbook.add_worksheet()
         #Add Styles
-        titles = workbook.add_format({'bold': True, 'font_size': 13})
+        header = workbook.add_format({'bold': True, 'font_size': 15, 'underline': 2})
+        titles = workbook.add_format({'bold': True, 'font_size': 13, 'underline': 1})
         bold = workbook.add_format({'bold': True})
-        # Fixed headers
-        worksheet.write(0, 0, "Contents of selected element:", titles)
-        worksheet.write(1, 0, "Entity", bold)
-        worksheet.write(2, 0, "Element", bold)
-        worksheet.write(4, 0, "Attributes", titles)
-        worksheet.write(4, 2, "Property Sets", titles)
-        # Write Entity and Element values
-        worksheet.write(1, 1, data["Entity"])
-        worksheet.write(2, 1, data["Element"])
+        underlined = workbook.add_format({'underline': 1})
+        #Add fix titles
+        worksheet.write(0, 0, "IFC Information Report", header)
+        worksheet.write(1, 0, "IFC File", bold)
+        worksheet.write(2, 0, "Date of report", bold)
+
+        worksheet.write(4, 0, "Basic Information", titles)
+        worksheet.write(5, 0, "IFC Schema",bold)
+        worksheet.write(6, 0, "Project Base Point", bold)
+        worksheet.write(7, 0, "Coordinate System", bold)
+        worksheet.write(8, 0, "Ref.Latitude", bold)
+        worksheet.write(9, 0, "Ref.Longitude", bold)
+        worksheet.write(10, 0, "Authoring Software", bold)
+        worksheet.write(11, 0, "Objects in Model", bold)
+
+        worksheet.write(4, 2, "Project Information", titles)
+        worksheet.write(5, 2, "Description", bold)
+        worksheet.write(6, 2, "Phase", bold)
+        worksheet.write(7, 2, "Organization", bold)
+        worksheet.write(8, 2, "Author", bold)
+
+        worksheet.write(13, 0, "Contents of selected IFC Element", titles)
+        worksheet.write(14, 0, "Entity", bold)
+        worksheet.write(15, 0, "Element", bold)
+        worksheet.write(17, 0, "Attributes", titles)
+        worksheet.write(17, 2, "Property Sets", titles)
+        # Write values
+        worksheet.write(1, 1, data["ifc_info"]["File"])
+        worksheet.write(2, 1, current_date)
+        worksheet.write(5, 1, data["basic_info"]["ifc_schema"])
+        worksheet.write(6, 1, data["basic_info"]["base_point"])
+        worksheet.write(7, 1, data["basic_info"]["coord_system"])
+        worksheet.write(8, 1, data["basic_info"]["latitude"])
+        worksheet.write(9, 1, data["basic_info"]["longitude"])
+        worksheet.write(10, 1, data["basic_info"]["software"])
+        worksheet.write(11, 1, data["basic_info"]["objects_num"])
+        worksheet.write(5, 3,data["project_info"]["description"])
+        worksheet.write(6, 3,data["project_info"]["phase"])
+        worksheet.write(7, 3,data["project_info"]["organization"])
+        worksheet.write(8, 3,data["project_info"]["author"])
+        worksheet.write(14, 1, data["ifc_info"]["Entity"])
+        worksheet.write(15, 1, data["ifc_info"]["Element"])
+        
         # Write Attribute
-        if "Attributes" in data:
-            row_start=5
-            attributes=data["Attributes"]
+        if "Attributes" in data["ifc_info"]:
+            row_start=18
+            col_start =0
+            attributes=data["ifc_info"]["Attributes"]
             for idx, attr in enumerate(attributes):
-                worksheet.write(row_start + idx, 0, attr)
+                worksheet.write(row_start + idx, col_start, attr)
         # Write PSets
-        if "PSets" in data:
-            psets = data["PSets"]
-            row = 5
-            column_start=2
+        if "PSets" in data["ifc_info"]:
+            psets = data["ifc_info"]["PSets"]
+            row_start = 18
+            col_start=2
             for key in psets.keys():
-                worksheet.write(row, column_start, key, bold)
+                worksheet.write(row_start, col_start, key, bold)
                 properties= psets[key]
                 for idx, attr in enumerate(properties):
-                    worksheet.write(row_start+ 1 + idx, column_start, attr)
-                column_start+=1
-            last_column=column_start
-        #Adjust width
+                    worksheet.write(row_start+ 1 + idx, col_start, attr)
+                col_start+=1
+            last_column=col_start
+        else:
+            last_column=3 #assuming there is no Property sets in model
+        #Adjust column width
         worksheet.set_column(0, last_column,30)
         # Close the workbook
         workbook.close()
-        print("Excel file 'output.xlsx' has been created successfully.")
+        Ops.msgError(self, "Report created", f"Excel file has been created successfully in {filepath}.")
     
+    def formatLatLong(coordinates:tuple)->str:
+        degrees = coordinates[0]
+        minutes = coordinates[1]
+        seconds = coordinates[2]
+
+        # Formatting the string
+        formatted_string = f"{degrees}° {minutes}' {seconds}''"
+
+        # Display the result
+        return(formatted_string)
 
     @staticmethod
     def msgError(self,title, msg):
