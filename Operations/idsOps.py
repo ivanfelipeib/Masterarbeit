@@ -1,6 +1,7 @@
 from ifctester import ids, reporter
 import uuid
 from pathlib import Path
+from Operations.Ops import Ops
 import subprocess
 import constants
 import xmlschema
@@ -161,6 +162,7 @@ class IdsOps():
         my_ids.parse(ids_as_dict)
         return my_ids
     
+    @staticmethod
     def entityToString(entity_instance:ids.Entity, clause_type:str="requirement")->str:
         entity = entity_instance
         clause = clause_type
@@ -181,52 +183,31 @@ class IdsOps():
                 predefinedType=getattr(entity, 'predefinedType', '')
             )
         return entity_str
-        # match clause:
-        #     case "requirement":
-        #         if entity.predefinedType is None:
-        #             template = entity.requirement_templates[1]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             return template.format(name=name)
-        #         else:
-        #             template = entity.requirement_templates[0]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
-        #             template.format(name=name, predefinedType=predefinedType)
-
-        #     case "applicability":
-        #         if entity.predefinedType is None:
-        #             template = entity.applicability_templates[1]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             return template.format(name=name)
-        #         else:
-        #             template = entity.applicability_templates[0]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
-        #             template.format(name=name, predefinedType=predefinedType)
-        #     case "prohibited":
-        #         if entity.predefinedType is None:
-        #             template = entity.prohibited_templates[1]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             return template.format(name=name)
-        #         else:
-        #             template = entity.prohibited_templates[0]
-        #             name = entity.baseName if hasattr(entity, 'baseName') else ""
-        #             predefinedType = entity.value if hasattr(entity, 'value') else ""
-        #             template.format(name=name, predefinedType=predefinedType)   
-        #     case _:
-        #         print("Error accessing Entity's string templates")
-
-        # if clause == "requirement":
-        #     # Choose a template from applicability_templates
-        #     template = entity.applicability_templates[0]  # Choose the first template
-
-        # # Access necessary attributes (assuming these attributes are defined in Entity or Facet)
-        # name = self.baseName if hasattr(self, 'baseName') else ""
-        # predefinedType = self.value if hasattr(self, 'value') else ""
-
-        # # Format the template with the attributes
-        # return template.format(name=name, predefinedType=predefinedType)
-        # pass
     
+    @staticmethod
+    def idsQualityReport(ids_enity:ids, base_report_filepath:str):
+        my_ids=ids_enity
+
+        with open(base_report_filepath, 'r') as file:
+            existing_content = file.read()
+
+        with open(base_report_filepath,'w') as file:
+            header= "IDS QUALITY CHECK REPORT"+"\n"
+            subheader= "Date of report: "+ Ops.getDatetime() +"\n"+"\n"
+            ids_name= "IDS Name: "+ str(my_ids.info["title"]) +"\n"
+            ids_version = "IDS Version: "+ str(my_ids.info["version"])+"\n"
+            ids_date= "Created on: "+ str(my_ids.info["date"])+"\n"
+            ids_description= "IDS Description: "+ str(my_ids.info["description"])+"\n"+"\n"
+            header_quality_check= "Quality check: "+"\n"
+
+            new_text= header + subheader+ ids_name + ids_version + ids_date + ids_description + header_quality_check
+
+            footnote=("\n The warnings and information are for informational purposes and do not constitute a problem in themselves."
+                      "On the contrary, the errors found in the quality report must be corrected before the IDS file can be used."
+                    "Using a corrupted IDS file will not allow proper verification of the information content of an IFC model. \n"
+                    "Please consider this before saving the IDS File you are editing")
+
+            file.write(new_text+existing_content+footnote)
+
    
         

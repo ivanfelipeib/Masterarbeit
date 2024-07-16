@@ -37,11 +37,11 @@ class IdsEditorAuditWindow(QMainWindow):
     
     def export(self):
         options = QFileDialog.Options()
-        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", "All Files (*)", options=options)
+        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", "Text files (*.txt)", options=options)
         if destination_file:
             print(f"Destination file path: {destination_file}")
             try:
-                shutil.copy(constants.TEMP_IDS_DIR, destination_file) #copy file from Temp folder to selected filepath
+                shutil.copy(constants.TEMP_LOG_DIR, destination_file) #copy file from Temp folder to selected filepath
                 QMessageBox.information(self, "Success", f"File exported to {destination_file}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Failed to export file: {e}")
@@ -80,10 +80,13 @@ class IdsInfoWindow(QMainWindow):
         self.txt_copyright.setText(idsToLoad.info["copyright"])
         self.txt_version.setText(idsToLoad.info["version"])
         self.txt_author.setText(idsToLoad.info["author"])
-        #self.date TODO: Search method to set date from string
         self.txt_description.setPlainText(idsToLoad.info["description"])
         self.txt_purpose.setPlainText(idsToLoad.info["purpose"])
         self.txt_milestone.setPlainText(idsToLoad.info["milestone"])
+        date=Ops.stringToDateFormat(idsToLoad.info["date"])
+        self.date.setDisplayFormat("dd/MM/yyyy")
+        self.date.setDate(date) 
+
         
 
 
@@ -475,6 +478,10 @@ class IdsEditorWindow(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
         #Hide mdi_editor as default when opening new IdsEditor
         self.mdi_editor.hide()
+        #Hide buttons when loading Window to ensure the progressive filling of the IDS attributes (Back Btn and Ids Info Button visible)
+        self.btn_ids_specifications.hide()
+        self.btn_ids_audit.hide()
+        self.btn_ids_save.hide()
 
         #Create instance of Subwindows
         self.info_window=None
@@ -499,6 +506,7 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
+        self.btn_ids_specifications.show()
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
@@ -506,6 +514,7 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals, my_ids_instance=self.my_ids)
+        self.btn_ids_audit.show()
      
     def openSpecEditorWindow(self):
         def setup_signals(window_instance):
@@ -521,13 +530,15 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_list.resize(800,832)
         self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
         self.generateIdsFile() #generate IDS file in temp_files folder each time Audit button is clicked
-        self.runAudit() #Audit Report of IDS file
-        
+        self.runAudit() 
+        self.btn_ids_save.show()
+
     def generateIdsFile(self):
         self.my_ids= IdsOps.createIds() #TODO: Add try catch, to handle when user clicks automatically in audit before clicking on info and specifications
         self.addIdsInfo()
         self.addIdsSpecifications()
         self.idsToXML()
+        self.btn_ids_save.hide()
 
     def idsToXML(self):
         filepath= constants.TEMP_IDS_DIR 
@@ -537,9 +548,12 @@ class IdsEditorWindow(QMainWindow):
     def runAudit(self):
         IdsOps.auditIds() #run c# script to run IDS Audit
         filepathLog= constants.TEMP_LOG_DIR
+
+        IdsOps.idsQualityReport(self.my_ids,filepathLog) #acces base report from c# Script and structure quality report
+
         with open(filepathLog, 'r') as file:
-                content = file.read()
-                self.audit_window.textBrowser_audit.setText(content)
+            content = file.read()
+            self.audit_window.textBrowser_audit.setText(content)
 
     def addIdsInfo(self):
         self.ids_info = {
@@ -964,11 +978,11 @@ class ManageIdsWindow(QMainWindow):
         self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
         if self.file_path:
             if len(self.list_ids_mgmnt.findItems(self.file_path, Qt.MatchExactly)) == 0:
-                    #Save IDS File
-                    my_ids.filepath=self.file_path
-                    my_ids.to_xml(self.file_path)
-                    print(f"File saved in: {self.file_path}")
-            else: print(f"filepath already in list. {self.file_path}")
+                print(f"File saved in: {self.file_path}")
+            else: 
+                print(f"filepath already in list, file in {self.file_path} was successfully overwritten.")
+            my_ids.filepath=self.file_path
+            my_ids.to_xml(self.file_path)
         else:
             print("No file selected to save")
 

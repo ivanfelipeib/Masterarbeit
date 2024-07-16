@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QMdiSubWindow, QMessageBox,QFileDialog
 from PyQt5 import uic
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QDate
 from datetime import datetime
 import constants
 import xlsxwriter
@@ -76,9 +76,14 @@ class Ops():
         return window_instance
     
     @staticmethod
-    def dateToIsoFormat(date):
+    def dateToIsoFormat(date)->str:
         iso_date=date.date().toString(Qt.ISODate)
         return iso_date
+
+    @staticmethod
+    def stringToDateFormat(date_str:str)-> QDate:
+        date = QDate.fromString(date_str, 'yyyy-MM-dd')
+        return date
     
     @staticmethod
     def dictEmptyValueToNone(dict_data):
@@ -87,7 +92,6 @@ class Ops():
                 dict_data[key] = None
         return dict_data
 
-    @staticmethod
     def setTextComboBox(window, combo_box_name:str= "comboBox", text:str="Text to search"):
         combo_box_widget = getattr(window, combo_box_name, None)
 
@@ -116,6 +120,7 @@ class Ops():
     
         return False  # Return False if item with given text is not found
     
+    @staticmethod
     def accessDictByPath(nested_dict, path):
         keys = path.split('.')
         value = nested_dict
@@ -126,6 +131,7 @@ class Ops():
         except KeyError:
             return None
 
+    @staticmethod
     def formatDictionary(dictionary, level=0):
         formatted_text = ""
         for key, value in dictionary.items():
@@ -221,6 +227,7 @@ class Ops():
         workbook.close()
         Ops.msgError(self, "Report created", f"Excel file has been created successfully in {filepath}.")
     
+    @staticmethod
     def formatLatLong(coordinates:tuple)->str:
         degrees = coordinates[0]
         minutes = coordinates[1]
@@ -231,6 +238,13 @@ class Ops():
 
         # Display the result
         return(formatted_string)
+    
+    @staticmethod
+    def getDatetime()->str:
+        now = datetime.now()
+        formatted_now = now.strftime("%d-%m-%Y %H:%M")
+        return formatted_now
+
 
     @staticmethod
     def msgError(self,title, msg):
