@@ -86,13 +86,13 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLineEdit" name="txt_entity"/>
+        <widget class="CustomLineEdit" name="txt_entity"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_predef_type"/>
+        <widget class="CustomLineEdit" name="txt_predef_type"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_relation"/>
+        <widget class="CustomLineEdit" name="txt_relation"/>
        </item>
       </layout>
      </item>
@@ -133,6 +133,13 @@
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

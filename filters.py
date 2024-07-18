@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QCombo
 from Operations.Ops import Ops
 from ifctester import ids
 from Operations.ifcOps import IfcOps
+from myWidgets import CustomLineEdit
 
 
 class byAttribute(QMainWindow):
@@ -57,8 +58,8 @@ class byClass(QMainWindow):
 
         # Define and load Widgets
         main_widget_setup = {
-            "txt_name": QLineEdit,
-            "txt_type": QLineEdit
+            "txt_name": CustomLineEdit,
+            "txt_type": CustomLineEdit
         }
         Ops.loadWidgets(self, main_widget_setup)
 
@@ -171,9 +172,9 @@ class byPartOf(QMainWindow):
 
         # Define and load Widgets
         main_widget_setup = {
-            "txt_entity": QLineEdit,
-            "txt_predef_type": QLineEdit,
-            "txt_relation": QLineEdit,
+            "txt_entity": CustomLineEdit,
+            "txt_predef_type": CustomLineEdit,
+            "txt_relation": CustomLineEdit,
             "lbl_optionality": QLabel,
             "combo_optionality": QComboBox
         }
@@ -215,7 +216,7 @@ class byProperty(QMainWindow):
         main_widget_setup = {
             "txt_pset": QLineEdit,
             "txt_name": QLineEdit,
-            "txt_data_type": QLineEdit,
+            "txt_data_type": CustomLineEdit,
             "txt_value": QLineEdit,
             "txt_uri": QLineEdit,
             "lbl_optionality": QLabel,

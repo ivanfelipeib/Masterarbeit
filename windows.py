@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (QTableWidget, QMainWindow,QApplication, QPushButton, QMdiArea, QComboBox,
                              QFileDialog, QMessageBox, QMdiSubWindow,QLineEdit, QPlainTextEdit,QDateEdit,
                              QTextBrowser, QDialog, QVBoxLayout, QLabel)
-from PyQt5.QtCore import Qt, pyqtSignal, QVariant
+from PyQt5.QtCore import Qt, pyqtSignal, QVariant, QDate
 from PyQt5.QtGui import QCursor
 from myWidgets import CustomListWidget
 from Operations.Ops import Ops
@@ -72,7 +72,10 @@ class IdsInfoWindow(QMainWindow):
         if self.my_ids:
             self.loadData(self.my_ids)
         else:
-            pass
+            current_date = QDate.currentDate()
+            self.date.setDisplayFormat("dd/MM/yyyy")
+            self.date.setDate(current_date)
+            
     
     def loadData(self, ids_instance:ids.Ids):
         idsToLoad=ids_instance
@@ -83,9 +86,10 @@ class IdsInfoWindow(QMainWindow):
         self.txt_description.setPlainText(idsToLoad.info["description"])
         self.txt_purpose.setPlainText(idsToLoad.info["purpose"])
         self.txt_milestone.setPlainText(idsToLoad.info["milestone"])
+
         date=Ops.stringToDateFormat(idsToLoad.info["date"])
         self.date.setDisplayFormat("dd/MM/yyyy")
-        self.date.setDate(date) 
+        self.date.setDate(date)
 
         
 

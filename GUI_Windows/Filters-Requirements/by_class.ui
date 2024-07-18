@@ -79,10 +79,10 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLineEdit" name="txt_name"/>
+        <widget class="CustomLineEdit" name="txt_name"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_type"/>
+        <widget class="CustomLineEdit" name="txt_type"/>
        </item>
       </layout>
      </item>
@@ -90,6 +90,13 @@
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

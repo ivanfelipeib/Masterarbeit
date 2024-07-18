@@ -106,7 +106,7 @@
         <widget class="QLineEdit" name="txt_name"/>
        </item>
        <item>
-        <widget class="QLineEdit" name="txt_data_type"/>
+        <widget class="CustomLineEdit" name="txt_data_type"/>
        </item>
        <item>
         <widget class="QLineEdit" name="txt_value"/>
@@ -158,6 +158,13 @@
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>myWidgets.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

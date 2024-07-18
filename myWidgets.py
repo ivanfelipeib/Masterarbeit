@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QListWidget,QMessageBox, QComboBox,QStylePainter, QStyleOptionComboBox, QStyle
-# from PySide2 import QtGui
+from PyQt5.QtWidgets import QListWidget,QMessageBox, QComboBox,QStylePainter, QStyleOptionComboBox, QStyle,QLineEdit
+from PyQt5.QtGui import QValidator
 from PyQt5.QtCore import Qt
 import os
 
+#Custom List allowing drag and drop and constraining number of elements in list
 class CustomListWidget(QListWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -54,3 +55,12 @@ class CustomListWidget(QListWidget):
             self.items.append(os.path.basename(self.item(x).text()))
         return self.items
 
+#Custom Line edit constraining text to only capital letters
+class UppercaseValidator(QValidator):
+    def validate(self, string, pos):
+        return (QValidator.Acceptable, string.upper(), pos)
+
+class CustomLineEdit(QLineEdit):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setValidator(UppercaseValidator())
