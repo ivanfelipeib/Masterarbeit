@@ -117,50 +117,14 @@ class IdsOps():
         return None
     
     @staticmethod
-    def parseXmlToDict(xml_path:str = None)->dict:
-        try:
-            # Extract the version
-            version = IdsOps.getIdsVersionXML(xml_path)
-            
-            if not version:
-                raise ValueError("Could not determine the IDS version or the version is unsupported.")
-            
-            # Determine the appropriate schema path based on the version
-            schema_path = ''
-            if version == "0.9.7":
-                schema_path = constants.IDS_097_SCHEMA
-            elif version == "1.0.0":
-                schema_path = constants.IDS_SCHEMA
-            else:
-                raise ValueError("Only IDS Versions 1.0.0 and 0.9.7 are supported")
-            
-            # Load the XML schema
-            schema = xmlschema.XMLSchema(schema_path)
-            # Convert XML to dictionary
-            data_dict = schema.to_dict(xml_path)
-            # Convert IDS Versions to String since IDS Schema defines IFC Version as list an returns in previous step IDs version 1-element lists. 
-            specifications = data_dict.get('specifications', {})
-            specification_list = specifications.get('specification', [])
-            for spec in specification_list:
-                if '@ifcVersion' in spec and isinstance(spec['@ifcVersion'], list) and len(spec['@ifcVersion']) == 1:
-                    spec['@ifcVersion'] = spec['@ifcVersion'][0]
-            return data_dict
+    def parseXmlToIds(xml_file_path:str)->ids:
+        ids_object=ids.open(xml_file_path)
+        return ids_object
     
-        except ValueError as e:
-            print(f"ValueError: {e}")
-        except xmlschema.XMLSchemaException as e:
-            print(f"XMLSchemaException: {e}")
-        except FileNotFoundError as e:
-            print(f"File not found: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-        return {}
-
     @staticmethod
-    def parseDictToIds(ids_as_dict: dict)->ids.Ids:
-        my_ids= ids.Ids()
-        my_ids.parse(ids_as_dict)
-        return my_ids
+    def parseidsToDict(ids_object:ids)->dict:
+        ids_as_dict=ids_object.asdict() 
+        return ids_as_dict
     
     @staticmethod
     def entityToString(entity_instance:ids.Entity, clause_type:str="requirement")->str:
@@ -202,7 +166,7 @@ class IdsOps():
 
             new_text= header + subheader+ ids_name + ids_version + ids_date + ids_description + header_quality_check
 
-            footnote=("\n The warnings and information are for informational purposes and do not constitute a problem in themselves."
+            footnote=("\nThe warnings and information are for informational purposes and do not constitute a problem in themselves."
                       "On the contrary, the errors found in the quality report must be corrected before the IDS file can be used."
                     "Using a corrupted IDS file will not allow proper verification of the information content of an IFC model. \n"
                     "Please consider this before saving the IDS File you are editing")

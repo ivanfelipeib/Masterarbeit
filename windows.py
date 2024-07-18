@@ -68,32 +68,40 @@ class IdsInfoWindow(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
 
-        #Load data if ids was passed
-        if self.my_ids:
+        if self.my_ids: #Load data if ids was passed
             self.loadData(self.my_ids)
-        else:
+        else: #Load default values
+            self.txt_author.setText("This field requires an email address e.g. author@mail.com")
+            self.txt_version.setText("1.0")
             current_date = QDate.currentDate()
             self.date.setDisplayFormat("dd/MM/yyyy")
             self.date.setDate(current_date)
             
     
     def loadData(self, ids_instance:ids.Ids):
-        idsToLoad=ids_instance
-        self.txt_title.setText(idsToLoad.info["title"])
-        self.txt_copyright.setText(idsToLoad.info["copyright"])
-        self.txt_version.setText(idsToLoad.info["version"])
-        self.txt_author.setText(idsToLoad.info["author"])
-        self.txt_description.setPlainText(idsToLoad.info["description"])
-        self.txt_purpose.setPlainText(idsToLoad.info["purpose"])
-        self.txt_milestone.setPlainText(idsToLoad.info["milestone"])
+        self.txt_title.setText(ids_instance.info.get("title", ""))
+        self.txt_copyright.setText(ids_instance.info.get("copyright", ""))
+        self.txt_version.setText(ids_instance.info.get("version", ""))
+        self.txt_author.setText(ids_instance.info.get("author", ""))
+        self.txt_description.setPlainText(ids_instance.info.get("description", ""))
+        self.txt_purpose.setPlainText(ids_instance.info.get("purpose", ""))
+        self.txt_milestone.setPlainText(ids_instance.info.get("milestone", ""))
 
-        date=Ops.stringToDateFormat(idsToLoad.info["date"])
+        date=Ops.stringToDateFormat(ids_instance.info.get("date", ""))
         self.date.setDisplayFormat("dd/MM/yyyy")
         self.date.setDate(date)
 
-        
+        # self.txt_title.setText(ids_instance.info["title"])
+        # self.txt_copyright.setText(ids_instance.info["copyright"])
+        # self.txt_version.setText(ids_instance.info["version"])
+        # self.txt_author.setText(ids_instance.info["author"])
+        # self.txt_description.setPlainText(ids_instance.info["description"])
+        # self.txt_purpose.setPlainText(ids_instance.info["purpose"])
+        # self.txt_milestone.setPlainText(ids_instance.info["milestone"])
 
-
+        # date=Ops.stringToDateFormat(ids_instance.info["date"])
+        # self.date.setDisplayFormat("dd/MM/yyyy")
+        # self.date.setDate(date)
 
 class IdsSpecListWindow(QMainWindow):
     open_spec_editor= pyqtSignal() # emit signal when clicking on New Specification, go to method OpenSpecEditor in class IdsEditorWindow
@@ -133,7 +141,7 @@ class IdsSpecListWindow(QMainWindow):
         if self.my_ids:
             self.loadSpec(self.my_ids)
         else:
-            print(f"No Ids was passed to {self}")
+            print(f"No Ids was passed to {self}") #TODO: delete this, was just for checking
             pass
     
     def loadSpec(self, ids_instance:ids.Ids):
@@ -963,8 +971,7 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.activateWindow()
 
     def clickEdit(self):
-        xml_as_dict=self.parseXmlToDict()
-        my_ids= IdsOps.parseDictToIds(xml_as_dict)
+        my_ids=self.parseXmlToIds()
         self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
         self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
         self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
@@ -972,7 +979,6 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.show()
         self.idsEditor_window.raise_()
         self.idsEditor_window.activateWindow()
-
 
     def setFilepathIds(self, my_ids):
         self.filter="IDS files (*.ids)"
@@ -1016,13 +1022,15 @@ class ManageIdsWindow(QMainWindow):
         self.list_ids_mgmnt.maxFileList+=1
         print(self.dic_ids)
     
-    def parseXmlToDict(self):
+    def parseXmlToIds(self):
         file_path= self.list_ids_mgmnt.currentIndex().data()
         if file_path:
-            ids_parsed_dic=IdsOps.parseXmlToDict(file_path)
-            return ids_parsed_dic
+            ids_object=IdsOps.parseXmlToIds(file_path)
+            ids_as_dict= ids_object.asdict()
+            print(ids_as_dict)
+            return ids_object
         else:
-            self.selected_label.setText('No element from IDS List was selected')
+            Ops.msgError(title="Error", msg='No element from IDS List was selected')
 
     def showManageIds(self):
         self.show()
