@@ -394,6 +394,8 @@ class IdsSpecEditorWindow(QMainWindow):
         self.txt_description.setPlainText(self.my_spec.description)
         self.txt_instructions.setPlainText(self.my_spec.instructions)
         ifc_version=self.my_spec.ifcVersion
+        if isinstance(ifc_version,list): #IDS Version may come as [IFC2X3], in this case access element in list
+            ifc_version=ifc_version[0]
         Ops.setTextComboBox(self,"combo_ifc_version", ifc_version)
     
     def loadReqSubWindow(self):
@@ -403,8 +405,11 @@ class IdsSpecEditorWindow(QMainWindow):
             self.facet_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
             req_selected = self.dic_requirements[item]
             facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
+            #handle facet name to match element in ComboBox(combo_add_requirement)
             if facet_class=="entity":
                 facet_class = "class"
+            elif facet_class=="partof":
+                facet_class = "part of"
             text = "Add requirement by "+ facet_class
             Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
         self.openRequirementSubWindow(text, req_selected)
@@ -500,9 +505,7 @@ class IdsEditorWindow(QMainWindow):
         self.spec_list_window=None
         self.audit_window= None
 
-        #If no ids was passed from IdsManagerWindow a new instance is created and flag reamins False:
-        self.flag_load_data = False
-        self.my_ids= my_ids
+        self.my_ids= my_ids # Instantiate ids, None as default in constructor if no ids was passed
         
         handlers = {
             "btn_ids_info": self.openInfoWindow,
@@ -522,7 +525,7 @@ class IdsEditorWindow(QMainWindow):
 
     def openSpecListWindow(self):
         def setup_signals(window_instance):
-            window_instance.open_spec_editor.connect(self.openSpecEditorWindow) #Receive signal emmited from IdsSpecListWindow Button:New / Button:Edit
+            window_instance.open_spec_editor.connect(self.openSpecEditorWindow) #Connect signal emmited from IdsSpecListWindow Button:New / Button:Edit
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.spec_list_window = Ops.openSubWindow(self.mdi_list, IdsSpecListWindow, self.spec_list_window, setup_signals, my_ids_instance=self.my_ids)

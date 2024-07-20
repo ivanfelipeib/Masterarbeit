@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLabel
 from Operations.Ops import Ops
+from Operations.idsOps import IdsOps
 from ifctester import ids
 from Operations.ifcOps import IfcOps
 from myWidgets import CustomLineEdit
@@ -37,11 +38,18 @@ class byAttribute(QMainWindow):
             "value": self.txt_value.text(),
             "optionality": self.combo_optionality.currentText()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        return IdsOps.checkComplexRestriction(dict_data) 
     
     def loadData(self):
-        self.txt_name.setText(self.my_facet.name) 
-        self.txt_value.setText(self.my_facet.value)
+        self.txt_name.setText(self.my_facet.name)
+        value = self.my_facet.value
+        if value is ids.Restriction: #TODO:Is Restriction or dict?
+            for restriction in value:
+            #TODO: Parse Restriction to text and load in QlineEdit
+                pass
+        else:
+            self.txt_value.setText(self.my_facet.value)
         #Set value in combobox_optionality
         optionality= self.my_facet.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)

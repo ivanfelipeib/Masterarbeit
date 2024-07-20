@@ -1,4 +1,4 @@
-from ifctester import ids, reporter
+from ifctester import ids, reporter, facet
 import uuid
 from pathlib import Path
 from Operations.Ops import Ops
@@ -6,6 +6,7 @@ import subprocess
 import constants
 import xmlschema
 import xml.etree.ElementTree as ET
+import re
 
 class IdsOps():
     @staticmethod
@@ -70,6 +71,49 @@ class IdsOps():
         else: pass
 
         return facet
+
+    def checkComplexRestriction(dict_data:dict, restriction_base:str)->dict:
+        #Based on the type of data in QLineEdit, create instance of class Restriction
+       
+        for key, value in dict_data.items():
+            if restriction_base =="double":
+                if Ops.validateRangeOverlapInString(value):
+                    parts = value.split(',')
+                    options={}
+                    pattern = r"^\s*(>=|<=|>|<)\s*(\d+(\.\d+)?)\s*$" #Regex pattern "operator+number, operator+number"
+                    for part in value:
+                        part = part.strip()
+                        match = re.match(pattern, part)  #match part against pattern
+                        if match:
+                            # Extract the operator and value and create restriction
+                            operator, value = match.groups()[0], float(match.groups()[1])
+                            restr_type= IdsOps.typeOfRestriction(operator) #Set restriction type based in operator
+                            base= restriction_base
+                            options[restr_type]=value
+                    restriction=ids.Restriction(base, options)
+                    dict_data[key]=restriction #override value with restriction object in dict_data
+                else:
+                    Ops.msgError("Error in complex restriction", "The string representing range boundaries describes overlapping ranges .")
+
+            elif restriction_base == "string":
+                is_regex= re.compile(value)
+                if is_regex:
+                    base="pattern"
+                    options={base : value}
+                    restriction=ids.Restriction(base, options)
+                    dict_data[key]=restriction #override value with restriction object in dict_data
+        return dict_data
+    
+    def typeOfRestriction(operator:str)->str:
+        if operator == ">":
+            restr_type= "maxExclusive"
+        elif operator == "<":
+            restr_type= "maxExclusive"
+        elif operator == ">=":
+            restr_type= "maxInclusive"
+        elif operator == "<=":
+            restr_type= "minInclusive"
+            return restr_type
 
     @staticmethod
     def addFacetApplicability(my_spec, facet):
