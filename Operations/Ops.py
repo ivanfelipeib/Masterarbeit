@@ -132,6 +132,17 @@ class Ops():
         except KeyError:
             return None
 
+    def isRegex(pattern:str)->bool:
+        #Since any string is a valid regex pattern that matches the literal string
+        #This method distinguishes between a literal string and a string that is intended to be a regular expression
+        if pattern=="" or pattern is None:
+            return False
+        
+        else:
+            regex_special_chars = r".^$*+?{}[]\|()"
+            contains_special_char = any(char in pattern for char in regex_special_chars)
+            return contains_special_char
+        
     @staticmethod
     def formatDictionary(dictionary, level=0):
         formatted_text = ""

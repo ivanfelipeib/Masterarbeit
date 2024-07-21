@@ -7,6 +7,7 @@ import constants
 import xmlschema
 import xml.etree.ElementTree as ET
 import re
+import ast
 
 class IdsOps():
     @staticmethod
@@ -71,77 +72,137 @@ class IdsOps():
         else: pass
 
         return facet
-
-    def createComplexRestrictions(dict_data:dict)->dict:
-        data1=IdsOps.restrictionBaseDouble(dict_data)
-        data2=IdsOps.restrictionBaseString(data1)
-        return data2
     
-    def restrictionBaseDouble(dict_data:dict):
+    def createRestrictions(dict_data:dict)->dict:
         single_boundary_pattern = re.compile(r'^[<>]=?-?\d+(\.\d+)?$')
-        double_boundary_pattern = re.compile(r'^([<>]=?-?\d+(\.\d+)?),([<>]=?-?\d+(\.\d+)?)$')
-        base="double"
+        double_boundary_pattern = re.compile(r'^([<>]=?)(-?\d+(\.\d+)?),([<>]=?)(-?\d+(\.\d+)?)$')
+        list_pattern = re.compile(r'^\[.*\]$')
+        
         for key, value in dict_data.items():
+            is_regex= Ops.isRegex(value)
             if isinstance(value, str):
+                restriction=None
                 match_single= single_boundary_pattern.match(value)
                 match_double= double_boundary_pattern.match(value)
-                # Check if the value matches the single boundary pattern
+                match_list = list_pattern.match(value)
+                is_regex= Ops.isRegex(value)
+
                 if match_single:
+                    base="double"
                     operator, value_restriction = match_single.groups()[0], float(match_single.groups()[1])
                     restr_type= IdsOps.typeOfRestriction(operator)
                     options={restr_type: value_restriction}
-                    restriction= ids.Restriction(base,options)
+                    restriction= ids.Restriction(options, base)
                     
-                # Check if the value matches the double boundary pattern
                 elif match_double:
+                    base="double"
                     operator1, value_restriction1 = match_double.group(1), float(match_double.group(2))
-                    operator2, value_restriction2 = match_double.group(3), float(match_double.group(4))
-                    restr_type1= IdsOps.typeOfRestriction(operator1)
-                    restr_type2= IdsOps.typeOfRestriction(operator2)
-                    options={restr_type1:value_restriction1, restr_type2 : restr_type2 }
-                    restriction= ids.Restriction(base,options)
+                    operator2, value_restriction2 = match_double.group(4), float(match_double.group(5))
+                    restr_type1= IdsOps.typeOfRestriction(str(operator1))
+                    restr_type2= IdsOps.typeOfRestriction(str(operator2))
+                    options={restr_type1:value_restriction1, restr_type2 : value_restriction2 }
+                    restriction= ids.Restriction(options, base)
+                
+                elif match_list:
+                    value = value[1:-1] #removes brackets
+                    value= value.split(',')
+                    base="string"
+                    options={"enumeration": value}
+                    restriction= ids.Restriction(options, base)
+                
+                elif is_regex:
+                    base="string"
+                    options={"pattern" : value}
+                    restriction=ids.Restriction(options, base)
 
                 else:
-                    Ops.msgError("Expression Error", "Expression does not match any range of values.")
-                    break
+                    print("Expression does not match any range of values.")
 
-                dict_data[key] = restriction
+                if restriction:
+                    dict_data[key] = restriction
 
         return dict_data
         
-    def restrictionBaseString(dict_data:dict):
-        list_pattern = re.compile(r'^\[.*\]$')
-        regex_pattern= re.compile(value)
-        base="string"
-        for key, value in dict_data.items():
-            value_restriction={}
-            if list_pattern.match(value):
-                options={"enumeration": value}
-                restriction= ids.Restriction(base,options)
+    # def restrictionBaseString(dict_data:dict):
+    #     base="string"
+    #     for key, value in dict_data.items():
+    #         restriction=None
+    #         list_pattern = re.compile(r'^\[.*\]$')
+    #         is_regex= Ops.isRegex(value)
+    #         value_restriction={}
+    #         if list_pattern.match(value):
+    #             options={"enumeration": value}
+    #             restriction= ids.Restriction(options, base)
 
-            elif regex_pattern.match(value):
-                options={"pattern" : value}
-                restriction=ids.Restriction(base, options)
-            else:
-                Ops.msgError("Expression Error", "Expression does not match either a list or a regex.")
-                break
-
-            dict_data[key]=restriction #override value with restriction object in dict_data
+    #         elif is_regex:
+    #             options={"pattern" : value}
+    #             restriction=ids.Restriction(options, base)
+    #         else:
+    #             print("Expression does not match either a list or a regex.")
+            
+    #         if restriction:
+    #             dict_data[key]=restriction #override value with restriction object in dict_data
 
     def typeOfRestriction(operator:str)->str:
-        if operator == ">":
+        if operator == '>':
             restr_type= "maxExclusive"
         elif operator == "<":
-            restr_type= "maxExclusive"
+            restr_type= "minExclusive"
         elif operator == ">=":
             restr_type= "maxInclusive"
         elif operator == "<=":
             restr_type= "minInclusive"
-            return restr_type
 
-    def loadComplexRestritctions(self):
-        pass
+        return restr_type
+
+    def loadRestrictions(facet_element:ids.Facet)->ids.Facet:
+        for attr_name in dir(facet_element):
+            attr_value = getattr(facet_element, attr_name)
+            
+            # Check if the attribute value is an instance of Restriction
+            if isinstance(attr_value, ids.Restriction):
+                text_converted= IdsOps.convertRestrictionText(attr_value.__str__())
+                setattr(facet_element, attr_name, text_converted)
     
+        return facet_element
+    
+    def convertRestrictionText(input_str:str):
+        # Convert the string representation of the dictionary to an actual dictionary
+        try:
+            input_dict = ast.literal_eval(input_str)
+        except (ValueError, SyntaxError):
+            raise ValueError("Invalid input string format")
+        
+        if 'pattern' in input_dict:
+            return input_dict['pattern']
+        
+        elif 'enumeration' in input_dict:
+            return str(input_dict['enumeration'])
+        
+        else:
+            # Handling range restrictions
+            min_exclusive = input_dict.get('minExclusive')
+            max_exclusive = input_dict.get('maxExclusive')
+            min_inclusive = input_dict.get('minInclusive')
+            max_inclusive = input_dict.get('maxInclusive')
+            
+            boundaries = []
+            
+            if min_exclusive is not None:
+                boundaries.append(f"<{min_exclusive}")
+            
+            if max_exclusive is not None:
+                boundaries.append(f">{max_exclusive}")
+            
+            if min_inclusive is not None:
+                boundaries.append(f"<={min_inclusive}")
+            
+            if max_inclusive is not None:
+                boundaries.append(f">={max_inclusive}")
+            
+            # Join boundaries with comma if both are present
+            return ','.join(boundaries)
+
     @staticmethod
     def addFacetApplicability(my_spec, facet):
         my_spec.applicability.append(facet)

@@ -39,20 +39,15 @@ class byAttribute(QMainWindow):
             "optionality": self.combo_optionality.currentText()
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
-        dict_with_restrictions= IdsOps.createComplexRestrictions(dict_data) 
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
         return dict_with_restrictions
     
     def loadData(self):
-        self.txt_name.setText(self.my_facet.name)
-        value = self.my_facet.value
-        if value is ids.Restriction: #TODO:Is Restriction or dict?
-            for restriction in value:
-            #TODO: Parse Restriction to text and load in QlineEdit
-                pass
-        else:
-            self.txt_value.setText(self.my_facet.value)
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_name.setText(facet_to_load.name)
+        self.txt_value.setText(facet_to_load.value)
         #Set value in combobox_optionality
-        optionality= self.my_facet.cardinality
+        optionality= facet_to_load.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)
 
 class byClass(QMainWindow):
@@ -81,11 +76,14 @@ class byClass(QMainWindow):
             "name": self.txt_name.text() ,
             "predef_type": self.txt_type.text()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
+        return dict_with_restrictions
     
     def loadData(self):
-        self.txt_name.setText(self.my_facet.name) 
-        self.txt_type.setText(self.my_facet.predefinedType)
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_name.setText(facet_to_load.name) 
+        self.txt_type.setText(facet_to_load.predefinedType)
         #clas entity MUST be required, there is no optionality to be provided. https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
 
 class byClassification(QMainWindow):
@@ -119,12 +117,15 @@ class byClassification(QMainWindow):
             "uri": self.txt_uri.text(),
             "optionality": self.combo_optionality.currentText()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
+        return dict_with_restrictions 
     
     def loadData(self):
-        self.txt_system.setText(self.my_facet.system) 
-        self.txt_value.setText(self.my_facet.value) 
-        self.txt_uri.setText(self.my_facet.uri)
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_system.setText(facet_to_load.system) 
+        self.txt_value.setText(facet_to_load.value) 
+        self.txt_uri.setText(facet_to_load.uri)
 
         #Set value in combobox_optionality
         optionality= self.my_facet.cardinality
@@ -159,11 +160,14 @@ class byMaterial(QMainWindow):
             "uri": self.txt_uri.text(),
             "optionality": self.combo_optionality.currentText()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
+        return dict_with_restrictions
     
     def loadData(self):
-        self.txt_value.setText(self.my_facet.value) 
-        self.txt_uri.setText(self.my_facet.uri) 
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_value.setText(facet_to_load.value) 
+        self.txt_uri.setText(facet_to_load.uri) 
 
         #Set value in combobox_optionality
         optionality= self.my_facet.cardinality
@@ -200,12 +204,15 @@ class byPartOf(QMainWindow):
             "relation": self.txt_relation.text(),
             "optionality": self.combo_optionality.currentText()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
+        return dict_with_restrictions
     
     def loadData(self):
-        self.txt_entity.setText(self.my_facet.name) 
-        self.txt_predef_type.setText(self.my_facet.predefinedType)
-        self.txt_relation.setText(self.my_facet.relation) 
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_entity.setText(facet_to_load.name) 
+        self.txt_predef_type.setText(facet_to_load.predefinedType)
+        self.txt_relation.setText(facet_to_load.relation) 
 
         #Set value in combobox_optionality
         optionality= self.my_facet.cardinality
@@ -246,14 +253,17 @@ class byProperty(QMainWindow):
             "uri" : self.txt_uri.text(),
             "optionality": self.combo_optionality.currentText()
         }
-        return Ops.dictEmptyValueToNone(dict_data)
+        dict_data= Ops.dictEmptyValueToNone(dict_data)
+        dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
+        return dict_with_restrictions
     
     def loadData(self):
-        self.txt_name.setText(self.my_facet.baseName) 
-        self.txt_pset.setText(self.my_facet.propertySet)
-        self.txt_data_type.setText(self.my_facet.dataType)
-        self.txt_value.setText(self.my_facet.value) 
-        self.txt_uri.setText(self.my_facet.uri) 
+        facet_to_load= IdsOps.loadRestrictions(self.my_facet)
+        self.txt_name.setText(facet_to_load.baseName) 
+        self.txt_pset.setText(facet_to_load.propertySet)
+        self.txt_data_type.setText(facet_to_load.dataType)
+        self.txt_value.setText(facet_to_load.value) 
+        self.txt_uri.setText(facet_to_load.uri) 
 
         #Set value in combobox_optionality
         optionality= self.my_facet.cardinality

@@ -318,7 +318,7 @@ class IdsSpecEditorWindow(QMainWindow):
     def save_requirements_data(self):
         #Create new facet
         current_text = self.combo_add_requirement.currentText()
-        dict_data = self.opened_window.getData()
+        dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
         if isinstance(facet, ids.Entity):
             item= IdsOps.entityToString(facet, "requirement") # Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
