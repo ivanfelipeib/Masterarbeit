@@ -39,7 +39,8 @@ class byAttribute(QMainWindow):
             "optionality": self.combo_optionality.currentText()
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
-        return IdsOps.checkComplexRestriction(dict_data) 
+        dict_with_restrictions= IdsOps.createComplexRestrictions(dict_data) 
+        return dict_with_restrictions
     
     def loadData(self):
         self.txt_name.setText(self.my_facet.name)

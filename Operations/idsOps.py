@@ -72,38 +72,62 @@ class IdsOps():
 
         return facet
 
-    def checkComplexRestriction(dict_data:dict, restriction_base:str)->dict:
-        #Based on the type of data in QLineEdit, create instance of class Restriction
-       
-        for key, value in dict_data.items():
-            if restriction_base =="double":
-                if Ops.validateRangeOverlapInString(value):
-                    parts = value.split(',')
-                    options={}
-                    pattern = r"^\s*(>=|<=|>|<)\s*(\d+(\.\d+)?)\s*$" #Regex pattern "operator+number, operator+number"
-                    for part in value:
-                        part = part.strip()
-                        match = re.match(pattern, part)  #match part against pattern
-                        if match:
-                            # Extract the operator and value and create restriction
-                            operator, value = match.groups()[0], float(match.groups()[1])
-                            restr_type= IdsOps.typeOfRestriction(operator) #Set restriction type based in operator
-                            base= restriction_base
-                            options[restr_type]=value
-                    restriction=ids.Restriction(base, options)
-                    dict_data[key]=restriction #override value with restriction object in dict_data
-                else:
-                    Ops.msgError("Error in complex restriction", "The string representing range boundaries describes overlapping ranges .")
-
-            elif restriction_base == "string":
-                is_regex= re.compile(value)
-                if is_regex:
-                    base="pattern"
-                    options={base : value}
-                    restriction=ids.Restriction(base, options)
-                    dict_data[key]=restriction #override value with restriction object in dict_data
-        return dict_data
+    def createComplexRestrictions(dict_data:dict)->dict:
+        data1=IdsOps.restrictionBaseDouble(dict_data)
+        data2=IdsOps.restrictionBaseString(data1)
+        return data2
     
+    def restrictionBaseDouble(dict_data:dict):
+        single_boundary_pattern = re.compile(r'^[<>]=?-?\d+(\.\d+)?$')
+        double_boundary_pattern = re.compile(r'^([<>]=?-?\d+(\.\d+)?),([<>]=?-?\d+(\.\d+)?)$')
+        base="double"
+        for key, value in dict_data.items():
+            if isinstance(value, str):
+                match_single= single_boundary_pattern.match(value)
+                match_double= double_boundary_pattern.match(value)
+                # Check if the value matches the single boundary pattern
+                if match_single:
+                    operator, value_restriction = match_single.groups()[0], float(match_single.groups()[1])
+                    restr_type= IdsOps.typeOfRestriction(operator)
+                    options={restr_type: value_restriction}
+                    restriction= ids.Restriction(base,options)
+                    
+                # Check if the value matches the double boundary pattern
+                elif match_double:
+                    operator1, value_restriction1 = match_double.group(1), float(match_double.group(2))
+                    operator2, value_restriction2 = match_double.group(3), float(match_double.group(4))
+                    restr_type1= IdsOps.typeOfRestriction(operator1)
+                    restr_type2= IdsOps.typeOfRestriction(operator2)
+                    options={restr_type1:value_restriction1, restr_type2 : restr_type2 }
+                    restriction= ids.Restriction(base,options)
+
+                else:
+                    Ops.msgError("Expression Error", "Expression does not match any range of values.")
+                    break
+
+                dict_data[key] = restriction
+
+        return dict_data
+        
+    def restrictionBaseString(dict_data:dict):
+        list_pattern = re.compile(r'^\[.*\]$')
+        regex_pattern= re.compile(value)
+        base="string"
+        for key, value in dict_data.items():
+            value_restriction={}
+            if list_pattern.match(value):
+                options={"enumeration": value}
+                restriction= ids.Restriction(base,options)
+
+            elif regex_pattern.match(value):
+                options={"pattern" : value}
+                restriction=ids.Restriction(base, options)
+            else:
+                Ops.msgError("Expression Error", "Expression does not match either a list or a regex.")
+                break
+
+            dict_data[key]=restriction #override value with restriction object in dict_data
+
     def typeOfRestriction(operator:str)->str:
         if operator == ">":
             restr_type= "maxExclusive"
@@ -115,6 +139,9 @@ class IdsOps():
             restr_type= "minInclusive"
             return restr_type
 
+    def loadComplexRestritctions(self):
+        pass
+    
     @staticmethod
     def addFacetApplicability(my_spec, facet):
         my_spec.applicability.append(facet)
