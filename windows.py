@@ -284,10 +284,10 @@ class IdsSpecEditorWindow(QMainWindow):
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of filter")
         
-        # if text != "Add filter by class":
-        #     self.opened_window.combo_optionality.hide()
-        #     self.opened_window.lbl_optionality.hide()
-        # else: pass
+        if text != "Add filter by class": # In Applicability section, there's one cardinality for all facets. Individual cardinality comboBox hide
+            self.opened_window.combo_optionality.hide()
+            self.opened_window.lbl_optionality.hide()
+        else: pass
 
     def openRequirementSubWindow(self, text, facet_to_load=None):
         mdi_area = self.mdi_requirement
@@ -310,18 +310,13 @@ class IdsSpecEditorWindow(QMainWindow):
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
-        # if text != "Add requirement by class":
-        #     self.opened_window.combo_optionality.show()
-        #     self.opened_window.lbl_optionality.show()
-        # else: pass
-
     def save_requirements_data(self):
         #Create new facet
         current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
         facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
         if isinstance(facet, ids.Entity):
-            item= IdsOps.entityToString(facet, "requirement") # Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
+            item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
         else:
             item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
         
@@ -839,7 +834,7 @@ class IfcInfoWindow(QMainWindow):
     def generateExcelRepot(self):
         data=self.generateDataDict()
         filepath=Ops.filePathExport(self)
-        Ops.generateExcelReport(self, filepath, data)
+        IfcOps.generateExcelReport(self, filepath, data)
        
 
 class ManageIfcWindow(QMainWindow):
@@ -1041,7 +1036,7 @@ class ManageIdsWindow(QMainWindow):
 class CheckWindow(QMainWindow):
     back_to_main_signal= pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, items_dict:dict=None):
         super(CheckWindow, self).__init__(parent)
 
         # Load UI file
@@ -1049,27 +1044,57 @@ class CheckWindow(QMainWindow):
 
         # Define and load Widgets
         main_widget_setup = {
-            "btn_check_ifc": QPushButton,
-            "btn_check_ifc_ids": QPushButton,
+            "btn_check": QPushButton,
             "btn_report": QPushButton,
             "btn_back": QPushButton,
             "comboBox_ifc": QComboBox,
-            "comboBox_ids": QComboBox
+            "comboBox_ids": QComboBox,
+            "comboBox_report": QComboBox,
+            "lbl_notification": QLabel
         }
         Ops.loadWidgets(self, main_widget_setup)
 
+        self.lbl_notification.hide() #hide lbl_notification when loading window first time
+
         # Connect handlers
         handlers = {
-            #"btn_check_ifc": self.clickImport, TODO: Implement methods for commented buttons
-            #"btn_check_ifc_ids": self.clickDelete,
-            #"btn_report": self.clickExistingEditorWindow,
-            "btn_back": self.back_to_main,
+            "btn_check": self.generateReport,
+            "btn_back": self.back_to_main
         }
         Ops.connectHandlers(self, handlers)
 
     def back_to_main(self):
         self.back_to_main_signal.emit()
         self.hide()
+    
+    def generateReport(self):
+        #handle file paths and file names
+        ids_file= self.comboBox_ids.currentText()
+        ifc_file= self.comboBox_ifc.currentText()
+        report_type= self.comboBox_report.currentText()
+
+        file_name_with_extension=os.path.basename(ifc_file)
+        file_name= os.path.splitext(file_name_with_extension)[0]
+        file_name= file_name.replace(" ", "_")
+        file_extension= "."+report_type.lower()
+        report_name= file_name+ "_Report_" + report_type + file_extension
+
+        folder_path= self.openCustomFileDialog()
+        report_path= folder_path+ f"/{report_name}" 
+
+        #Generate report
+        IfcOps.checkIfcWithIds(ifc_file, ids_file, report_type, report_path)
+        self.lbl_notification.setText(f"Report was saved in: {report_path}")
+        self.lbl_notification.show()
+
+    def openCustomFileDialog(self)->str:
+        options = QFileDialog.Options()
+        folder_path = QFileDialog.getExistingDirectory(self, 
+                                                       "Select Folder", 
+                                                       options=options)
+        if folder_path:
+            return folder_path
+            
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -1116,8 +1141,8 @@ class MainWindow(QMainWindow):
         if self.check_window.comboBox_ifc.count() == 0 and self.check_window.comboBox_ids.count() == 0:
             self.check_window.comboBox_ifc.clear()
             self.check_window.comboBox_ids.clear()
-            self.check_window.comboBox_ifc.addItems(CustomListWidget.getItems(self.ifc_window.list_ifc))
-            self.check_window.comboBox_ids.addItems(CustomListWidget.getItems(self.ids_window.list_ids_mgmnt))
+            self.check_window.comboBox_ifc.addItems(CustomListWidget.getItemsDict(self.ifc_window.list_ifc))
+            self.check_window.comboBox_ids.addItems(CustomListWidget.getItemsDict(self.ids_window.list_ids_mgmnt))
 
             # Hide the main window show check window
             self.hide()  

@@ -48,11 +48,11 @@ class CustomListWidget(QListWidget):
                 self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren")
                 self.msgError.show()
     
-    def getItems(self):
+    def getItemsDict(self)->dict:
         #generates an array wiht elements in list
         self.items=[]
         for x in range(self.count()):
-            self.items.append(os.path.basename(self.item(x).text()))
+            self.items.append(self.item(x).text())
         return self.items
 
 #Custom Line edit constraining text to only capital letters

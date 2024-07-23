@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
-    <height>186</height>
+    <width>780</width>
+    <height>280</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>780</width>
+    <height>280</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>780</width>
+    <height>280</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Compliance Check Window</string>
@@ -19,13 +31,28 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>501</width>
-      <height>121</height>
+      <width>584</width>
+      <height>201</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Check IFC with IDS</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLabel" name="lbl_ifc_title">
          <property name="text">
@@ -34,7 +61,26 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_ifc"/>
+        <widget class="QComboBox" name="comboBox_ifc">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -48,7 +94,79 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox_ids"/>
+        <widget class="QComboBox" name="comboBox_ids">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="lbl_ids_file_2">
+         <property name="text">
+          <string>Report type</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboBox_report">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>580</width>
+           <height>19</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>BCF</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>HTML</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ODS</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>JSON</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </item>
@@ -57,36 +175,58 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>30</y>
-      <width>112</width>
-      <height>132</height>
+      <x>640</x>
+      <y>50</y>
+      <width>111</width>
+      <height>111</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <widget class="QPushButton" name="btn_check_ifc">
-       <property name="text">
-        <string>Check IFC</string>
+      <widget class="QPushButton" name="btn_check">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_check_ifc_ids">
-       <property name="text">
-        <string>Check IFC vs IDS</string>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>23</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="btn_report">
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
-        <string>Show/Hide report</string>
+        <string>Check</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btn_back">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>100</width>
+         <height>23</height>
+        </size>
+       </property>
        <property name="text">
         <string>Back</string>
        </property>
@@ -94,8 +234,39 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="lbl_notification">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>230</y>
+      <width>711</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
+    <property name="font">
+     <font>
+      <family>Arial</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>

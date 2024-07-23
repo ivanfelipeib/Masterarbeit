@@ -74,7 +74,7 @@ class IdsOps():
         return facet
     
     def createRestrictions(dict_data:dict)->dict:
-        single_boundary_pattern = re.compile(r'^[<>]=?-?\d+(\.\d+)?$')
+        single_boundary_pattern = re.compile(r'^([<>]=?)(-?\d+(\.\d+)?)$')
         double_boundary_pattern = re.compile(r'^([<>]=?)(-?\d+(\.\d+)?),([<>]=?)(-?\d+(\.\d+)?)$')
         list_pattern = re.compile(r'^\[.*\]$')
         
