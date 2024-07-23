@@ -517,6 +517,8 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_editor.hide()
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
+
+        Ops.msgError(self, "Warning", "To proceed with the IDS authoring process, all the fields marked as required must be provided. Required information in marked with *.")
         self.btn_ids_specifications.show()
 
     def openSpecListWindow(self):
@@ -537,12 +539,19 @@ class IdsEditorWindow(QMainWindow):
         self.spec_list_window.spec_editor_window = Ops.openSubWindow(self.mdi_editor, IdsSpecEditorWindow, None, setup_signals=setup_signals, my_spec_instance= my_spec)
 
     def openAuditWindow(self):
-        self.mdi_editor.hide()
-        self.mdi_list.resize(800,832)
-        self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
-        self.generateIdsFile() #generate IDS file in temp_files folder each time Audit button is clicked
-        self.runAudit() 
-        self.btn_ids_save.show()
+        if not self.info_window.txt_title.text() or not self.info_window.txt_version.text() or not self.info_window.txt_author.text():
+            Ops.msgError(self, "IDS Information: missing information", "To proceed with the IDS audit process, all the fields marked as required must be provided. Required information in marked with *.")
+        elif not Ops.isValidEmail(self.info_window.txt_author.text()):
+            Ops.msgError(self, "IDS Information: Email required", "Field author requires a valid email address")
+        elif self.spec_list_window.list_ids_spec.count() == 0:
+            Ops.msgError(self, "IDS Specifications:", "The current IDS file has no specifications, add at least one specification before proceeding with the IDS audit process")
+        else:
+            self.mdi_editor.hide()
+            self.mdi_list.resize(800,832)
+            self.audit_window = Ops.openSubWindow(self.mdi_list, IdsEditorAuditWindow, self.audit_window, None)
+            self.generateIdsFile() #generate IDS file in temp_files folder each time Audit button is clicked
+            self.runAudit() 
+            self.btn_ids_save.show()
 
     def generateIdsFile(self):
         self.my_ids= IdsOps.createIds() #TODO: Add try catch, to handle when user clicks automatically in audit before clicking on info and specifications

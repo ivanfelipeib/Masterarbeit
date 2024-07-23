@@ -93,6 +93,11 @@ class Ops():
                 dict_data[key] = None
         return dict_data
 
+    @staticmethod
+    def isValidEmail(email: str) -> bool:
+        pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' # Basic regex pattern for email validation
+        return re.match(pattern, email) is not None
+
     def setTextComboBox(window, combo_box_name:str= "comboBox", text:str="Text to search"):
         combo_box_widget = getattr(window, combo_box_name, None)
 
