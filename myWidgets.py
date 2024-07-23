@@ -5,10 +5,11 @@ import os
 
 #Custom List allowing drag and drop and constraining number of elements in list
 class CustomListWidget(QListWidget):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, type_restriction=None):
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.maxFileList = 10
+        self.type_restriction= type_restriction
     
     #Events
     def dragEnterEvent(self, event):
@@ -34,7 +35,7 @@ class CustomListWidget(QListWidget):
                 for url in event.mimeData().urls():
                     filepath=str(url.toLocalFile())
                     itemInList= len(self.findItems(filepath, Qt.MatchExactly))
-                    if url.isLocalFile() and itemInList ==0: #urls.isLocalFile exclude urls from websites
+                    if url.isLocalFile() and itemInList ==0 and filepath.lower().endswith(self.type_restriction): #urls.isLocalFile exclude urls from websites / set restrictions to drop
                         links.append(filepath)
                         self.maxFileList-=1
                     else:
@@ -45,7 +46,7 @@ class CustomListWidget(QListWidget):
                 self.msgError= QMessageBox()
                 self.msgError.setIcon(QMessageBox.Warning)
                 self.msgError.setWindowTitle("Error")
-                self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren")
+                self.msgError.setText("You cannot import more than 10 files.")
                 self.msgError.show()
     
     def getItemsDict(self)->dict:

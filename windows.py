@@ -119,6 +119,7 @@ class IdsSpecListWindow(QMainWindow):
             "list_ids_spec": CustomListWidget
         }
         Ops.loadWidgets(self, main_widget_setup)
+        
 
         #Define Subwindows
         self.spec_editor_window=None
@@ -848,10 +849,11 @@ class ManageIfcWindow(QMainWindow):
         main_widget_setup = {
             "btn_import_ifc": QPushButton,
             "btn_delete_ifc": QPushButton,
-            "list_ifc": CustomListWidget,
+            "list_ifc": CustomListWidget
         }
         # Load Widgets
         Ops.loadWidgets(self, main_widget_setup )
+        self.list_ifc.type_restriction=".ifc" #constrain drag and drop just to ifc files
 
         # Connect handlers
         handlers = {
@@ -915,6 +917,8 @@ class ManageIdsWindow(QMainWindow):
             "list_ids_mgmnt": CustomListWidget
         }
         Ops.loadWidgets(self, main_widget_setup )
+        self.list_ids_mgmnt.type_restriction=".ids" #constrain drag and drop just to IDS files
+
 
         #Create instance of Subwindows
         self.idsEditor_window=None
