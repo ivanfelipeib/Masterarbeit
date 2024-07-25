@@ -252,7 +252,7 @@ class IdsSpecEditorWindow(QMainWindow):
         handlers = {
             "btn_save_requirement": self.save_requirements_data,
             "btn_save_filter": self.save_filters_data,
-            "btn_edit_filter": self.loadFilSubWindow,
+            "btn_edit_filter": self.loadFilterSubWindow,
             "btn_edit_requirement": self.loadReqSubWindow,
             "btn_delete_filter": self.clickDeleteFilter,
             "btn_delete_requirement": self.clickDeleteRequirement,
@@ -308,74 +308,86 @@ class IdsSpecEditorWindow(QMainWindow):
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
     def save_requirements_data(self):
-        dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
-
-        if dict_data["info_required"]:
-            dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
-            #Create new facet
-            current_text = self.combo_add_requirement.currentText()
-            facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
-            if isinstance(facet, ids.Entity):
-                item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
-            else:
-                item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
-            
-            #if there was and element in edition, delete old element from dictionary and list for adding edited element
-            if self.facet_in_edition:
-                del self.dic_requirements[self.facet_in_edition]
-                Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
-                self.facet_in_edition= None
-
-            #Add newfacet to dictionary and list
-            self.dic_requirements[item]= facet
-            self.list_requirements.addItem(item)
-            self.opened_window.close()
+        if not self.mdi_requirement.subWindowList():
+            Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
         else:
-            Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+            dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
+
+            if dict_data["info_required"]: #If required information was provided in filter add filter in list
+                dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+                #Create new facet
+                current_text = self.combo_add_requirement.currentText()
+                facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
+                if isinstance(facet, ids.Entity):
+                    item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
+                else:
+                    item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
+                
+                #if there was and element in edition, delete old element from dictionary and list for adding edited element
+                if self.facet_in_edition:
+                    del self.dic_requirements[self.facet_in_edition]
+                    Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
+                    self.facet_in_edition= None
+
+                #Add newfacet to dictionary and list
+                self.dic_requirements[item]= facet
+                self.list_requirements.addItem(item)
+                self.opened_window.close()
+            else:
+                Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def save_filters_data(self):
-        dict_data = self.opened_window.getData()
-
-        if dict_data["info_required"]:
-            dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
-            #Create new facet
-            current_text = self.combo_add_filter.currentText()
-            cardinality = self.combo_mandatory.currentText()
-            facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
-            if isinstance(facet, ids.Entity):
-                item= IdsOps.entityToString(facet,"applicability")
-            else:
-                item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
-
-            #if there was and element in edition, delete element from dictionary and list
-            if self.facet_in_edition:
-                del self.dic_filters[self.facet_in_edition]
-                Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
-                self.facet_in_edition= None
-
-            self.dic_filters[item]= facet
-            self.list_filters.addItem(item)
-            self.opened_window.close()
+        if not self.mdi_filter.subWindowList():
+            Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
         else:
-            Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+            dict_data = self.opened_window.getData()
+
+            if dict_data["info_required"]:#If required information was provided in requirement add requirement in list
+                dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+                #Create new facet
+                current_text = self.combo_add_filter.currentText()
+                cardinality = self.combo_mandatory.currentText()
+                facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
+                if isinstance(facet, ids.Entity):
+                    item= IdsOps.entityToString(facet,"applicability")
+                else:
+                    item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
+
+                #if there was and element in edition, delete element from dictionary and list
+                if self.facet_in_edition:
+                    del self.dic_filters[self.facet_in_edition]
+                    Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
+                    self.facet_in_edition= None
+
+                self.dic_filters[item]= facet
+                self.list_filters.addItem(item)
+                self.opened_window.close()
+            else:
+                Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def clickDeleteRequirement(self):
-        index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            facet = self.dic_requirements.pop(item)  # Remove the entry and get the associated object
-            self.list_requirements.model().removeRow(index.row())
-            del facet
-        self.list_requirements.maxFileList+=1
+        if Ops.checkIfElementSelected(self, self.list_requirements):
+            index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                facet = self.dic_requirements.pop(item)  # Remove the entry and get the associated object
+                self.list_requirements.model().removeRow(index.row())
+                del facet
+            self.list_requirements.maxFileList+=1
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
 
     def clickDeleteFilter(self):
-        index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            facet = self.dic_filters.pop(item)  # Remove the entry and get the associated object
-            self.list_filters.model().removeRow(index.row())
-            del facet
-        self.list_filters.maxFileList+=1
+        if Ops.checkIfElementSelected(self, self.list_filters):
+            index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                facet = self.dic_filters.pop(item)  # Remove the entry and get the associated object
+                self.list_filters.model().removeRow(index.row())
+                del facet
+            self.list_filters.maxFileList+=1
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
     
     def loadRequirementsList(self):
         for requirement_load in self.my_spec.requirements:
@@ -401,33 +413,39 @@ class IdsSpecEditorWindow(QMainWindow):
         Ops.setTextComboBox(self,"combo_ifc_version", ifc_version)
     
     def loadReqSubWindow(self):
-        index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            self.facet_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
-            req_selected = self.dic_requirements[item]
-            facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
-            #handle facet name to match element in ComboBox(combo_add_requirement)
-            if facet_class=="entity":
-                facet_class = "class"
-            elif facet_class=="partof":
-                facet_class = "part of"
-            text = "Add requirement by "+ facet_class
-            Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
-        self.openRequirementSubWindow(text, req_selected)
+        if Ops.checkIfElementSelected(self, self.list_requirements):
+            index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                self.facet_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
+                req_selected = self.dic_requirements[item]
+                facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
+                #handle facet name to match element in ComboBox(combo_add_requirement)
+                if facet_class=="entity":
+                    facet_class = "class"
+                elif facet_class=="partof":
+                    facet_class = "part of"
+                text = "Add requirement by "+ facet_class
+                Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
+            self.openRequirementSubWindow(text, req_selected)
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
 
-    def loadFilSubWindow(self):
-        index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
-            filter_selected = self.dic_filters[item]
-            facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
-            if facet_class=="entity":
-                facet_class = "class"
-            text = "Add filter by "+ facet_class
-            Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
-        self.openFilterSubWindow(text, filter_selected)
+    def loadFilterSubWindow(self):
+        if Ops.checkIfElementSelected(self, self.list_filters):
+            index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
+                filter_selected = self.dic_filters[item]
+                facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
+                if facet_class=="entity":
+                    facet_class = "class"
+                text = "Add filter by "+ facet_class
+                Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
+            self.openFilterSubWindow(text, filter_selected)
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
     
     def loadCardinality(self):
         #Set cardinality according with IDS documentation https://github.com/buildingSMART/IDS/blob/development/Documentation/specifications.md
@@ -454,25 +472,27 @@ class IdsSpecEditorWindow(QMainWindow):
             print(f"Value '{cardinality}' set successfully in the combo box for{self.my_spec}")
 
     def saveSpecification(self):
-        #add Specification Info to Specification instance
-        spec_info = {
-            "name": self.txt_name.text(),
-            "ifcVersion": self.combo_ifc_version.currentText(),
-            "identifier": str(uuid.uuid4()),
-            "description": self.txt_description.toPlainText(),
-            "instructions": self.txt_instructions.toPlainText(),
-        }
-        self.my_spec=IdsOps.addSpecInfo(spec_info)
-        #Add Applicability and Requirments to specification instance
-        self.my_spec.applicability = list(self.dic_filters.values())
-        self.my_spec.requirements = list(self.dic_requirements.values())
-        # Set cardinality of Applicability section
-        optionality = self.combo_mandatory.currentText()
-        self.my_spec.set_usage(usage=optionality) 
-        #Add populated specification to Specification list. Emit signal to method openSpecEditor in class IdsEditorWindow
-        self.add_spec_to_list.emit()
-        self.close()
-        print(self.my_spec.name)
+        if self.txt_name.text() and self.list_filters.count() > 0:
+            #add Specification Info to Specification instance
+            spec_info = {
+                "name": self.txt_name.text(),
+                "ifcVersion": self.combo_ifc_version.currentText(),
+                "identifier": str(uuid.uuid4()),
+                "description": self.txt_description.toPlainText(),
+                "instructions": self.txt_instructions.toPlainText(),
+            }
+            self.my_spec=IdsOps.addSpecInfo(spec_info)
+            #Add Applicability and Requirments to specification instance
+            self.my_spec.applicability = list(self.dic_filters.values())
+            self.my_spec.requirements = list(self.dic_requirements.values())
+            # Set cardinality of Applicability section
+            optionality = self.combo_mandatory.currentText()
+            self.my_spec.set_usage(usage=optionality) 
+            #Add populated specification to Specification list. Emit signal to method openSpecEditor in class IdsEditorWindow
+            self.add_spec_to_list.emit()
+            self.close()
+        else:
+            Ops.msgError(self,"Specification Error", "Please check that the required information marked with (*) has been provided. A specification must have at least one item in the applicability section")
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()

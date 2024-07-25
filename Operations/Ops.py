@@ -213,6 +213,13 @@ class Ops():
         else:
             return False
 
+    def checkIfElementSelected(window, list_widget):
+        if list_widget.count() == 0:
+            return False
+        elif not list_widget.selectedItems():
+            return False
+        return True
+
     @staticmethod
     def msgError(self,title, msg):
         self.msgError= QMessageBox()
