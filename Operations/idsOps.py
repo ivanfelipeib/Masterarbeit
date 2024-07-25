@@ -77,8 +77,11 @@ class IdsOps():
         single_boundary_pattern = re.compile(r'^([<>]=?)(-?\d+(\.\d+)?)$')
         double_boundary_pattern = re.compile(r'^([<>]=?)(-?\d+(\.\d+)?),([<>]=?)(-?\d+(\.\d+)?)$')
         list_pattern = re.compile(r'^\[.*\]$')
-        
+
         for key, value in dict_data.items():
+            if key== "info_required": # Skip flag to check required information for facet 
+                continue
+            
             is_regex= Ops.isRegex(value)
             if isinstance(value, str):
                 restriction=None

@@ -260,10 +260,6 @@ class IdsSpecEditorWindow(QMainWindow):
         }
         Ops.connectHandlers(self, handlers)
 
-        #Connect buttons with methods that do take arguments
-        # self.btn_edit_filter.clicked.connect(lambda: self.loadFilSubWindow('parameter1', 'parameter2'))
-        # self.btn_edit_requirement.clicked.connect(lambda: self.loadReqSubWindow('parameter1', 'parameter2'))
-    
     def openFilterSubWindow(self, text, facet_to_load = None):
         mdi_area = self.mdi_filter
         mdi_area.closeAllSubWindows()
@@ -312,46 +308,56 @@ class IdsSpecEditorWindow(QMainWindow):
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
     def save_requirements_data(self):
-        #Create new facet
-        current_text = self.combo_add_requirement.currentText()
         dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
-        facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
-        if isinstance(facet, ids.Entity):
-            item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
-        else:
-            item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
-        
-        #if there was and element in edition, delete old element from dictionary and list for adding edited element
-        if self.facet_in_edition:
-            del self.dic_requirements[self.facet_in_edition]
-            Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
-            self.facet_in_edition= None
 
-        #Add newfacet to dictionary and list
-        self.dic_requirements[item]= facet
-        self.list_requirements.addItem(item)
-        self.opened_window.close()
+        if dict_data["info_required"]:
+            dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+            #Create new facet
+            current_text = self.combo_add_requirement.currentText()
+            facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
+            if isinstance(facet, ids.Entity):
+                item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
+            else:
+                item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
+            
+            #if there was and element in edition, delete old element from dictionary and list for adding edited element
+            if self.facet_in_edition:
+                del self.dic_requirements[self.facet_in_edition]
+                Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
+                self.facet_in_edition= None
+
+            #Add newfacet to dictionary and list
+            self.dic_requirements[item]= facet
+            self.list_requirements.addItem(item)
+            self.opened_window.close()
+        else:
+            Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def save_filters_data(self):
-        #Create new facet
-        current_text = self.combo_add_filter.currentText()
         dict_data = self.opened_window.getData()
-        cardinality = self.combo_mandatory.currentText()
-        facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
-        if isinstance(facet, ids.Entity):
-            item= IdsOps.entityToString(facet,"applicability")
+
+        if dict_data["info_required"]:
+            dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+            #Create new facet
+            current_text = self.combo_add_filter.currentText()
+            cardinality = self.combo_mandatory.currentText()
+            facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
+            if isinstance(facet, ids.Entity):
+                item= IdsOps.entityToString(facet,"applicability")
+            else:
+                item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
+
+            #if there was and element in edition, delete element from dictionary and list
+            if self.facet_in_edition:
+                del self.dic_filters[self.facet_in_edition]
+                Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
+                self.facet_in_edition= None
+
+            self.dic_filters[item]= facet
+            self.list_filters.addItem(item)
+            self.opened_window.close()
         else:
-            item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
-
-        #if there was and element in edition, delete element from dictionary and list
-        if self.facet_in_edition:
-            del self.dic_filters[self.facet_in_edition]
-            Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
-            self.facet_in_edition= None
-
-        self.dic_filters[item]= facet
-        self.list_filters.addItem(item)
-        self.opened_window.close()
+            Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def clickDeleteRequirement(self):
         index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
@@ -518,7 +524,7 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
 
-        Ops.msgError(self, "Warning", "To proceed with the IDS authoring process, all the fields marked as required must be provided. Required information in marked with *.")
+        Ops.msgError(self, "Warning", "To proceed with the IDS authoring process, all the fields marked as required must be provided. Required information is marked with *.")
         self.btn_ids_specifications.show()
 
     def openSpecListWindow(self):

@@ -12,6 +12,8 @@ class byAttribute(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
         
         # Load UI file
         Ops.load_ui("by_attribute.ui",self, filter=True)
@@ -33,15 +35,19 @@ class byAttribute(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_name.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
-            "name": self.txt_name.text() ,
+            "name": self.txt_name.text(),
             "value": self.txt_value.text(),
-            "optionality": self.combo_optionality.currentText()
+            "optionality": self.combo_optionality.currentText(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
         return dict_with_restrictions
-    
+            
     def loadData(self):
         facet_to_load= IdsOps.loadRestrictions(self.my_facet)
         self.txt_name.setText(facet_to_load.name)
@@ -56,6 +62,8 @@ class byClass(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
 
         # Load UI file
         Ops.load_ui("by_class.ui",self, filter=True)
@@ -72,9 +80,13 @@ class byClass(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_name.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
             "name": self.txt_name.text() ,
-            "predef_type": self.txt_type.text()
+            "predef_type": self.txt_type.text(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
@@ -92,6 +104,8 @@ class byClassification(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
 
         # Load UI file
         Ops.load_ui("by_classification.ui",self, filter=True)
@@ -111,11 +125,15 @@ class byClassification(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_system.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
             "system": self.txt_system.text() ,
             "value": self.txt_value.text(),
             "uri": self.txt_uri.text(),
-            "optionality": self.combo_optionality.currentText()
+            "optionality": self.combo_optionality.currentText(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
@@ -137,6 +155,8 @@ class byMaterial(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
 
         # Load UI file
         Ops.load_ui("by_material.ui",self, filter=True)
@@ -155,10 +175,14 @@ class byMaterial(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_value.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
             "value": self.txt_value.text(),
             "uri": self.txt_uri.text(),
-            "optionality": self.combo_optionality.currentText()
+            "optionality": self.combo_optionality.currentText(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
@@ -179,6 +203,8 @@ class byPartOf(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
 
         # Load UI file
         Ops.load_ui("by_part_of.ui",self, filter=True)
@@ -198,11 +224,15 @@ class byPartOf(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_entity.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
             "name": self.txt_entity.text(),
             "predef_type": self.txt_predef_type.text(),
             "relation": self.txt_relation.text(),
-            "optionality": self.combo_optionality.currentText()
+            "optionality": self.combo_optionality.currentText(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
@@ -224,6 +254,8 @@ class byProperty(QMainWindow):
 
         #Load facet if passed from SpecEditorWindow
         self.my_facet=my_facet
+        #set flag for required information
+        self.flag_required_info= False
 
         # Load UI file
         Ops.load_ui("by_property.ui",self, filter=True)
@@ -245,13 +277,17 @@ class byProperty(QMainWindow):
             self.loadData()
 
     def getData(self):
+        if self.txt_name.text() and self.txt_pset.text():
+            self.flag_required_info=True # If required fields provided then True
+
         dict_data= {
             "name": self.txt_name.text(),
             "pset": self.txt_pset.text(),
             "data_type": self.txt_data_type.text(),
             "value" :self.txt_value.text(),
             "uri" : self.txt_uri.text(),
-            "optionality": self.combo_optionality.currentText()
+            "optionality": self.combo_optionality.currentText(),
+            "info_required": self.flag_required_info
         }
         dict_data= Ops.dictEmptyValueToNone(dict_data)
         dict_with_restrictions= IdsOps.createRestrictions(dict_data) 
