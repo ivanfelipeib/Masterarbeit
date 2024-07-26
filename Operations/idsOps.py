@@ -148,13 +148,13 @@ class IdsOps():
 
     def typeOfRestriction(operator:str)->str:
         if operator == '>':
-            restr_type= "maxExclusive"
-        elif operator == "<":
             restr_type= "minExclusive"
+        elif operator == "<":
+            restr_type= "maxExclusive"
         elif operator == ">=":
-            restr_type= "maxInclusive"
-        elif operator == "<=":
             restr_type= "minInclusive"
+        elif operator == "<=":
+            restr_type= "maxInclusive"
 
         return restr_type
 
@@ -192,16 +192,16 @@ class IdsOps():
             boundaries = []
             
             if min_exclusive is not None:
-                boundaries.append(f"<{min_exclusive}")
+                boundaries.append(f">{min_exclusive}")
             
             if max_exclusive is not None:
-                boundaries.append(f">{max_exclusive}")
+                boundaries.append(f"<{max_exclusive}")
             
             if min_inclusive is not None:
-                boundaries.append(f"<={min_inclusive}")
+                boundaries.append(f">={min_inclusive}")
             
             if max_inclusive is not None:
-                boundaries.append(f">={max_inclusive}")
+                boundaries.append(f"<={max_inclusive}")
             
             # Join boundaries with comma if both are present
             return ','.join(boundaries)
