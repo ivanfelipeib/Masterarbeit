@@ -123,7 +123,8 @@ class IfcOps:
         my_ifc = ifcopenshell.open(ifc_file_path)
         my_ids = ifctester.open(ids_file_path)  
         my_ids.validate(my_ifc) #validate IFC against IDS
-
+        reporter_obj = None
+        
         match report_type:
             case "HTML":
                 reporter_obj = reporter.Html(my_ids)
@@ -134,8 +135,11 @@ class IfcOps:
             case "BCF":
                 reporter_obj= reporter.Bcf(my_ids)
 
-        reporter_obj.report()
-        reporter_obj.to_file(report_file_path)
+        if reporter_obj:
+            reporter_obj.report()
+            reporter_obj.to_file(report_file_path)
+        else:
+            print("reporter is None")
 
 
 
