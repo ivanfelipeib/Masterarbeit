@@ -706,7 +706,7 @@ class IfcInfoWindow(QMainWindow):
         self.txt_longitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LONGITUDE)))
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
-        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcProduct")) #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
+        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcElement")) #IfcElement for physically existing objects / IfcProduct for hat can be spatially located in a building model
 
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
@@ -726,7 +726,7 @@ class IfcInfoWindow(QMainWindow):
         self.txt_longitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LONGITUDE)))
         self.txt_ifc_schema.setText(self.my_schema)
         self.txt_software.setText(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_AUTHOR_SOFTWARE))
-        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcProduct")) #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
+        self.txt_objects_number.setText(IfcOps.numberElementbyEntity(self.my_IfcOps,"IfcElement")) #IfcElement for physically existing objects / IfcProduct for hat can be spatially located in a building model
   
         #Project-related Information
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
@@ -739,7 +739,7 @@ class IfcInfoWindow(QMainWindow):
     def loadEntities(self):
         self.combo_entity.clear()
         entities = set()
-        for entity in self.my_model.by_type('IfcProduct'): #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcproduct.htm
+        for entity in self.my_model.by_type('IfcElement'): #Includes IfcElement (Elements are physically existent objects, although they might be void elements, such as holes) https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/schema/ifcproductextension/lexical/ifcelement.htm
             entities.add(entity.is_a())
         self.combo_entity.addItems(sorted(entities))
         
@@ -761,7 +761,9 @@ class IfcInfoWindow(QMainWindow):
                 # Iterate through the IsDefinedBy relationships
                 self.psets_dict={}
                 for definition in instance.IsDefinedBy:
-                    if definition.is_a('IfcRelDefinesByProperties'):
+                    # Add PSets and Props allocated in object itself
+                    #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD1/HTML/schema/ifckernel/lexical/ifcreldefinesbyproperties.htm
+                    if definition.is_a('IfcRelDefinesByProperties'): 
                         property_set = definition.RelatingPropertyDefinition
                         if property_set.is_a('IfcPropertySet'):
                             props_dict={}
@@ -771,6 +773,20 @@ class IfcInfoWindow(QMainWindow):
                                     prop_value = str(prop.NominalValue.wrappedValue)
                                     props_dict[prop.Name]= prop_value
                             self.psets_dict[property_set.Name] = props_dict
+
+                    # Add PSets and Props allocated within the object type definition 
+                    #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
+                    if definition.is_a('IfcRelDefinesByType'): 
+                        object_type = definition.RelatingType
+                        if object_type.is_a('IfcTypeObject'):
+                            props_dict={}
+                            for property_set in object_type.HasPropertySets:
+                                for prop in property_set.HasProperties:
+                                    prop_value = '<not handled>'
+                                    if prop.is_a('IfcPropertySingleValue'):
+                                        prop_value = str(prop.NominalValue.wrappedValue)
+                                        props_dict[prop.Name]= prop_value
+                                self.psets_dict[property_set.Name] = props_dict
 
                 self.combo_psets.addItems(self.psets_dict.keys())
             else:
