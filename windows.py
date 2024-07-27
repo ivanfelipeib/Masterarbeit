@@ -91,18 +91,6 @@ class IdsInfoWindow(QMainWindow):
         self.date.setDisplayFormat("dd/MM/yyyy")
         self.date.setDate(date)
 
-        # self.txt_title.setText(ids_instance.info["title"])
-        # self.txt_copyright.setText(ids_instance.info["copyright"])
-        # self.txt_version.setText(ids_instance.info["version"])
-        # self.txt_author.setText(ids_instance.info["author"])
-        # self.txt_description.setPlainText(ids_instance.info["description"])
-        # self.txt_purpose.setPlainText(ids_instance.info["purpose"])
-        # self.txt_milestone.setPlainText(ids_instance.info["milestone"])
-
-        # date=Ops.stringToDateFormat(ids_instance.info["date"])
-        # self.date.setDisplayFormat("dd/MM/yyyy")
-        # self.date.setDate(date)
-
 class IdsSpecListWindow(QMainWindow):
     open_spec_editor= pyqtSignal() # emit signal when clicking on New Specification, go to method OpenSpecEditor in class IdsEditorWindow
 
@@ -120,7 +108,6 @@ class IdsSpecListWindow(QMainWindow):
         }
         Ops.loadWidgets(self, main_widget_setup)
         
-
         #Define Subwindows
         self.spec_editor_window=None
         #Define ids and spec
@@ -141,9 +128,6 @@ class IdsSpecListWindow(QMainWindow):
         #Load specifications if ids was passed
         if self.my_ids:
             self.loadSpec(self.my_ids)
-        else:
-            print(f"No Ids was passed to {self}") #TODO: delete this, was just for checking
-            pass
     
     def loadSpec(self, ids_instance:ids.Ids):
         idsToLoad=ids_instance
@@ -157,22 +141,26 @@ class IdsSpecListWindow(QMainWindow):
         self.open_spec_editor.emit()
     
     def clickDelete(self):
-        index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            spec = self.dic_specifications.pop(item)  # Remove the entry and get the associated object
-            self.list_ids_spec.model().removeRow(index.row())
-            del spec
-        self.list_ids_spec.maxFileList+=1
-        print(self.dic_specifications)
+        if Ops.checkIfElementSelected(self, self.list_ids_spec):
+            index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                spec = self.dic_specifications.pop(item)  # Remove the entry and get the associated object
+                self.list_ids_spec.model().removeRow(index.row())
+                del spec
+            self.list_ids_spec.maxFileList+=1
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.") 
 
     def clickEdit(self):
-        index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
-        if index.isValid():
-            item = index.data()
-            self.my_spec = self.dic_specifications[item]
-        self.open_spec_editor.emit()
-        pass
+        if Ops.checkIfElementSelected(self, self.list_ids_spec):
+            index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
+            if index.isValid():
+                item = index.data()
+                self.my_spec = self.dic_specifications[item]
+            self.open_spec_editor.emit()
+        else:
+           Ops.msgError(self, "Selection Error", "There is no item selected to edit.") 
     
     def updateSpecList(self):
         #Save specification in List in SpecListWindow
@@ -939,18 +927,23 @@ class ManageIfcWindow(QMainWindow):
             self.msgError.show()
     
     def clickDelete(self):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_ifc.currentRow()
-        self.list_ifc.takeItem(row)
-        #Updates maxFileList value
-        self.list_ifc.maxFileList+=1
+        if Ops.checkIfElementSelected(self, self.list_ifc):
+            #Grabs selected row or current row in List and deletes it
+            row= self.list_ifc.currentRow()
+            self.list_ifc.takeItem(row)
+            #Updates maxFileList value
+            self.list_ifc.maxFileList+=1
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
     
     def checkIfc(self):
-        ifc_file_path= self.list_ifc.currentIndex().data()
-        if ifc_file_path:
-            self.ifc_checker_window=Ops.openWindow(IfcInfoWindow,window_instance=None,setup_signals=None, ifc_file_path=ifc_file_path)
-            self.ifc_checker_window.show()
-        pass
+        if Ops.checkIfElementSelected(self, self.list_ifc):
+            ifc_file_path= self.list_ifc.currentIndex().data()
+            if ifc_file_path:
+                self.ifc_checker_window=Ops.openWindow(IfcInfoWindow,window_instance=None,setup_signals=None, ifc_file_path=ifc_file_path)
+                self.ifc_checker_window.show()
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to check.")
 
 class ManageIdsWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -1008,11 +1001,13 @@ class ManageIdsWindow(QMainWindow):
             self.msgError.show()
     
     def clickDelete(self):
-        #Grabs selected row or current row in List and deletes it
-        row= self.list_ids_mgmnt.currentRow()
-        self.list_ids_mgmnt.takeItem(row)
-        #Updates maxFileList value
-        self.list_ids_mgmnt.maxFileList+=1
+        if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
+            #Grabs selected row or current row in List and deletes it
+            row= self.list_ids_mgmnt.currentRow()
+            self.list_ids_mgmnt.takeItem(row)
+            self.list_ids_mgmnt.maxFileList+=1
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
     
     def clickNewEditorWindow(self): 
         self.idsEditor_window = IdsEditorWindow(my_ids=None) #Pass my_ids as None when clicking on New
@@ -1024,14 +1019,17 @@ class ManageIdsWindow(QMainWindow):
         self.idsEditor_window.activateWindow()
 
     def clickEdit(self):
-        my_ids=self.parseXmlToIds()
-        self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
-        self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
-        self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
-        self.hide()  # Hide the main window
-        self.idsEditor_window.show()
-        self.idsEditor_window.raise_()
-        self.idsEditor_window.activateWindow()
+        if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
+            my_ids=self.parseXmlToIds()
+            self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
+            self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
+            self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
+            self.hide()  # Hide the main window
+            self.idsEditor_window.show()
+            self.idsEditor_window.raise_()
+            self.idsEditor_window.activateWindow()
+        else:
+            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
 
     def setFilepathIds(self, my_ids):
         self.filter="IDS files (*.ids)"
