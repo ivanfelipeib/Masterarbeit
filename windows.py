@@ -1191,22 +1191,25 @@ class MainWindow(QMainWindow):
         def setup_signals(window_instance):
             window_instance.back_to_main_signal.connect(self.clearMdiArea)
             window_instance.back_to_main_signal.connect(self.show_main_window)
-        self.check_window = Ops.openWindow(CheckWindow, self.check_window, setup_signals)
 
-       #Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
-        if self.check_window.comboBox_ifc.count() == 0 and self.check_window.comboBox_ids.count() == 0:
-            self.check_window.comboBox_ifc.clear()
-            self.check_window.comboBox_ids.clear()
-            self.check_window.comboBox_ifc.addItems(CustomListWidget.getItemsDict(self.ifc_window.list_ifc))
-            self.check_window.comboBox_ids.addItems(CustomListWidget.getItemsDict(self.ids_window.list_ids_mgmnt))
+       # Open window and Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
+        if self.ifc_window and self.ids_window:
+            if self.ifc_window.list_ifc.count() != 0 and self.ids_window.list_ids_mgmnt.count() != 0:
+                self.check_window = Ops.openWindow(CheckWindow, self.check_window, setup_signals)
+                self.check_window.comboBox_ifc.clear()
+                self.check_window.comboBox_ids.clear()
+                self.check_window.comboBox_ifc.addItems(CustomListWidget.getItemsDict(self.ifc_window.list_ifc))
+                self.check_window.comboBox_ids.addItems(CustomListWidget.getItemsDict(self.ids_window.list_ids_mgmnt))
 
-            # Hide the main window show check window
-            self.hide()  
-            self.check_window.show()
-            self.check_window.raise_()
-            self.check_window.activateWindow()
+                # Hide the main window show check window
+                self.hide()  
+                self.check_window.show()
+                self.check_window.raise_()
+                self.check_window.activateWindow()
+            else:
+                Ops.msgError(self, "Error","Before proceeding with the check, you must provide at least one IDS file and one IFC file.")
         else:
-            Ops.msgError(self, "Error","You have not uploaded any files yet")
+            Ops.msgError(self, "Error","Before proceeding with the check, you must provide at least one IDS file and one IFC file.")
 
     def show_main_window(self):
         self.show()
