@@ -124,11 +124,11 @@ class IfcOps:
         my_ids = ifctester.open(ids_file_path)  
         my_ids.validate(my_ifc) #validate IFC against IDS
         reporter_obj = None
-        
+
         match report_type:
             case "HTML":
                 reporter_obj = reporter.Html(my_ids)
-            case "Excel":
+            case "ODS":
                 reporter_obj= reporter.Ods(my_ids)
             case "JSON":
                 reporter_obj= reporter.Json(my_ids)
