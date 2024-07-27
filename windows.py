@@ -296,7 +296,7 @@ class IdsSpecEditorWindow(QMainWindow):
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
     def save_requirements_data(self):
-        if not self.mdi_requirement.subWindowList():
+        if not self.mdi_requirement.subWindowList() or not self.opened_window:
             Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
         else:
             dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
@@ -321,12 +321,14 @@ class IdsSpecEditorWindow(QMainWindow):
                 self.dic_requirements[item]= facet
                 self.list_requirements.addItem(item)
                 self.opened_window.close()
+                self.opened_window = None
+                self.mdi_requirement.closeAllSubWindows()
             else:
                 Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def save_filters_data(self):
-        if not self.mdi_filter.subWindowList():
-            Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
+        if not self.mdi_filter.subWindowList() or not self.opened_window:
+            Ops.msgError(self, "Error", "There is no filter in edition. Please select a filter type from the dropdown list.")
         else:
             dict_data = self.opened_window.getData()
 
@@ -349,7 +351,8 @@ class IdsSpecEditorWindow(QMainWindow):
 
                 self.dic_filters[item]= facet
                 self.list_filters.addItem(item)
-                self.opened_window.close()
+                self.opened_window = None
+                self.mdi_filter.closeAllSubWindows()
             else:
                 Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
