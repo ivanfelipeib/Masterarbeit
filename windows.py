@@ -110,9 +110,10 @@ class IdsSpecListWindow(QMainWindow):
         
         #Define Subwindows
         self.spec_editor_window=None
-        #Define ids and spec
+        #Define ids, spec and spec_in_edition
         self.my_ids = my_ids
         self.my_spec = my_spec
+        self.spec_in_edition=None
 
         #Create dictionary of specifications' names(Key) and Specification instances (Values) to handel list_ids_spec
         self.dic_specifications = {}
@@ -138,17 +139,20 @@ class IdsSpecListWindow(QMainWindow):
             self.list_ids_spec.addItem(item)
 
     def clickNew(self):
+        self.my_spec=None
         self.open_spec_editor.emit()
     
     def clickDelete(self):
         if Ops.checkIfElementSelected(self, self.list_ids_spec):
             index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
-            if index.isValid():
-                item = index.data()
+            item = index.data()
+            if index.isValid() and item != self.spec_in_edition:
                 spec = self.dic_specifications.pop(item)  # Remove the entry and get the associated object
                 self.list_ids_spec.model().removeRow(index.row())
                 del spec
-            self.list_ids_spec.maxFileList+=1
+                self.list_ids_spec.maxFileList+=1
+            else:
+                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected to delete.") 
 
@@ -157,6 +161,7 @@ class IdsSpecListWindow(QMainWindow):
             index = self.list_ids_spec.selectedIndexes()[0]  # Assuming single selection
             if index.isValid():
                 item = index.data()
+                self.spec_in_edition=item
                 self.my_spec = self.dic_specifications[item]
             self.list_ids_spec.clearSelection()
             self.open_spec_editor.emit()
@@ -165,6 +170,7 @@ class IdsSpecListWindow(QMainWindow):
     
     def updateSpecList(self):
         #Save specification in List in SpecListWindow
+        self.spec_in_edition=None
         my_spec = self.spec_editor_window.my_spec
         item= my_spec.name
 
