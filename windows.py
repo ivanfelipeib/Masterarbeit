@@ -158,6 +158,7 @@ class IdsSpecListWindow(QMainWindow):
             if index.isValid():
                 item = index.data()
                 self.my_spec = self.dic_specifications[item]
+            self.list_ids_spec.clearSelection()
             self.open_spec_editor.emit()
         else:
            Ops.msgError(self, "Selection Error", "There is no item selected to edit.") 
@@ -419,6 +420,7 @@ class IdsSpecEditorWindow(QMainWindow):
                 text = "Add requirement by "+ facet_class
                 Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
             self.openRequirementSubWindow(text, req_selected)
+            self.list_requirements.clearSelection()
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
 
@@ -435,6 +437,7 @@ class IdsSpecEditorWindow(QMainWindow):
                 text = "Add filter by "+ facet_class
                 Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
             self.openFilterSubWindow(text, filter_selected)
+            self.list_filters.clearSelection()
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
     
@@ -1037,6 +1040,7 @@ class ManageIdsWindow(QMainWindow):
             self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
             self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
             self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
+            self.list_ids_mgmnt.clearSelection()
             self.hide()  # Hide the main window
             self.idsEditor_window.show()
             self.idsEditor_window.raise_()
