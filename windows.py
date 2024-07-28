@@ -216,13 +216,15 @@ class IdsSpecEditorWindow(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup)
 
         #Create instance for subwindow and specification
-        self.opened_window= None
+        self.opened_filter=None
+        self.opened_requirement=None
         self.my_spec= my_spec
         #Set dictionaries to storage entries in lists (Key= facet string, Value= facet).
         self.dic_requirements={}
         self.dic_filters={}
-        #Set element to handle facet in edition
-        self.facet_in_edition=None
+        #Set elements to handle facet in edition
+        self.filter_in_edition=None
+        self.requirement_in_edition=None
 
         #If no spec was passed from SpecList a new instance is created:
         if self.my_spec is None:
@@ -256,23 +258,23 @@ class IdsSpecEditorWindow(QMainWindow):
 
         match text:
             case "Add filter by class":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by part of":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by attribute":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by property":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by classification":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add filter by material":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_filter = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of filter")
         
         if text != "Add filter by class": # In Applicability section, there's one cardinality for all facets. Individual cardinality comboBox hide
-            self.opened_window.combo_optionality.hide()
-            self.opened_window.lbl_optionality.hide()
+            self.opened_filter.combo_optionality.hide()
+            self.opened_filter.lbl_optionality.hide()
         else: pass
 
     def openRequirementSubWindow(self, text, facet_to_load=None):
@@ -282,27 +284,27 @@ class IdsSpecEditorWindow(QMainWindow):
 
         match text:
             case "Add requirement by class":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by part of":
-                self.opened_window= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by attribute":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by property":
-                self.opened_window =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by classification":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case "Add requirement by material":
-                self.opened_window = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
+                self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
                 Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
         
     def save_requirements_data(self):
-        if not self.mdi_requirement.subWindowList() or not self.opened_window:
+        if not self.mdi_requirement.subWindowList() or not self.opened_requirement:
             Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
         else:
-            dict_data = self.opened_window.getData() #access windows in filter.py and calls getData depending on window
+            dict_data = self.opened_requirement.getData() #access windows in filter.py and calls getData depending on window
 
-            if dict_data["info_required"]: #If required information was provided in filter add filter in list
+            if dict_data["info_required"]: #If True required information was provided in filter
                 dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
                 #Create new facet
                 current_text = self.combo_add_requirement.currentText()
@@ -313,25 +315,25 @@ class IdsSpecEditorWindow(QMainWindow):
                     item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
                 
                 #if there was and element in edition, delete old element from dictionary and list for adding edited element
-                if self.facet_in_edition:
-                    del self.dic_requirements[self.facet_in_edition]
-                    Ops.deleteItemInList(self,"list_requirements", self.facet_in_edition)
-                    self.facet_in_edition= None
+                if self.requirement_in_edition:
+                    del self.dic_requirements[self.requirement_in_edition]
+                    Ops.deleteItemInList(self,"list_requirements", self.requirement_in_edition)
+                    self.requirement_in_edition= None
 
                 #Add newfacet to dictionary and list
                 self.dic_requirements[item]= facet
                 self.list_requirements.addItem(item)
-                self.opened_window.close()
-                self.opened_window = None
+                self.opened_requirement.close()
+                self.opened_requirement = None
                 self.mdi_requirement.closeAllSubWindows()
             else:
                 Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
 
     def save_filters_data(self):
-        if not self.mdi_filter.subWindowList() or not self.opened_window:
+        if not self.mdi_filter.subWindowList() or not self.opened_filter:
             Ops.msgError(self, "Error", "There is no filter in edition. Please select a filter type from the dropdown list.")
         else:
-            dict_data = self.opened_window.getData()
+            dict_data = self.opened_filter.getData()
 
             if dict_data["info_required"]:#If required information was provided in requirement add requirement in list
                 dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
@@ -345,14 +347,15 @@ class IdsSpecEditorWindow(QMainWindow):
                     item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
 
                 #if there was and element in edition, delete element from dictionary and list
-                if self.facet_in_edition:
-                    del self.dic_filters[self.facet_in_edition]
-                    Ops.deleteItemInList(self,"list_filters", self.facet_in_edition)
-                    self.facet_in_edition= None
+                if self.filter_in_edition:
+                    del self.dic_filters[self.filter_in_edition]
+                    Ops.deleteItemInList(self,"list_filters", self.filter_in_edition)
+                    self.filter_in_edition= None
 
                 self.dic_filters[item]= facet
                 self.list_filters.addItem(item)
-                self.opened_window = None
+                self.opened_filter.close()
+                self.opened_filter = None
                 self.mdi_filter.closeAllSubWindows()
             else:
                 Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
@@ -360,24 +363,28 @@ class IdsSpecEditorWindow(QMainWindow):
     def clickDeleteRequirement(self):
         if Ops.checkIfElementSelected(self, self.list_requirements):
             index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
-            if index.isValid():
-                item = index.data()
+            item = index.data()
+            if index.isValid()and item != self.requirement_in_edition:
                 facet = self.dic_requirements.pop(item)  # Remove the entry and get the associated object
                 self.list_requirements.model().removeRow(index.row())
                 del facet
-            self.list_requirements.maxFileList+=1
+                self.list_requirements.maxFileList+=1
+            else:
+                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
 
     def clickDeleteFilter(self):
         if Ops.checkIfElementSelected(self, self.list_filters):
             index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
-            if index.isValid():
-                item = index.data()
+            item = index.data()
+            if index.isValid() and item != self.filter_in_edition:
                 facet = self.dic_filters.pop(item)  # Remove the entry and get the associated object
                 self.list_filters.model().removeRow(index.row())
                 del facet
-            self.list_filters.maxFileList+=1
+                self.list_filters.maxFileList+=1
+            else:
+                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
     
@@ -409,7 +416,7 @@ class IdsSpecEditorWindow(QMainWindow):
             index = self.list_requirements.selectedIndexes()[0]  # Assuming single selection
             if index.isValid():
                 item = index.data()
-                self.facet_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
+                self.requirement_in_edition = item #Store item(facet) in edition to delete it from the list and add updated item
                 req_selected = self.dic_requirements[item]
                 facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
                 #handle facet name to match element in ComboBox(combo_add_requirement)
@@ -429,7 +436,7 @@ class IdsSpecEditorWindow(QMainWindow):
             index = self.list_filters.selectedIndexes()[0]  # Assuming single selection
             if index.isValid():
                 item = index.data()
-                self.facet_in_edition = item #Store item in edition to delete it from the list and add updated item
+                self.filter_in_edition = item #Store item in edition to delete it from the list and add updated item
                 filter_selected = self.dic_filters[item]
                 facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
                 if facet_class=="entity":
