@@ -992,9 +992,8 @@ class ManageIdsWindow(QMainWindow):
         Ops.loadWidgets(self, main_widget_setup )
         self.list_ids_mgmnt.type_restriction=".ids" #constrain drag and drop just to IDS files
 
-
-        #Create instance of Subwindows
-        self.idsEditor_window=None
+        self.idsEditor_window=None #Create instance of Subwindows
+        self.ids_in_edition= None #Instantiate IDS in edition
 
         #Set dictionary to storage entries in ids lists(Key) and corresponding ids instance (value)
         self.dic_ids={}
@@ -1030,15 +1029,24 @@ class ManageIdsWindow(QMainWindow):
             self.msgError.show()
     
     def clickDelete(self):
+        if not self.idsEditor_window.isVisible():
+            self.ids_in_edition=None
+        
         if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
-            #Grabs selected row or current row in List and deletes it
-            row= self.list_ids_mgmnt.currentRow()
-            self.list_ids_mgmnt.takeItem(row)
-            self.list_ids_mgmnt.maxFileList+=1
+            selected_indexes = self.list_ids_mgmnt.selectedIndexes()
+            selection=selected_indexes[0].data()
+            if selection != self.ids_in_edition:
+                #Grabs selected row or current row in List and deletes it
+                row= self.list_ids_mgmnt.currentRow()
+                self.list_ids_mgmnt.takeItem(row)
+                self.list_ids_mgmnt.maxFileList+=1
+            else:
+                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
         else:
             Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
     
     def clickNewEditorWindow(self): 
+        self.ids_in_edition=None
         self.idsEditor_window = IdsEditorWindow(my_ids=None) #Pass my_ids as None when clicking on New
         self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
         self.idsEditor_window.add_ids_to_list.connect(self.updateIdsList)# Connect signal of "Save IDS" button
@@ -1049,6 +1057,8 @@ class ManageIdsWindow(QMainWindow):
 
     def clickEdit(self):
         if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
+            selected_indexes = self.list_ids_mgmnt.selectedIndexes()
+            self.ids_in_edition=selected_indexes[0].data()
             my_ids=self.parseXmlToIds()
             self.idsEditor_window = IdsEditorWindow(my_ids=my_ids) #Pass parsed IDS to new IDSEditorWindow
             self.idsEditor_window.back_to_manage_ids.connect(self.showManageIds) #Connect signal of "Back to IDS Manager" button
