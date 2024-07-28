@@ -571,7 +571,7 @@ class IdsEditorWindow(QMainWindow):
             self.btn_ids_save.show()
 
     def generateIdsFile(self):
-        self.my_ids= IdsOps.createIds() #TODO: Add try catch, to handle when user clicks automatically in audit before clicking on info and specifications
+        self.my_ids= IdsOps.createIds()
         self.addIdsInfo()
         self.addIdsSpecifications()
         self.idsToXML()
@@ -612,8 +612,6 @@ class IdsEditorWindow(QMainWindow):
     def saveIds(self):
         self.generateIdsFile()
         self.setFilePathIds()
-        #self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
-        #self.close()
     
     def setFilePathIds(self):
         self.filter="IDS files (*.ids)"
@@ -625,7 +623,7 @@ class IdsEditorWindow(QMainWindow):
             self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
             self.close()
         else:
-            Ops.msgError(self,"Error", "IDS file was not saved")
+            Ops.msgError(self,"Error", "The process was interrupted, the IDS file has not been saved")
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
