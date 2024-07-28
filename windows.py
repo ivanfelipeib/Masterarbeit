@@ -575,7 +575,6 @@ class IdsEditorWindow(QMainWindow):
         self.addIdsInfo()
         self.addIdsSpecifications()
         self.idsToXML()
-        self.btn_ids_save.hide()
 
     def idsToXML(self):
         filepath= constants.TEMP_IDS_DIR 
@@ -612,9 +611,22 @@ class IdsEditorWindow(QMainWindow):
     
     def saveIds(self):
         self.generateIdsFile()
-        self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
-        self.close()
+        self.setFilePathIds()
+        #self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
+        #self.close()
     
+    def setFilePathIds(self):
+        self.filter="IDS files (*.ids)"
+        self.title= "Save IDS file"
+        self.fileDialog = QFileDialog()
+        self.fileDialog.setAcceptMode(QFileDialog.AcceptSave)
+        self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
+        if self.file_path:
+            self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
+            self.close()
+        else:
+            Ops.msgError(self,"Error", "IDS file was not saved")
+
     def backIdsList(self):
         self.back_to_manage_ids.emit()
         self.close()
@@ -984,8 +996,8 @@ class ManageIdsWindow(QMainWindow):
         
     def clickImport(self):
         #Adds filepath from selected element to a list
-        self.filter="IDS-Dateien (*.ids)"
-        self.title= "Öffnen"
+        self.filter="IDS-Files (*.ids)"
+        self.title= "Open"
         self.fileDialog = QFileDialog()
         self.tuple_names= self.fileDialog.getOpenFileNames(self, self.title, "", self.filter)
         
@@ -1000,7 +1012,7 @@ class ManageIdsWindow(QMainWindow):
             self.msgError= QMessageBox()
             self.msgError.setIcon(QMessageBox.Warning)
             self.msgError.setWindowTitle("Error")
-            self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren")
+            self.msgError.setText("You cannot import more than 10 IFC files")
             self.msgError.show()
     
     def clickDelete(self):
@@ -1035,11 +1047,12 @@ class ManageIdsWindow(QMainWindow):
             Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
 
     def setFilepathIds(self, my_ids):
-        self.filter="IDS files (*.ids)"
-        self.title= "Save IDS file"
-        self.fileDialog = QFileDialog()
-        self.fileDialog.setAcceptMode(QFileDialog.AcceptSave)
-        self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
+        # self.filter="IDS files (*.ids)"
+        # self.title= "Save IDS file"
+        # self.fileDialog = QFileDialog()
+        # self.fileDialog.setAcceptMode(QFileDialog.AcceptSave)
+        # self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
+        self.file_path = self.idsEditor_window.file_path
         if self.file_path:
             if len(self.list_ids_mgmnt.findItems(self.file_path, Qt.MatchExactly)) == 0:
                 print(f"File saved in: {self.file_path}")
