@@ -217,7 +217,7 @@ class IdsOps():
     @staticmethod
     def auditIds():
         try:
-            # Run the C# console application 'TODO: Handle filepath with constants file
+            # Run the C# console application 
             result = subprocess.run(
                 [constants.AUDIT_SCRIPT_DIR],
             )

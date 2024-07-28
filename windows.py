@@ -765,12 +765,12 @@ class IfcInfoWindow(QMainWindow):
         entity_type = self.combo_entity.currentText()
         if entity_type:
             instances = self.my_model.by_type(entity_type)
-            instance_ids = [str(instance.get_info()["GlobalId"]) for instance in instances]
+            instance_ids = [str(instance.get_info()["GlobalId"])+" - "+str(instance.get_info()["Name"]) for instance in instances]
             self.combo_instance.addItems(instance_ids)
 
     def updatePsets(self):
         self.combo_psets.clear()
-        instance_id = self.combo_instance.currentText()
+        instance_id= self.combo_instance.currentText().split(" - ")[0]
         if instance_id:
             instance = self.my_model.by_guid(instance_id)
             if hasattr(instance, 'IsDefinedBy'): #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/link/ifcobject.htm Assignment of property sets : IsDefinedBy - a definition relationship IfcRelDefinesByProperties that assignes property set definitions to the object occurrence.
@@ -829,14 +829,14 @@ class IfcInfoWindow(QMainWindow):
 
     def updateAttributes(self):
         self.combo_attribute.clear()
-        instance_id = self.combo_instance.currentText()
+        instance_id = self.combo_instance.currentText().split(" - ")[0]
         if instance_id:
             instance = self.my_model.by_guid(instance_id)
             self.attributes = [attr for attr in instance.get_info(recursive=True).keys()]
             self.combo_attribute.addItems(self.attributes)
 
     def updateResultAtt(self):
-        instance_id = self.combo_instance.currentText()
+        instance_id = self.combo_instance.currentText().split(" - ")[0]
         attribute = self.combo_attribute.currentText()
         if instance_id and attribute:
             instance = self.my_model.by_guid(instance_id)
@@ -1104,7 +1104,7 @@ class ManageIdsWindow(QMainWindow):
         self.list_ids_mgmnt.addItem(item)
         print(self.dic_ids)
     
-    def deleteIds(self): #TODO:Connect this method with button delete, but first populate dic_ids with imported ids files
+    def deleteIds(self): 
         index = self.list_ids_mgmnt.selectedIndexes()[0]  # Assuming single selection
         if index.isValid():
             item = index.data()
@@ -1230,7 +1230,7 @@ class MainWindow(QMainWindow):
             window_instance.back_to_main_signal.connect(self.clearMdiArea)
             window_instance.back_to_main_signal.connect(self.show_main_window)
 
-       # Open window and Populates Comboboxes in new CheckWindow()   #TODO: Add exception when no manage_ifc or ´manage_ids exist, error triggered
+       # Open window and Populates Comboboxes in new CheckWindow()  
         if self.ifc_window and self.ids_window:
             if self.ifc_window.list_ifc.count() != 0 and self.ids_window.list_ids_mgmnt.count() != 0:
                 self.check_window = Ops.openWindow(CheckWindow, self.check_window, setup_signals)
@@ -1253,4 +1253,4 @@ class MainWindow(QMainWindow):
         self.show()
 
     def clearMdiArea(self):
-        self.mdi_main.closeAllSubWindows() #TODO:add argument in clearMdiArea with name of mdi. NoneType error triggered??
+        self.mdi_main.closeAllSubWindows() 
