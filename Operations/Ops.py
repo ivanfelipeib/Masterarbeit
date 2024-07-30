@@ -140,13 +140,17 @@ class Ops():
     def isRegex(pattern:str)->bool:
         #Since any string is a valid regex pattern that matches the literal string
         #This method distinguishes between a literal string and a string that is intended to be a regular expression
+        #Exclude as well floating-point numbers with decimal indicated by comma or point, since those are proofed as single values not as patterns
         if pattern=="" or pattern is None:
             return False
         
-        else:
-            regex_special_chars = r".^$*+?{}[]\|()"
-            contains_special_char = any(char in pattern for char in regex_special_chars)
-            return contains_special_char
+        regex_special_chars = r".^$*+?{}[]\|()"
+        contains_special_char = any(char in pattern for char in regex_special_chars)
+        
+        float_regex = r"^\d+([.,]\d+)?$"  # Define a regex to match floating-point
+        if contains_special_char and not re.match(float_regex, pattern):
+            return True
+        return False
         
     @staticmethod
     def formatDictionary(dictionary, level=0):
