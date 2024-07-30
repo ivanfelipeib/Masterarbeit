@@ -626,8 +626,15 @@ class IdsEditorWindow(QMainWindow):
             self.my_ids.specifications.append(element)
     
     def saveIds(self):
-        self.generateIdsFile()
-        self.setFilePathIds()
+        if not self.info_window.txt_title.text() or not self.info_window.txt_version.text() or not self.info_window.txt_author.text():
+            Ops.msgError(self, "IDS Information: missing information", "IDS cannot be saved, required information is missing. All the fields marked as required must be provided, required information is marked with *.")
+        elif not Ops.isValidEmail(self.info_window.txt_author.text()):
+            Ops.msgError(self, "IDS Information: Email required", "Field author requires a valid email address")
+        elif self.spec_list_window.list_ids_spec.count() == 0:
+            Ops.msgError(self, "IDS Specifications:", "The current IDS file has no specifications, add at least one specification before proceeding.")
+        else:
+            self.generateIdsFile()
+            self.setFilePathIds()
     
     def setFilePathIds(self):
         self.filter="IDS files (*.ids)"
@@ -1029,21 +1036,23 @@ class ManageIdsWindow(QMainWindow):
             self.msgError.show()
     
     def clickDelete(self):
-        if not self.idsEditor_window.isVisible():
-            self.ids_in_edition=None
-        
-        if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
-            selected_indexes = self.list_ids_mgmnt.selectedIndexes()
-            selection=selected_indexes[0].data()
-            if selection != self.ids_in_edition:
-                #Grabs selected row or current row in List and deletes it
-                row= self.list_ids_mgmnt.currentRow()
-                self.list_ids_mgmnt.takeItem(row)
-                self.list_ids_mgmnt.maxFileList+=1
+        if self.idsEditor_window:
+            if not self.idsEditor_window.isVisible():
+                self.ids_in_edition=None
+            if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
+                selected_indexes = self.list_ids_mgmnt.selectedIndexes()
+                selection=selected_indexes[0].data()
+                if selection != self.ids_in_edition:
+                    #Grabs selected row or current row in List and deletes it
+                    row= self.list_ids_mgmnt.currentRow()
+                    self.list_ids_mgmnt.takeItem(row)
+                    self.list_ids_mgmnt.maxFileList+=1
+                else:
+                    Ops.msgError(self, "Error", "Item in edition cannot be deleted")
             else:
-                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
+                Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
+            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")           
     
     def clickNewEditorWindow(self): 
         self.ids_in_edition=None
