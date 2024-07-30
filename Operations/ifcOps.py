@@ -130,8 +130,6 @@ class IfcOps:
                 reporter_obj = reporter.Html(my_ids)
             case "ODS":
                 reporter_obj= reporter.Ods(my_ids)
-            case "JSON":
-                reporter_obj= reporter.Json(my_ids)
             case "BCF":
                 reporter_obj= reporter.Bcf(my_ids)
 

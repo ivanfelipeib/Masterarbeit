@@ -161,11 +161,6 @@
            <string>ODS</string>
           </property>
          </item>
-         <item>
-          <property name="text">
-           <string>JSON</string>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>
