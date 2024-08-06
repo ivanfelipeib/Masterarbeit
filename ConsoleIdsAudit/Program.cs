@@ -13,7 +13,7 @@ class Program
     {
         // Determine the root directory of the project
         string baseDirectory = AppContext.BaseDirectory;
-        string rootFolder = Path.Combine(baseDirectory,"..", "..","..",".."); //navigate up to root directory
+        string rootFolder = Path.Combine(baseDirectory,".."); //navigate up to root directory
         rootFolder= Path.GetFullPath(rootFolder);
         
         // Specify the relative paths for the log file and IDS file

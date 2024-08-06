@@ -9,7 +9,7 @@ TEMP_IDS_DIR= os.path.join(BASE_DIR, 'temp_files', 'TempIds.ids')
 TEMP_LOG_DIR= os.path.join(BASE_DIR, 'temp_files', 'log.txt')
 
 #IdsAuditTool Script
-AUDIT_SCRIPT_DIR= os.path.join(BASE_DIR, 'ConsoleIdsAudit', 'bin','Release',DOTNET_VERSION,'ConsoleIdsAudit.exe') #TODO: path for debug, probkems with release
+AUDIT_SCRIPT_DIR= os.path.join(BASE_DIR, 'ConsoleIdsAudit', 'ConsoleIdsAudit.exe') #TODO: path for debug, probkems with release
 
 #GUI folders
 GUI_DIR= os.path.join(BASE_DIR, 'GUI_Windows')
