@@ -126,17 +126,6 @@ class Ops():
     
         return False  # Return False if item with given text is not found
     
-    @staticmethod
-    def accessDictByPath(nested_dict, path):
-        keys = path.split('.')
-        value = nested_dict
-        try:
-            for key in keys:
-                value = value[key]
-            return value
-        except KeyError:
-            return None
-
     def isRegex(pattern:str)->bool:
         #Since any string is a valid regex pattern that matches the literal string
         #This method distinguishes between a literal string and a string that is intended to be a regular expression
@@ -169,7 +158,6 @@ class Ops():
         destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", filter, options=options)
         return destination_file
 
-    
     @staticmethod
     def formatLatLong(coordinates:tuple)->str:
         degrees = coordinates[0]
@@ -187,35 +175,6 @@ class Ops():
         now = datetime.now()
         formatted_now = now.strftime("%d-%m-%Y %H:%M")
         return formatted_now
-
-    def validateRangeOverlapInString(input_str:str)->bool:
-        # Match the input string against the Regex pattern
-        pattern = r"^\s*(>=|<=|>|<)\s*(\d+(\.\d+)?)\s*,\s*(>=|<=|>|<)\s*(\d+(\.\d+)?)\s*$"
-        match = re.match(pattern, input_str)
-        
-        if not match:
-            return False
-        
-        # Extract the operators and float values
-        op1, num1, _, op2, num2, _ = match.groups()
-        num1 = float(num1)
-        num2 = float(num2)
-    
-        # Check for no range overlap
-        # If both operators are '>' or '>=' and first number is less than the second number, there is no overlap
-        if (op1 in ('>', '>=') and op2 in ('>', '>=') and num1 < num2):
-            return True
-        # If both operators are '<' or '<=' and first number is greater than the second number, there is no overlap
-        elif (op1 in ('<', '<=') and op2 in ('<', '<=') and num1 > num2):
-            return True
-        # If the ranges are in different directions, there is no overlap
-        elif (op1 in ('>', '>=') and op2 in ('<', '<=') and num1 <= num2):
-            return True
-        elif (op1 in ('<', '<=') and op2 in ('>', '>=') and num1 >= num2):
-            return True
-        # Any other case means there is overlap
-        else:
-            return False
 
     def checkIfElementSelected(window, list_widget):
         if list_widget.count() == 0:

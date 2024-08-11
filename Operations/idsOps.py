@@ -125,26 +125,6 @@ class IdsOps():
                     dict_data[key] = restriction
 
         return dict_data
-        
-    # def restrictionBaseString(dict_data:dict):
-    #     base="string"
-    #     for key, value in dict_data.items():
-    #         restriction=None
-    #         list_pattern = re.compile(r'^\[.*\]$')
-    #         is_regex= Ops.isRegex(value)
-    #         value_restriction={}
-    #         if list_pattern.match(value):
-    #             options={"enumeration": value}
-    #             restriction= ids.Restriction(options, base)
-
-    #         elif is_regex:
-    #             options={"pattern" : value}
-    #             restriction=ids.Restriction(options, base)
-    #         else:
-    #             print("Expression does not match either a list or a regex.")
-            
-    #         if restriction:
-    #             dict_data[key]=restriction #override value with restriction object in dict_data
 
     def typeOfRestriction(operator:str)->str:
         if operator == '>':
@@ -205,14 +185,6 @@ class IdsOps():
             
             # Join boundaries with comma if both are present
             return ','.join(boundaries)
-
-    @staticmethod
-    def addFacetApplicability(my_spec, facet):
-        my_spec.applicability.append(facet)
-
-    @staticmethod
-    def addFacetRequirement(my_spec, facet):
-        my_spec.requirements.append(facet)
     
     @staticmethod
     def auditIds():
@@ -225,41 +197,9 @@ class IdsOps():
             print(e)
     
     @staticmethod
-    def getIdsVersionXML(file_path: str) -> str:
-        try:
-            # Parse the XML file
-            tree = ET.parse(file_path)
-            xml_root = tree.getroot()
-            
-            # Get the schemaLocation attribute
-            schema_location = xml_root.attrib.get('{http://www.w3.org/2001/XMLSchema-instance}schemaLocation')
-            
-            if schema_location:
-                # The schemaLocation attribute contains a space-separated list of URIs
-                parts = schema_location.split()
-                if len(parts) > 1:
-                    # Extract the version from the second URI in the list
-                    version_uri = parts[1]
-                    version = version_uri.rsplit('/', 2)[-2]
-                    return version
-            return None
-        except ET.ParseError as e:
-            print(f"Error parsing XML file: {e}")
-        except FileNotFoundError as e:
-            print(f"File not found: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-        return None
-    
-    @staticmethod
     def parseXmlToIds(xml_file_path:str)->ids:
         ids_object=ids.open(xml_file_path)
         return ids_object
-    
-    @staticmethod
-    def parseidsToDict(ids_object:ids)->dict:
-        ids_as_dict=ids_object.asdict() 
-        return ids_as_dict
     
     @staticmethod
     def entityToString(entity_instance:ids.Entity, clause_type:str="requirement")->str:
