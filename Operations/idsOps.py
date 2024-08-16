@@ -234,7 +234,7 @@ class IdsOps():
             header= "IDS QUALITY CHECK REPORT"+"\n"
             subheader= "Date of report: "+ Ops.getDatetime() +"\n"+"\n"
             ids_name= "IDS Name: "+ str(my_ids.info["title"]) +"\n"
-            ids_version = "IDS Version: "+ str(my_ids.info["version"])+"\n"
+            ids_version = "File Version: "+ str(my_ids.info["version"])+"\n"
             ids_date= "Created on: "+ str(my_ids.info["date"])+"\n"
             ids_description= "IDS Description: "+ str(my_ids.info["description"])+"\n"+"\n"
             header_quality_check= "Quality check: "+"\n"
