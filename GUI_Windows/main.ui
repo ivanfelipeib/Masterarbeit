@@ -95,7 +95,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Compliance check</string>
+        <string>IFC vs. IDS</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
