@@ -310,61 +310,66 @@ class IdsSpecEditorWindow(QMainWindow):
         else:
             dict_data = self.opened_requirement.getData() #access windows in filter.py and calls getData depending on window
 
-            if dict_data["info_required"]: #If True required information was provided in filter
-                dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
-                #Create new facet
-                current_text = self.combo_add_requirement.currentText()
-                facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
-                if isinstance(facet, ids.Entity):
-                    item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
-                else:
-                    item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
-                
-                #if there was and element in edition, delete old element from dictionary and list for adding edited element
-                if self.requirement_in_edition:
-                    del self.dic_requirements[self.requirement_in_edition]
-                    Ops.deleteItemInList(self,"list_requirements", self.requirement_in_edition)
-                    self.requirement_in_edition= None
+            if not IdsOps.checkExistingEntityFacet(self.dic_requirements) or IdsOps.getExistingEntityFacet(self.dic_requirements) == self.requirement_in_edition:#Raised error if entity facet already exist in requirements
+                if dict_data["info_required"]: #If True required information was provided in filter
+                    dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+                    #Create new facet
+                    current_text = self.combo_add_requirement.currentText()
+                    facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data)
+                    if isinstance(facet, ids.Entity):
+                        item= IdsOps.entityToString(facet, "requirement") # special to_string for Entity type, since ifcOpensShell failed / Entity facet in requirements MUST be required not prohibited or optional https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
+                    else:
+                        item= facet.to_string(clause_type= "requirement", specification=self.my_spec, requirement=facet)
+                    
+                    #if there was and element in edition, delete old element from dictionary and list for adding edited element
+                    if self.requirement_in_edition:
+                        del self.dic_requirements[self.requirement_in_edition]
+                        Ops.deleteItemInList(self,"list_requirements", self.requirement_in_edition)
+                        self.requirement_in_edition= None
 
-                #Add newfacet to dictionary and list
-                self.dic_requirements[item]= facet
-                self.list_requirements.addItem(item)
-                self.opened_requirement.close()
-                self.opened_requirement = None
-                self.mdi_requirement.closeAllSubWindows()
+                    #Add newfacet to dictionary and list
+                    self.dic_requirements[item]= facet
+                    self.list_requirements.addItem(item)
+                    self.opened_requirement.close()
+                    self.opened_requirement = None
+                    self.mdi_requirement.closeAllSubWindows()
+                else:
+                    Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
             else:
-                Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+                Ops.msgError(self, "Existing entity facet", "An entity facet already exists. Only one entity facet is allowed.")
 
     def save_filters_data(self):
         if not self.mdi_filter.subWindowList() or not self.opened_filter:
             Ops.msgError(self, "Error", "There is no filter in edition. Please select a filter type from the dropdown list.")
         else:
             dict_data = self.opened_filter.getData()
+            if not IdsOps.checkExistingEntityFacet(self.dic_filters) or IdsOps.getExistingEntityFacet(self.dic_filters) == self.filter_in_edition: #Raised error if entity facet already exist ina applicability
+                if dict_data["info_required"]:#If required information was provided in requirement add requirement in list
+                    dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
+                    #Create new facet
+                    current_text = self.combo_add_filter.currentText()
+                    cardinality = self.combo_mandatory.currentText()
+                    facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
+                    if isinstance(facet, ids.Entity):
+                        item= IdsOps.entityToString(facet,"applicability")
+                    else:
+                        item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
 
-            if dict_data["info_required"]:#If required information was provided in requirement add requirement in list
-                dict_data.pop('info_required', None) #Delete flag from dictionary since check of required info has been made
-                #Create new facet
-                current_text = self.combo_add_filter.currentText()
-                cardinality = self.combo_mandatory.currentText()
-                facet= IdsOps.createFacet(spec_type= current_text, dict_data= dict_data, is_filter= True, cardinality_filter= cardinality)
-                if isinstance(facet, ids.Entity):
-                    item= IdsOps.entityToString(facet,"applicability")
+                    #if there was and element in edition, delete element from dictionary and list
+                    if self.filter_in_edition:
+                        del self.dic_filters[self.filter_in_edition]
+                        Ops.deleteItemInList(self,"list_filters", self.filter_in_edition)
+                        self.filter_in_edition= None
+
+                    self.dic_filters[item]= facet
+                    self.list_filters.addItem(item)
+                    self.opened_filter.close()
+                    self.opened_filter = None
+                    self.mdi_filter.closeAllSubWindows()
                 else:
-                    item= facet.to_string(clause_type= "applicability", specification=self.my_spec, requirement=None)
-
-                #if there was and element in edition, delete element from dictionary and list
-                if self.filter_in_edition:
-                    del self.dic_filters[self.filter_in_edition]
-                    Ops.deleteItemInList(self,"list_filters", self.filter_in_edition)
-                    self.filter_in_edition= None
-
-                self.dic_filters[item]= facet
-                self.list_filters.addItem(item)
-                self.opened_filter.close()
-                self.opened_filter = None
-                self.mdi_filter.closeAllSubWindows()
+                    Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
             else:
-                Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+                Ops.msgError(self, "Existing entity facet", "An entity facet already exists. Only one entity facet is allowed.")
 
     def clickDeleteRequirement(self):
         if Ops.checkIfElementSelected(self, self.list_requirements):

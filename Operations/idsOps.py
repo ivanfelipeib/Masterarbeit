@@ -247,6 +247,24 @@ class IdsOps():
                     "Please consider this before saving the IDS File you are editing")
 
             file.write(new_text+existing_content+footnote)
+    
+    def checkExistingEntityFacet(dictionary):
+        entity_in_list=False
+        for key, value in dictionary.items():
+            if isinstance(value, ids.Entity):
+                entity_in_list = True
+            else:
+                pass
+        return entity_in_list
+
+    def getExistingEntityFacet(dictionary):
+            item= None
+            for key, value in dictionary.items():
+                if isinstance(value, ids.Entity):
+                    item=key
+                else:
+                    pass
+            return item
 
    
         
