@@ -1,4 +1,5 @@
 import ifcopenshell
+import os
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLineEdit, QCompleter
 from collections import defaultdict
 from Operations.Ops import Ops
@@ -139,19 +140,20 @@ class IfcOps:
 
             if reporter_obj:
                 try:
-                    # Generate the report
                     reporter_obj.report()
                     reporter_obj.to_file(report_file_path)
                 except Exception as e:
-                    # If an exception occurs, write the error to a text file
-                    with open(report_file_path, 'w') as error_file:
+                    root, _ = os.path.splitext(report_file_path)
+                    new_report_file_path= root + ".txt"
+                    with open(new_report_file_path, 'w') as error_file:
                         error_file.write(f"An error occurred during report generation:\n{str(e)}")
             else:
                 print("Reporter object is None. Invalid report type provided.")
     
         except Exception as e:
-            # If an exception occurs during the initial setup, handle it here
-            with open(report_file_path, 'w') as error_file:
+            root, _ = os.path.splitext(report_file_path)
+            new_report_file_path= root + ".txt"
+            with open(new_report_file_path, 'w') as error_file:
                 error_file.write(f"An error occurred during processing:\n{str(e)}")
 
 

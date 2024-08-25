@@ -1181,19 +1181,27 @@ class CheckWindow(QMainWindow):
         ifc_file= self.comboBox_ifc.currentText()
         report_type= self.comboBox_report.currentText()
 
-        file_name_with_extension=os.path.basename(ifc_file)
-        file_name= os.path.splitext(file_name_with_extension)[0]
-        file_name= file_name.replace(" ", "_")
+        ifc_name_with_extension=os.path.basename(ifc_file)
+        ifc_name= os.path.splitext(ifc_name_with_extension)[0]
+        ifc_name= ifc_name.replace(" ", "_")
+
+        ids_name_with_extension=os.path.basename(ids_file)
+        ids_name= os.path.splitext(ids_name_with_extension)[0]
+        ids_name= ids_name.replace(" ", "_")
+
+
         file_extension= "."+report_type.lower()
-        report_name= file_name+ "_Report_" + report_type + file_extension
+        report_name= ifc_name+ "_VS_"+ids_name+"_Report_" + report_type + file_extension
 
         folder_path= self.openCustomFileDialog()
-        report_path= folder_path+ f"/{report_name}" 
-
-        #Generate report
-        IfcOps.checkIfcWithIds(ifc_file, ids_file, report_type, report_path)
-        self.lbl_notification.setText(f"Report was saved in: {report_path}")
-        self.lbl_notification.show()
+        if folder_path:
+            report_path= folder_path+ f"/{report_name}" 
+            #Generate report
+            IfcOps.checkIfcWithIds(ifc_file, ids_file, report_type, report_path)
+            self.lbl_notification.setText(f"Report was saved in: {report_path}")
+            self.lbl_notification.show()
+        else:
+            Ops.msgError(self, "Error: Folder path", "A folder path must be provided")
 
     def openCustomFileDialog(self)->str:
         options = QFileDialog.Options()
@@ -1202,6 +1210,8 @@ class CheckWindow(QMainWindow):
                                                        options=options)
         if folder_path:
             return folder_path
+        else:
+            return None
             
 
 class MainWindow(QMainWindow):
