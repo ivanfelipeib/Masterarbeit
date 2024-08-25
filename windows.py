@@ -1041,8 +1041,8 @@ class ManageIdsWindow(QMainWindow):
             self.msgError.show()
     
     def clickDelete(self):
-        if self.idsEditor_window:
-            if not self.idsEditor_window.isVisible():
+        if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
+            if self.idsEditor_window and not self.idsEditor_window.isVisible():
                 self.ids_in_edition=None
             if Ops.checkIfElementSelected(self, self.list_ids_mgmnt):
                 selected_indexes = self.list_ids_mgmnt.selectedIndexes()
