@@ -139,14 +139,8 @@ class IfcOps:
                     reporter_obj= reporter.Bcf(my_ids)
 
             if reporter_obj:
-                try:
-                    reporter_obj.report()
-                    reporter_obj.to_file(report_file_path)
-                except Exception as e:
-                    root, _ = os.path.splitext(report_file_path)
-                    new_report_file_path= root + ".txt"
-                    with open(new_report_file_path, 'w') as error_file:
-                        error_file.write(f"An error occurred during report generation:\n{str(e)}")
+                reporter_obj.report()
+                reporter_obj.to_file(report_file_path)
             else:
                 print("Reporter object is None. Invalid report type provided.")
     
