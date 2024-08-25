@@ -123,24 +123,36 @@ class IfcOps:
         Ops.msgError(self, "Report created", f"Excel file has been created successfully in {filepath}.")
 
     def checkIfcWithIds(ifc_file_path:str, ids_file_path:str, report_type:str, report_file_path:str):
-        my_ifc = ifcopenshell.open(ifc_file_path)
-        my_ids = ifctester.open(ids_file_path)  
-        my_ids.validate(my_ifc) #validate IFC against IDS
-        reporter_obj = None
+        try:
+            my_ifc = ifcopenshell.open(ifc_file_path)
+            my_ids = ifctester.open(ids_file_path)  
+            my_ids.validate(my_ifc) #validate IFC against IDS
+            reporter_obj = None
 
-        match report_type:
-            case "HTML":
-                reporter_obj = reporter.Html(my_ids)
-            case "ODS":
-                reporter_obj= reporter.Ods(my_ids)
-            case "BCF":
-                reporter_obj= reporter.Bcf(my_ids)
+            match report_type:
+                case "HTML":
+                    reporter_obj = reporter.Html(my_ids)
+                case "ODS":
+                    reporter_obj= reporter.Ods(my_ids)
+                case "BCF":
+                    reporter_obj= reporter.Bcf(my_ids)
 
-        if reporter_obj:
-            reporter_obj.report()
-            reporter_obj.to_file(report_file_path)
-        else:
-            print("reporter is None")
+            if reporter_obj:
+                try:
+                    # Generate the report
+                    reporter_obj.report()
+                    reporter_obj.to_file(report_file_path)
+                except Exception as e:
+                    # If an exception occurs, write the error to a text file
+                    with open(report_file_path, 'w') as error_file:
+                        error_file.write(f"An error occurred during report generation:\n{str(e)}")
+            else:
+                print("Reporter object is None. Invalid report type provided.")
+    
+        except Exception as e:
+            # If an exception occurs during the initial setup, handle it here
+            with open(report_file_path, 'w') as error_file:
+                error_file.write(f"An error occurred during processing:\n{str(e)}")
 
 
 
