@@ -109,9 +109,18 @@ class IdsOps():
                 elif match_list:
                     value = value[1:-1] #removes brackets
                     value= value.split(',')
-                    base="string"
-                    options={"enumeration": value}
-                    restriction= ids.Restriction(options, base)
+                    if all(float(item.strip()) for item in value) :
+                        base="double"
+                        options={"enumeration": value}
+                        restriction= ids.Restriction(options, base)
+                    elif all(item.strip().isdigit() for item in value):
+                        base="integer"
+                        options={"enumeration": value}
+                        restriction= ids.Restriction(options, base)
+                    else:
+                        base="string"
+                        options={"enumeration": value}
+                        restriction= ids.Restriction(options, base)
                 
                 elif is_regex:
                     base="string"
