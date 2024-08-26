@@ -1,12 +1,25 @@
 from PyQt5.QtWidgets import QMainWindow,QLineEdit, QPushButton, QMdiArea, QComboBox, QFileDialog, QMessageBox, QMdiSubWindow, QLabel
+from PyQt5 import QtWidgets
 from Operations.Ops import Ops
 from Operations.idsOps import IdsOps
 from ifctester import ids
 from Operations.ifcOps import IfcOps
 from myWidgets import CustomLineEdit
+from abc import ABC, ABCMeta, abstractmethod
 
+class CombinedMeta(ABCMeta, type(QtWidgets.QWidget)):
+    pass
 
-class byAttribute(QMainWindow):
+class Filters(ABC):
+    @abstractmethod
+    def getData(self):
+        pass
+
+    @abstractmethod
+    def loadData(self):
+        pass
+    
+class byAttribute(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet: ids.Attribute=None):
         super(byAttribute, self).__init__(parent)
 
@@ -56,7 +69,7 @@ class byAttribute(QMainWindow):
         optionality= facet_to_load.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)
 
-class byClass(QMainWindow):
+class byClass(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet: ids.Entity=None):
         super(byClass, self).__init__(parent)
 
@@ -98,7 +111,7 @@ class byClass(QMainWindow):
         self.txt_type.setText(facet_to_load.predefinedType)
         #clas entity MUST be required, there is no optionality to be provided. https://github.com/buildingSMART/IDS/blob/development/Documentation/facet-configurations.md
 
-class byClassification(QMainWindow):
+class byClassification(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet:ids.Classification=None):
         super(byClassification, self).__init__(parent)
 
@@ -149,7 +162,7 @@ class byClassification(QMainWindow):
         optionality= self.my_facet.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)
 
-class byMaterial(QMainWindow):
+class byMaterial(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet:ids.Material=None):
         super(byMaterial, self).__init__(parent)
 
@@ -197,7 +210,7 @@ class byMaterial(QMainWindow):
         optionality= self.my_facet.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)
 
-class byPartOf(QMainWindow):
+class byPartOf(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet:ids.PartOf= None):
         super(byPartOf, self).__init__(parent)
 
@@ -248,7 +261,7 @@ class byPartOf(QMainWindow):
         optionality= self.my_facet.cardinality
         Ops.setTextComboBox(self, "combo_optionality", optionality)
 
-class byProperty(QMainWindow):
+class byProperty(QMainWindow, Filters, metaclass=CombinedMeta):
     def __init__(self, parent=None, my_ids:ids.Ids=None, my_spec:ids.Specification=None, my_facet:ids.Property=None):
         super(byProperty, self).__init__(parent)
 
