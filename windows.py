@@ -788,10 +788,9 @@ class IfcInfoWindow(QMainWindow):
             if self.my_schema=="IFC4":
                 if hasattr(instance, 'IsDefinedBy'): #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD2_TC1/HTML/link/ifcobject.htm Assignment of property sets : IsDefinedBy - a definition relationship IfcRelDefinesByProperties that assignes property set definitions to the object occurrence.
                     self.flag_psets=True
-                    # Iterate through the IsDefinedBy relationships
                     self.psets_dict={}
+
                     for definition in instance.IsDefinedBy: #Assignment of property sets in IFcObject through IsDefinedBy
-                        # Add PSets and Props allocated in object itself
                         #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD1/HTML/schema/ifckernel/lexical/ifcreldefinesbyproperties.htm
                         if definition.is_a('IfcRelDefinesByProperties'): 
                             property_set = definition.RelatingPropertyDefinition
@@ -810,51 +809,13 @@ class IfcInfoWindow(QMainWindow):
                                         props_dict[prop.Name]= prop_value
                                 self.psets_dict[property_set.Name] = props_dict
 
-                        # Add PSets and Props allocated within the object type definition 
-                        #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
-                        if definition.is_a('IfcRelDefinesByType'): 
-                            object_type = definition.RelatingType
-                            if object_type.is_a('IfcTypeObject'):
-                                props_dict={}
-                                for property_set in object_type.HasPropertySets:
-                                    for prop in property_set.HasProperties:
-                                        prop_value = '<not handled>'
-                                        if prop.is_a('IfcPropertySingleValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyListValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                    self.psets_dict[property_set.Name] = props_dict
-
                     for definition in instance.IsTypedBy: #Assignment of a type in IFcObject through IsDefinedBy (from IFC SChema IFC4 onwards)
-                        if definition.is_a('IfcRelDefinesByProperties'): 
-                            property_set = definition.RelatingPropertyDefinition
-                            if property_set.is_a('IfcPropertySet'):
-                                props_dict={}
-                                for prop in property_set.HasProperties:
-                                    prop_value = '<not handled>'
-                                    if prop.is_a('IfcPropertySingleValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                    elif prop.is_a('IfcPropertyListValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                    elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                self.psets_dict[property_set.Name] = props_dict
-
-                        # Add PSets and Props allocated within the object type definition 
                         #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
                         if definition.is_a('IfcRelDefinesByType'): 
                             object_type = definition.RelatingType
                             if object_type.is_a('IfcTypeObject'):
-                                props_dict={}
                                 for property_set in object_type.HasPropertySets:
+                                    props_dict={}
                                     for prop in property_set.HasProperties:
                                         prop_value = '<not handled>'
                                         if prop.is_a('IfcPropertySingleValue'):
@@ -866,45 +827,7 @@ class IfcInfoWindow(QMainWindow):
                                         elif prop.is_a('IfcPropertyEnumeratedValue'):
                                             prop_value = str(prop.NominalValue.wrappedValue)
                                             props_dict[prop.Name]= prop_value
-                                    self.psets_dict[property_set.Name] = props_dict
-
-                    for definition in instance.IsDeclaredBy: #Assignment of a partial type in IFcObject through IsDeclaredBy (from IFC SChema IFC4 onwards)
-                        if definition.is_a('IfcRelDefinesByProperties'): 
-                            property_set = definition.RelatingPropertyDefinition
-                            if property_set.is_a('IfcPropertySet'):
-                                props_dict={}
-                                for prop in property_set.HasProperties:
-                                    prop_value = '<not handled>'
-                                    if prop.is_a('IfcPropertySingleValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                    elif prop.is_a('IfcPropertyListValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                    elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
-                                        props_dict[prop.Name]= prop_value
-                                self.psets_dict[property_set.Name] = props_dict
-
-                        # Add PSets and Props allocated within the object type definition 
-                        #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
-                        if definition.is_a('IfcRelDefinesByType'): 
-                            object_type = definition.RelatingType
-                            if object_type.is_a('IfcTypeObject'):
-                                props_dict={}
-                                for property_set in object_type.HasPropertySets:
-                                    for prop in property_set.HasProperties:
-                                        prop_value = '<not handled>'
-                                        if prop.is_a('IfcPropertySingleValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyListValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                    self.psets_dict[property_set.Name] = props_dict
+                                    self.psets_dict[property_set.Name +" (Type)"] = props_dict
 
                     self.combo_psets.addItems(self.psets_dict.keys())
 
@@ -938,8 +861,8 @@ class IfcInfoWindow(QMainWindow):
                         if definition.is_a('IfcRelDefinesByType'): 
                             object_type = definition.RelatingType
                             if object_type.is_a('IfcTypeObject'):
-                                props_dict={}
                                 for property_set in object_type.HasPropertySets:
+                                    props_dict={}
                                     for prop in property_set.HasProperties:
                                         prop_value = '<not handled>'
                                         if prop.is_a('IfcPropertySingleValue'):
@@ -951,8 +874,8 @@ class IfcInfoWindow(QMainWindow):
                                         elif prop.is_a('IfcPropertyEnumeratedValue'):
                                             prop_value = str(prop.NominalValue.wrappedValue)
                                             props_dict[prop.Name]= prop_value
-                                    self.psets_dict[property_set.Name] = props_dict
-                                    
+                                    self.psets_dict[property_set.Name +" (Type)"] = props_dict
+
                     self.combo_psets.addItems(self.psets_dict.keys())
             else:
                 self.flag_psets=False
