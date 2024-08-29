@@ -401,10 +401,16 @@ class IdsSpecEditorWindow(QMainWindow):
     
     def loadRequirementsList(self):
         for requirement_load in self.my_spec.requirements:
-            item= requirement_load.to_string(clause_type= "requirement", specification=self.my_spec, requirement=requirement_load)
-            self.dic_requirements[item]= requirement_load
-            self.list_requirements.addItem(item)
-            print(self.dic_requirements)
+            if isinstance(requirement_load,ids.Entity):
+                item= IdsOps.entityToString(requirement_load, "requirement")
+                self.dic_requirements[item]= requirement_load
+                self.list_requirements.addItem(item)
+                print(self.dic_requirements)
+            else:
+                item= requirement_load.to_string(clause_type= "requirement", specification=self.my_spec, requirement=requirement_load)
+                self.dic_requirements[item]= requirement_load
+                self.list_requirements.addItem(item)
+                print(self.dic_requirements)
 
     def loadFiltersList(self):
         for filter_load in self.my_spec.applicability:
@@ -457,7 +463,7 @@ class IdsSpecEditorWindow(QMainWindow):
             self.openFilterSubWindow(text, filter_selected)
             self.list_filters.clearSelection()
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
+            Ops.msgError(self, "Selection Error", "There is no item selected for editing.") 
     
     def loadCardinality(self):
         #Set cardinality according with IDS documentation https://github.com/buildingSMART/IDS/blob/development/Documentation/specifications.md
