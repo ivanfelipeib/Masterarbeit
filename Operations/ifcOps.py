@@ -29,10 +29,11 @@ class IfcOps:
                         key= int(key)
                     value = value[key]
                     if value is None or value == "":
-                        value="Value is either None or empty"
+                        value= f"Value is either None or empty"
+                        break
                 return value
-            except (KeyError, IndexError, TypeError):
-                return None
+            except (KeyError, IndexError, TypeError) as e:
+                return "Error: "+str(e)
         else:
             return f"Entity {my_ifc_entity_class} not found in IFC Model"
         
