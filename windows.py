@@ -800,7 +800,7 @@ class IfcInfoWindow(QMainWindow):
                         #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD1/HTML/schema/ifckernel/lexical/ifcreldefinesbyproperties.htm
                         if definition.is_a('IfcRelDefinesByProperties'): 
                             property_set = definition.RelatingPropertyDefinition
-                            if property_set.is_a('IfcPropertySet'):
+                            if property_set.is_a('IfcPropertySet') and property_set.HasProperties is not None:
                                 props_dict={}
                                 for prop in property_set.HasProperties:
                                     prop_value = '<not handled>'
@@ -808,10 +808,10 @@ class IfcInfoWindow(QMainWindow):
                                         prop_value = str(prop.NominalValue.wrappedValue)
                                         props_dict[prop.Name]= prop_value
                                     elif prop.is_a('IfcPropertyListValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
+                                        prop_value = str(prop)
                                         props_dict[prop.Name]= prop_value
                                     elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                        prop_value = str(prop.NominalValue.wrappedValue)
+                                        prop_value = str(prop)
                                         props_dict[prop.Name]= prop_value
                                 self.psets_dict[property_set.Name] = props_dict
 
@@ -819,7 +819,7 @@ class IfcInfoWindow(QMainWindow):
                         #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
                         if definition.is_a('IfcRelDefinesByType'): 
                             object_type = definition.RelatingType
-                            if object_type.is_a('IfcTypeObject'):
+                            if object_type.is_a('IfcTypeObject') and object_type.HasPropertySets is not None:
                                 for property_set in object_type.HasPropertySets:
                                     props_dict={}
                                     for prop in property_set.HasProperties:
@@ -847,7 +847,7 @@ class IfcInfoWindow(QMainWindow):
                         #https://standards.buildingsmart.org/IFC/RELEASE/IFC4/ADD1/HTML/schema/ifckernel/lexical/ifcreldefinesbyproperties.htm
                         if definition.is_a('IfcRelDefinesByProperties'): 
                             property_set = definition.RelatingPropertyDefinition
-                            if property_set.is_a('IfcPropertySet'):
+                            if property_set.is_a('IfcPropertySet') and property_set.HasProperties is not None:
                                 props_dict={}
                                 for prop in property_set.HasProperties:
                                     prop_value = '<not handled>'
@@ -866,7 +866,7 @@ class IfcInfoWindow(QMainWindow):
                         #https://standards.buildingsmart.org/IFC/DEV/IFC4_2/FINAL/HTML/schema/ifckernel/lexical/ifcreldefinesbytype.htm
                         if definition.is_a('IfcRelDefinesByType'): 
                             object_type = definition.RelatingType
-                            if object_type.is_a('IfcTypeObject'):
+                            if object_type.is_a('IfcTypeObject') and object_type.HasPropertySets is not None:
                                 for property_set in object_type.HasPropertySets:
                                     props_dict={}
                                     for prop in property_set.HasProperties:
