@@ -804,15 +804,19 @@ class IfcInfoWindow(QMainWindow):
                                 props_dict={}
                                 for prop in property_set.HasProperties:
                                     if hasattr(prop, 'NominalValue'):
-                                        prop_value = '<not handled>'
-                                        if prop.is_a('IfcPropertySingleValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyListValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
+                                        if hasattr(prop.NominalValue, 'wrappedValue'):
+                                            prop_value = '<not handled>'
+                                            if prop.is_a('IfcPropertySingleValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                            elif prop.is_a('IfcPropertyListValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                            elif prop.is_a('IfcPropertyEnumeratedValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                        else:
+                                            prop_value = str(prop.NominalValue)
                                             props_dict[prop.Name]= prop_value
                                     else:
                                         prop_value = str(prop)
@@ -828,15 +832,19 @@ class IfcInfoWindow(QMainWindow):
                                     props_dict={}
                                     for prop in property_set.HasProperties:
                                         if hasattr(prop, 'NominalValue'):
-                                            prop_value = '<not handled>'
-                                            if prop.is_a('IfcPropertySingleValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
-                                                props_dict[prop.Name]= prop_value
-                                            elif prop.is_a('IfcPropertyListValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
-                                                props_dict[prop.Name]= prop_value
-                                            elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                            if hasattr(prop.NominalValue, 'wrappedValue'):
+                                                prop_value = '<not handled>'
+                                                if prop.is_a('IfcPropertySingleValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                                elif prop.is_a('IfcPropertyListValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                                elif prop.is_a('IfcPropertyEnumeratedValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                            else:
+                                                prop_value = str(prop.NominalValue)
                                                 props_dict[prop.Name]= prop_value
                                         else:
                                             prop_value = str(prop)
@@ -859,15 +867,19 @@ class IfcInfoWindow(QMainWindow):
                                 props_dict={}
                                 for prop in property_set.HasProperties:
                                     if hasattr(prop, 'NominalValue'):
-                                        prop_value = '<not handled>'
-                                        if prop.is_a('IfcPropertySingleValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyListValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
-                                            props_dict[prop.Name]= prop_value
-                                        elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                            prop_value = str(prop.NominalValue.wrappedValue)
+                                        if hasattr(prop.NominalValue, 'wrappedValue'):
+                                            prop_value = '<not handled>'
+                                            if prop.is_a('IfcPropertySingleValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                            elif prop.is_a('IfcPropertyListValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                            elif prop.is_a('IfcPropertyEnumeratedValue'):
+                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                                props_dict[prop.Name]= prop_value
+                                        else:
+                                            prop_value = str(prop.NominalValue)
                                             props_dict[prop.Name]= prop_value
                                     else:
                                         prop_value = str(prop)
@@ -883,15 +895,19 @@ class IfcInfoWindow(QMainWindow):
                                     props_dict={}
                                     for prop in property_set.HasProperties:
                                         if hasattr(prop, 'NominalValue'):
-                                            prop_value = '<not handled>'
-                                            if prop.is_a('IfcPropertySingleValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
-                                                props_dict[prop.Name]= prop_value
-                                            elif prop.is_a('IfcPropertyListValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
-                                                props_dict[prop.Name]= prop_value
-                                            elif prop.is_a('IfcPropertyEnumeratedValue'):
-                                                prop_value = str(prop.NominalValue.wrappedValue)
+                                            if hasattr(prop.NominalValue, 'wrappedValue'):
+                                                prop_value = '<not handled>'
+                                                if prop.is_a('IfcPropertySingleValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                                elif prop.is_a('IfcPropertyListValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                                elif prop.is_a('IfcPropertyEnumeratedValue'):
+                                                    prop_value = str(prop.NominalValue.wrappedValue)
+                                                    props_dict[prop.Name]= prop_value
+                                            else:
+                                                prop_value = str(prop.NominalValue)
                                                 props_dict[prop.Name]= prop_value
                                         else:
                                             prop_value = str(prop)
