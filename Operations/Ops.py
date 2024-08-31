@@ -159,16 +159,20 @@ class Ops():
         return destination_file
 
     @staticmethod
-    def formatLatLong(coordinates:tuple)->str:
-        degrees = coordinates[0]
-        minutes = coordinates[1]
-        seconds = coordinates[2]
+    def formatLatLong(coordinates)->str:
+        if isinstance(coordinates, tuple) and len(coordinates) == 3:
+            degrees = coordinates[0]
+            minutes = coordinates[1]
+            seconds = coordinates[2]
 
-        # Formatting the string
-        formatted_string = f"{degrees}° {minutes}' {seconds}''"
+            # Formatting the string
+            formatted_string = f"{degrees}° {minutes}' {seconds}''"
 
-        # Display the result
-        return(formatted_string)
+            # Display the result
+            return(formatted_string)
+        else:
+            return str(coordinates)
+    
     
     @staticmethod
     def getDatetime()->str:
