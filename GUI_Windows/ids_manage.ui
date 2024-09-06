@@ -29,7 +29,7 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>271</width>
+      <width>381</width>
       <height>31</height>
      </rect>
     </property>
@@ -42,7 +42,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Information Delivery Specifications</string>
+     <string>Information Delivery Specifications File Manager</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -92,7 +92,7 @@
   <customwidget>
    <class>CustomListWidget</class>
    <extends>QListView</extends>
-   <header>myWidgets.h</header>
+   <header location="global">myWidgets.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

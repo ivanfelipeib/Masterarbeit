@@ -50,7 +50,7 @@
      </font>
     </property>
     <property name="text">
-     <string>General Information</string>
+     <string>IDS General Information</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">

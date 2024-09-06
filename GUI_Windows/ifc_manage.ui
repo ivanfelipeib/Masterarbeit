@@ -29,7 +29,7 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>101</width>
+      <width>181</width>
       <height>31</height>
      </rect>
     </property>
@@ -42,7 +42,7 @@
      </font>
     </property>
     <property name="text">
-     <string>BIM Models</string>
+     <string>IFC File Manager</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">

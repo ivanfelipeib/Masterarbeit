@@ -40,38 +40,12 @@
      <rect>
       <x>30</x>
       <y>40</y>
-      <width>55</width>
+      <width>531</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>The IDS</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_comply">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>40</y>
-      <width>141</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>&lt;Complies / does not comply&gt;</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="lbl_text2">
-    <property name="geometry">
-     <rect>
-      <x>220</x>
-      <y>40</y>
-      <width>241</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>with the IDS standard, please check the report below.</string>
+     <string>The IDS audit has been made, please check the report below.</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
