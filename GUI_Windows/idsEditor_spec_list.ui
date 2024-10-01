@@ -57,15 +57,25 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="btn_new_spec">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>New</string>
+        <string>Neu</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btn_delete_spec">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Delete</string>
+        <string>Löschen</string>
        </property>
       </widget>
      </item>
@@ -83,8 +93,13 @@
          <height>28</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Edit</string>
+        <string>Bearbeiten</string>
        </property>
       </widget>
      </item>

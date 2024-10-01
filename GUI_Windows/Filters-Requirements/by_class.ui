@@ -19,7 +19,7 @@
      <rect>
       <x>10</x>
       <y>0</y>
-      <width>98</width>
+      <width>161</width>
       <height>24</height>
      </rect>
     </property>
@@ -32,7 +32,7 @@
      </font>
     </property>
     <property name="text">
-     <string>By Class:</string>
+     <string>Nach IFC-Klasse:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -45,7 +45,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>(*) Required fields</string>
+     <string>(*) Pflichtfelder</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -70,7 +70,7 @@
        <item>
         <widget class="QLabel" name="lbl_type">
          <property name="text">
-          <string>Predefined Type</string>
+          <string>Vordefinierter Typ</string>
          </property>
         </widget>
        </item>

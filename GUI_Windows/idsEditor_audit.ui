@@ -20,7 +20,7 @@
       <x>30</x>
       <y>20</y>
       <width>101</width>
-      <height>16</height>
+      <height>21</height>
      </rect>
     </property>
     <property name="font">
@@ -32,7 +32,7 @@
      </font>
     </property>
     <property name="text">
-     <string>IDS Audit</string>
+     <string>IDS-Prüfung</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_text1">
@@ -44,8 +44,13 @@
       <height>16</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
     <property name="text">
-     <string>The IDS audit has been made, please check the report below.</string>
+     <string>Das IDS-Prüfung wurde durchgeführt, bitte überprüfen Sie den untenstehenden Bericht.</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -60,8 +65,13 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btn_export">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Export</string>
+        <string>Exportieren</string>
        </property>
       </widget>
      </item>

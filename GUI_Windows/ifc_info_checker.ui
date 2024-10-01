@@ -50,7 +50,7 @@
      </font>
     </property>
     <property name="text">
-     <string>IFC File</string>
+     <string>IFC-Datei</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -81,11 +81,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Project base point:</string>
+          <string>Projekt-Basispunkt:</string>
          </property>
         </widget>
        </item>
@@ -128,11 +128,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Coordiante System:</string>
+          <string>Koordinatensystem:</string>
          </property>
         </widget>
        </item>
@@ -175,11 +175,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>---Ref.Latitude</string>
+          <string>---Breitengrad</string>
          </property>
         </widget>
        </item>
@@ -222,11 +222,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>---Ref. Longitude</string>
+          <string>---Längengräde</string>
          </property>
         </widget>
        </item>
@@ -269,11 +269,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>IFC Schema:</string>
+          <string>IFC-Schema:</string>
          </property>
         </widget>
        </item>
@@ -316,11 +316,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Authoring Software:</string>
+          <string>Autorensoftware:</string>
          </property>
         </widget>
        </item>
@@ -363,11 +363,11 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Objects in model:</string>
+          <string>Objekte im Modell:</string>
          </property>
         </widget>
        </item>
@@ -418,7 +418,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Basic Information</string>
+     <string>Allgemeine Informationen</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_ids_info_title_3">
@@ -439,7 +439,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Project-related Information</string>
+     <string>Projektbezogene Informationen</string>
     </property>
    </widget>
    <widget class="QLabel" name="lbl_ids_info_title_4">
@@ -460,7 +460,7 @@
      </font>
     </property>
     <property name="text">
-     <string>IFC Schema Explorer</string>
+     <string>IFC-Schema-Explorer</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget_2">
@@ -482,11 +482,11 @@
         <widget class="QLabel" name="lbl_title_2">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Description</string>
+          <string>Beschreibung:</string>
          </property>
         </widget>
        </item>
@@ -517,7 +517,7 @@
         <widget class="QLabel" name="lbl_copyright_2">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
@@ -552,11 +552,11 @@
         <widget class="QLabel" name="lbl_version_2">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Organization:</string>
+          <string>Organisation:</string>
          </property>
         </widget>
        </item>
@@ -587,11 +587,11 @@
         <widget class="QLabel" name="lbl_author_2">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Author:</string>
+          <string>Autor:</string>
          </property>
         </widget>
        </item>
@@ -637,11 +637,11 @@
         <widget class="QLabel" name="lbl_title_4">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Entity:</string>
+          <string>Entität:</string>
          </property>
         </widget>
        </item>
@@ -675,7 +675,7 @@
         <widget class="QLabel" name="lbl_title_5">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
@@ -725,11 +725,11 @@
         <widget class="QLabel" name="lbl_title_7">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Attribute</string>
+          <string>Attribut:</string>
          </property>
         </widget>
        </item>
@@ -763,11 +763,11 @@
         <widget class="QLabel" name="label">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Value</string>
+          <string>Wert:</string>
          </property>
         </widget>
        </item>
@@ -816,11 +816,11 @@
         <widget class="QLabel" name="lbl_title_8">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>PSet</string>
+          <string>PSet:</string>
          </property>
         </widget>
        </item>
@@ -854,11 +854,11 @@
         <widget class="QLabel" name="lbl_title_9">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Property</string>
+          <string>Merkmal:</string>
          </property>
         </widget>
        </item>
@@ -892,11 +892,11 @@
         <widget class="QLabel" name="label_2">
          <property name="font">
           <font>
-           <pointsize>8</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Value</string>
+          <string>Wert:</string>
          </property>
         </widget>
        </item>
@@ -934,9 +934,14 @@
      <rect>
       <x>40</x>
       <y>670</y>
-      <width>93</width>
+      <width>111</width>
       <height>28</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Generate Report</string>

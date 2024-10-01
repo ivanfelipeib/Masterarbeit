@@ -29,7 +29,7 @@
      <rect>
       <x>30</x>
       <y>20</y>
-      <width>381</width>
+      <width>391</width>
       <height>31</height>
      </rect>
     </property>
@@ -42,7 +42,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Information Delivery Specifications File Manager</string>
+     <string>Dateimanager - Information Delivery Specifications </string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -57,29 +57,49 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QPushButton" name="btn_import_ids">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Import</string>
+        <string>Importieren</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btn_delete_ids">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Delete</string>
+        <string>Löschen</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btn_ids_edit">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Edit</string>
+        <string>Bearbeiten</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btn_ids_new">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>New</string>
+        <string>Neu</string>
        </property>
       </widget>
      </item>

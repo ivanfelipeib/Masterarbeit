@@ -32,7 +32,7 @@
      </font>
     </property>
     <property name="text">
-     <string>By Attribute:</string>
+     <string>Nach Attribut:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -45,7 +45,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>(*) Required fields</string>
+     <string>(*) Pflichtfelder</string>
     </property>
    </widget>
    <widget class="QWidget" name="layoutWidget">
@@ -70,7 +70,7 @@
        <item>
         <widget class="QLabel" name="lbl_value">
          <property name="text">
-          <string>Value</string>
+          <string>Wert</string>
          </property>
         </widget>
        </item>
@@ -123,7 +123,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Optionality</string>
+     <string>Optionalität:</string>
     </property>
    </widget>
   </widget>

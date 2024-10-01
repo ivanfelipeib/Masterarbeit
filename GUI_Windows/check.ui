@@ -49,14 +49,19 @@
           </font>
          </property>
          <property name="text">
-          <string>Compliance Check IFC against IDS</string>
+          <string>Konformitätsprüfung IFC gegenüber IDS</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="lbl_ifc_title">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>IFC file</string>
+          <string>IFC-Datei</string>
          </property>
         </widget>
        </item>
@@ -80,6 +85,11 @@
            <height>19</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
         </widget>
        </item>
       </layout>
@@ -88,8 +98,15 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QLabel" name="lbl_ids_file">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>IDS file</string>
+          <string>IDS-Datei</string>
          </property>
         </widget>
        </item>
@@ -113,6 +130,11 @@
            <height>19</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
         </widget>
        </item>
       </layout>
@@ -121,8 +143,15 @@
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
         <widget class="QLabel" name="lbl_ids_file_2">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Report type</string>
+          <string>Berichtstyp</string>
          </property>
         </widget>
        </item>
@@ -145,6 +174,11 @@
            <width>580</width>
            <height>19</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
          </property>
          <item>
           <property name="text">
@@ -197,8 +231,13 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Check</string>
+        <string>Prüfen</string>
        </property>
       </widget>
      </item>
@@ -222,8 +261,13 @@
          <height>23</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Back</string>
+        <string>Zurück</string>
        </property>
       </widget>
      </item>
@@ -253,8 +297,9 @@
     <property name="font">
      <font>
       <family>Arial</family>
-      <weight>75</weight>
-      <bold>true</bold>
+      <pointsize>10</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
      </font>
     </property>
     <property name="text">

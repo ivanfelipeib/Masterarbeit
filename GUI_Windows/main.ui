@@ -45,7 +45,7 @@
         </font>
        </property>
        <property name="text">
-        <string>IFC Manager and Data Access Module</string>
+        <string>IFC-Modul</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -57,8 +57,13 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_manage_ifc">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Manage IFC</string>
+        <string>IFC verwalten</string>
        </property>
       </widget>
      </item>
@@ -73,7 +78,7 @@
         </font>
        </property>
        <property name="text">
-        <string>IDS Manager Module</string>
+        <string>IDS-Modul</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -85,8 +90,13 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_manage_ids">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Manage IDS</string>
+        <string>IDS verwalten</string>
        </property>
       </widget>
      </item>
@@ -101,7 +111,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Compliance Check Module</string>
+        <string>IFC vs IDS Modul</string>
        </property>
        <property name="textFormat">
         <enum>Qt::AutoText</enum>
@@ -116,8 +126,13 @@
      </item>
      <item>
       <widget class="QPushButton" name="btn_check">
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
        <property name="text">
-        <string>Compliance Check</string>
+        <string>Konformitätsprüfung</string>
        </property>
       </widget>
      </item>
