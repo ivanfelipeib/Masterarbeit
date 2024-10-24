@@ -102,20 +102,20 @@ class Ops():
         combo_box_widget = getattr(window, combo_box_name, None)
 
         if combo_box_widget is None:
-            Ops.msgError(window,"Error", f"ComboBox '{combo_box_name}' not found")
+            Ops.msgError(window,"Fehler", f"ComboBox '{combo_box_name}' nicht gefunden.")
             return
         
         index = combo_box_widget.findText(text)
         if index == -1:  # Value not found
-            Ops.msgError(window, "Error", f"Value: '{text}' was not found within the ComboBox {combo_box_name} available values.")
+            Ops.msgError(window, "Fehler", f"Wert: '{text}' wurde nicht in der Combobox {combo_box_name} innerhalb der verfügbaren Werte gefunden.")
         else:
             combo_box_widget.setCurrentIndex(index)
-            print(f"Value '{text}' set successfully in {combo_box_name}.")
+            print(f"Wert '{text}' ergfolgreich in {combo_box_name} gesetzt.")
 
     def deleteItemInList(window, list_widget_name, text):
         list_widget = getattr(window, list_widget_name, None)
         if not list_widget:
-            print(f"Error: {list_widget_name} is not a valid attribute of {window}.")
+            print(f"Fehler: {list_widget_name} ist kein gültiges Merkmal von {window}.")
             return False
         
         for i in range(list_widget.count()):
@@ -154,8 +154,8 @@ class Ops():
     
     def filePathExport(self):
         options = QFileDialog.Options()
-        filter = "Excel files (*.xlsx)"
-        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", filter, options=options)
+        filter = "Excel-Dateien (*.xlsx)"
+        destination_file, _ = QFileDialog.getSaveFileName(self, "Ziel-Dateipfad auswählen", "", filter, options=options)
         return destination_file
 
     @staticmethod
