@@ -29,13 +29,13 @@ class IfcOps:
                         key= int(key)
                     value = value[key]
                     if value is None or value == "":
-                        value= f"Value is either None or empty"
+                        value= f"Wert ist entweder None oder leer."
                         break
                 return value
             except (KeyError, IndexError, TypeError) as e:
                 return "Error: "+str(e)
         else:
-            return f"Entity {my_ifc_entity_class} not found in IFC Model"
+            return f"Entität {my_ifc_entity_class} nicht im IFC-Modell gefunden."
         
     def numberElementbyEntity(self, ifc_entity:str)->str:
         elements = self.model.by_type(ifc_entity)
@@ -56,29 +56,29 @@ class IfcOps:
         bold = workbook.add_format({'bold': True})
         underlined = workbook.add_format({'underline': 1})
         #Add fix titles
-        worksheet.write(0, 0, "IFC Information Report", header)
-        worksheet.write(1, 0, "IFC File", bold)
-        worksheet.write(2, 0, "Date of report", bold)
+        worksheet.write(0, 0, "IFC-Informationsbericht", header)
+        worksheet.write(1, 0, "IFC-Datei", bold)
+        worksheet.write(2, 0, "Berichtsdatum", bold)
 
-        worksheet.write(4, 0, "Basic Information", titles)
-        worksheet.write(5, 0, "IFC Schema",bold)
-        worksheet.write(6, 0, "Project Base Point", bold)
-        worksheet.write(7, 0, "Coordinate System", bold)
-        worksheet.write(8, 0, "Ref.Latitude", bold)
-        worksheet.write(9, 0, "Ref.Longitude", bold)
-        worksheet.write(10, 0, "Authoring Software", bold)
-        worksheet.write(11, 0, "Objects in Model", bold)
+        worksheet.write(4, 0, "Grundinformationen", titles)
+        worksheet.write(5, 0, "IFC-Schema",bold)
+        worksheet.write(6, 0, "Projekt-Basispunkt", bold)
+        worksheet.write(7, 0, "Koordinatensystem", bold)
+        worksheet.write(8, 0, "Breitengrad", bold)
+        worksheet.write(9, 0, "Längengrad", bold)
+        worksheet.write(10, 0, "Autoren-Software", bold)
+        worksheet.write(11, 0, "Objekte im Modell", bold)
 
-        worksheet.write(4, 2, "Project Information", titles)
-        worksheet.write(5, 2, "Description", bold)
+        worksheet.write(4, 2, "Projektinformationen", titles)
+        worksheet.write(5, 2, "Beschreibung", bold)
         worksheet.write(6, 2, "Phase", bold)
-        worksheet.write(7, 2, "Organization", bold)
-        worksheet.write(8, 2, "Author", bold)
+        worksheet.write(7, 2, "Organisation", bold)
+        worksheet.write(8, 2, "Autor", bold)
 
-        worksheet.write(13, 0, "Contents of selected IFC Element", titles)
-        worksheet.write(14, 0, "Entity", bold)
+        worksheet.write(13, 0, "Inhalte des ausgewählten IFC-Elements", titles)
+        worksheet.write(14, 0, "Entität", bold)
         worksheet.write(15, 0, "Element", bold)
-        worksheet.write(17, 0, "Attributes", titles)
+        worksheet.write(17, 0, "Merkmale", titles)
         worksheet.write(17, 2, "Property Sets", titles)
         # Write values
         worksheet.write(1, 1, data["ifc_info"]["File"])
@@ -122,7 +122,7 @@ class IfcOps:
         worksheet.set_column(0, last_column,30)
         # Close the workbook
         workbook.close()
-        Ops.msgError(self, "Report created", f"Excel file has been created successfully in {filepath}.")
+        Ops.msgError(self, "Bericht erstellt", f"Excel-Datei wurde erfolgreich erstellt in {filepath}.")
 
     def checkIfcWithIds(ifc_file_path:str, ids_file_path:str, report_type:str, report_file_path:str):
         try:
@@ -143,13 +143,13 @@ class IfcOps:
                 reporter_obj.report()
                 reporter_obj.to_file(report_file_path)
             else:
-                print("Reporter object is None. Invalid report type provided.")
+                print("Reporter-Objekt ist None. Ungültiger Berichtstyp angegeben.")
     
         except Exception as e:
             root, _ = os.path.splitext(report_file_path)
             new_report_file_path= root + ".txt"
             with open(new_report_file_path, 'w') as error_file:
-                error_file.write(f"An error occurred during processing:\n{str(e)}")
+                error_file.write(f"Ein Fehler ist während der Verarbeitung aufgetreten:\n{str(e)}")
 
 
 
