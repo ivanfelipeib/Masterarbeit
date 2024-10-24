@@ -45,8 +45,8 @@ class CustomListWidget(QListWidget):
                 event.ignore()
                 self.msgError= QMessageBox()
                 self.msgError.setIcon(QMessageBox.Warning)
-                self.msgError.setWindowTitle("Error")
-                self.msgError.setText("You cannot import more than 10 files.")
+                self.msgError.setWindowTitle("Fehler")
+                self.msgError.setText("Sie können nicht mehr als 10 Dateien importieren.")
                 self.msgError.show()
     
     def getItemsDict(self)->dict:
