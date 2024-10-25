@@ -67,7 +67,7 @@ class IfcOps:
         worksheet.write(8, 0, "Breitengrad", bold)
         worksheet.write(9, 0, "Längengrad", bold)
         worksheet.write(10, 0, "Autoren-Software", bold)
-        worksheet.write(11, 0, "Objekte im Modell", bold)
+        worksheet.write(11, 0, "Anzahl der Objekte im Modell", bold)
 
         worksheet.write(4, 2, "Projektinformationen", titles)
         worksheet.write(5, 2, "Beschreibung", bold)

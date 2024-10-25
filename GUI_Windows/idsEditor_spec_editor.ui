@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>786</width>
-    <height>522</height>
+    <width>798</width>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>0</x>
       <y>50</y>
       <width>791</width>
-      <height>461</height>
+      <height>501</height>
      </rect>
     </property>
     <property name="font">
@@ -177,6 +177,12 @@
         <height>151</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
      </widget>
      <widget class="QComboBox" name="combo_mandatory">
       <property name="geometry">
@@ -249,7 +255,7 @@
         <x>19</x>
         <y>219</y>
         <width>551</width>
-        <height>211</height>
+        <height>241</height>
        </rect>
       </property>
      </widget>
@@ -303,7 +309,7 @@
         <x>19</x>
         <y>219</y>
         <width>551</width>
-        <height>211</height>
+        <height>241</height>
        </rect>
       </property>
      </widget>
@@ -328,6 +334,12 @@
         <width>551</width>
         <height>151</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <family>MS Shell Dlg 2</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
      </widget>
      <widget class="QPushButton" name="btn_delete_requirement">
@@ -448,6 +460,11 @@
       <width>141</width>
       <height>28</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+     </font>
     </property>
     <property name="text">
      <string>Specification speichern</string>

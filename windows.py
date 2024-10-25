@@ -154,7 +154,7 @@ class IdsSpecListWindow(QMainWindow):
             else:
                 Ops.msgError(self, "Fehler", "Element in Bearbeitung kann nicht gelöscht werden.")
         else:
-            Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zum Löschen ausgewählt.") 
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zum Löschen ausgewählt.") 
 
     def clickEdit(self):
         if Ops.checkIfElementSelected(self, self.list_ids_spec):
@@ -166,7 +166,7 @@ class IdsSpecListWindow(QMainWindow):
             self.list_ids_spec.clearSelection()
             self.open_spec_editor.emit()
         else:
-           Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zur Bearbeitung ausgewählt.") 
+           Ops.msgError(self, "Auswahlfehler", "Kein Element zur Bearbeitung ausgewählt.") 
     
     def updateSpecList(self):
         #Save specification in List in SpecListWindow
