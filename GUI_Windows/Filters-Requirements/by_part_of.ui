@@ -77,7 +77,7 @@
        <item>
         <widget class="QLabel" name="lbl_relation">
          <property name="text">
-          <string>Baziehung</string>
+          <string>Beziehung</string>
          </property>
         </widget>
        </item>
