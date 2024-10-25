@@ -510,7 +510,7 @@ class IdsSpecEditorWindow(QMainWindow):
             self.add_spec_to_list.emit()
             self.close()
         else:
-            Ops.msgError(self,"Specification-Fehler", "Bitte überprüfen Sie, ob die mit (*) markierten erforderlichen Informationen angegeben wurden. Eine Specification muss mindestens ein Element im Applicability-Teil enthalten.")
+            Ops.msgError(self,"Specification-Fehler", "Bitte überprüfen Sie, ob die mit (*) markierten erforderlichen Informationen angegeben wurden. Eine Specification muss mindestens ein Filter enthalten.")
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
@@ -1295,7 +1295,7 @@ class CheckWindow(QMainWindow):
             report_path= folder_path+ f"/{report_name}" 
             #Generate report
             IfcOps.checkIfcWithIds(ifc_file, ids_file, report_type, report_path)
-            self.lbl_notification.setText(f"bericht gespeichert in: {report_path}")
+            self.lbl_notification.setText(f"Bericht gespeichert in: {report_path}")
             self.lbl_notification.show()
         else:
             Ops.msgError(self, "Fehler: Ordnerpfad", "Ein Ordnerpfad muss angegeben werden.")

@@ -29,7 +29,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -160,12 +160,12 @@
        <rect>
         <x>20</x>
         <y>20</y>
-        <width>141</width>
+        <width>241</width>
         <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>Element im Model sind:</string>
+       <string>gefilterte Elemente im Modell sind:</string>
       </property>
      </widget>
      <widget class="CustomListWidget" name="list_filters">
@@ -187,7 +187,7 @@
      <widget class="QComboBox" name="combo_mandatory">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>230</x>
         <y>20</y>
         <width>141</width>
         <height>16</height>
