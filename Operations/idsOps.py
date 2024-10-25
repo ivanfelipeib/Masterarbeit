@@ -65,7 +65,7 @@ class IdsOps():
             facet= ids.PartOf(name = dict_data["name"], predefinedType=  dict_data["predef_type"], relation= dict_data["relation"], cardinality = dict_data["optionality"], instructions= None) 
         
         else:
-            print("Chosen filter/requirement, does not correspont to a valid facet type")
+            print("Der ausgewählte Filter/Informationsanforderung entspricht keinem gültigen Facet-Typ")
 
         if is_filter:
             facet.cardinality = cardinality_filter #If facet is a filter, cardinality is defined by comboBox in applicability section
@@ -128,7 +128,7 @@ class IdsOps():
                     restriction=ids.Restriction(options, base)
 
                 else:
-                    print("Expression does not match any range of values.")
+                    print("Der Ausdruck entspricht keinem Wertebereich.")
 
                 if restriction:
                     dict_data[key] = restriction
@@ -163,7 +163,7 @@ class IdsOps():
         try:
             input_dict = ast.literal_eval(input_str)
         except (ValueError, SyntaxError):
-            raise ValueError("Invalid input string format")
+            raise ValueError("Ungültiges Eingabeformat")
         
         if 'pattern' in input_dict:
             return input_dict['pattern']
@@ -240,20 +240,20 @@ class IdsOps():
             existing_content = file.read()
 
         with open(base_report_filepath,'w') as file:
-            header= "IDS QUALITY CHECK REPORT"+"\n"
-            subheader= "Date of report: "+ Ops.getDatetime() +"\n"+"\n"
-            ids_name= "IDS Name: "+ str(my_ids.info["title"]) +"\n"
-            ids_version = "File Version: "+ str(my_ids.info["version"])+"\n"
-            ids_date= "Created on: "+ str(my_ids.info["date"])+"\n"
-            ids_description= "IDS Description: "+ str(my_ids.info["description"])+"\n"+"\n"
-            header_quality_check= "Quality check: "+"\n"
+            header= "IDS-Prüfbericht"+"\n"
+            subheader= "Berichtsdatum: "+ Ops.getDatetime() +"\n"+"\n"
+            ids_name= "IDS-Name: "+ str(my_ids.info["title"]) +"\n"
+            ids_version = "Dateiversion: "+ str(my_ids.info["version"])+"\n"
+            ids_date= "Erstellt am: "+ str(my_ids.info["date"])+"\n"
+            ids_description= "IDS-Beschreibung "+ str(my_ids.info["description"])+"\n"+"\n"
+            header_quality_check= "Ergebnisse: "+"\n"
 
             new_text= header + subheader+ ids_name + ids_version + ids_date + ids_description + header_quality_check
 
-            footnote=("\nThe warnings and information are for informational purposes and do not constitute a problem in themselves."
-                      "On the contrary, the errors found in the quality report must be corrected before the IDS file can be used."
-                    "Using a corrupted IDS file will not allow proper verification of the information content of an IFC model. \n"
-                    "Please consider this before saving the IDS File you are editing")
+            footnote=("\nDie Warnungen und Informationen dienen nur zu Informationszwecken und stellen an sich kein Problem dar."
+                      " Im Gegensatz dazu müssen die im Qualitätsbericht gefundenen Fehler behoben werden, bevor die IDS-Datei verwendet werden kann."
+                    "\n\nDie Verwendung einer fehlerhaften IDS-Datei ermöglicht keine ordnungsgemäße Überprüfung des Informationsinhalts eines IFC-Modells. \n"
+                    "\nBitte beachten Sie dies, bevor Sie die IDS-Datei in Bearbeitung speichern.")
 
             file.write(new_text+existing_content+footnote)
     
