@@ -37,14 +37,14 @@ class IdsEditorAuditWindow(QMainWindow):
     
     def export(self):
         options = QFileDialog.Options()
-        destination_file, _ = QFileDialog.getSaveFileName(self, "Select destination filepath", "", "Text files (*.txt)", options=options)
+        destination_file, _ = QFileDialog.getSaveFileName(self, "Ziel-Dateipfad auswählen", "", "Text-Dateien (*.txt)", options=options)
         if destination_file:
-            print(f"Destination file path: {destination_file}")
+            print(f"Ziel-Dateipfad: {destination_file}")
             try:
                 shutil.copy(constants.TEMP_LOG_DIR, destination_file) #copy file from Temp folder to selected filepath
-                QMessageBox.information(self, "Success", f"File exported to {destination_file}")
+                QMessageBox.information(self, "Ergfolgreich exportiert", f"Datei exportiert nach {destination_file}")
             except Exception as e:
-                QMessageBox.critical(self, "Error", f"Failed to export file: {e}")
+                QMessageBox.critical(self, "Fehler", f"Export der Datei: {e}  fehlgeschlagen")
 
 class IdsInfoWindow(QMainWindow):
     def __init__(self, parent= None, my_ids= None, my_spec= None, my_facet=None):
@@ -71,7 +71,7 @@ class IdsInfoWindow(QMainWindow):
         if self.my_ids: #Load data if ids was passed
             self.loadData(self.my_ids)
         else: #Load default values
-            self.txt_author.setText("This field requires an email address e.g. author@mail.com")
+            self.txt_author.setText("Dieses Feld erfordert eine E-Mail-Adresse, z. B. autor@mail.com")
             self.txt_version.setText("1.0")
             current_date = QDate.currentDate()
             self.date.setDisplayFormat("dd/MM/yyyy")
@@ -152,9 +152,9 @@ class IdsSpecListWindow(QMainWindow):
                 del spec
                 self.list_ids_spec.maxFileList+=1
             else:
-                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
+                Ops.msgError(self, "Fehler", "Element in Bearbeitung kann nicht gelöscht werden.")
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.") 
+            Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zum Löschen ausgewählt.") 
 
     def clickEdit(self):
         if Ops.checkIfElementSelected(self, self.list_ids_spec):
@@ -166,7 +166,7 @@ class IdsSpecListWindow(QMainWindow):
             self.list_ids_spec.clearSelection()
             self.open_spec_editor.emit()
         else:
-           Ops.msgError(self, "Selection Error", "There is no item selected to edit.") 
+           Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zur Bearbeitung ausgewählt.") 
     
     def updateSpecList(self):
         #Save specification in List in SpecListWindow
@@ -276,7 +276,7 @@ class IdsSpecEditorWindow(QMainWindow):
             case "Add filter by material":
                 self.opened_filter = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
-                Ops.msgError(self, "Error","Text in ComboBox does not match any type of filter")
+                Ops.msgError(self, "Fehler","Text in der ComboBox stimmt mit keinem Filtertyp überein.")
         
         if text != "Add filter by class": # In Applicability section, there's one cardinality for all facets. Individual cardinality comboBox hide
             self.opened_filter.combo_optionality.hide()
@@ -302,11 +302,11 @@ class IdsSpecEditorWindow(QMainWindow):
             case "Add requirement by material":
                 self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
-                Ops.msgError(self, "Error","Text in ComboBox does not match any type of requirements")
+                Ops.msgError(self, "Fehler","Text in der ComboBox stimmt mit keinem Informationsanforderungstyp überein.")
         
     def save_requirements_data(self):
         if not self.mdi_requirement.subWindowList() or not self.opened_requirement:
-            Ops.msgError(self, "Error", "There is no requirement in edition. Please select a requirement type from the dropdown list.")
+            Ops.msgError(self, "Fehler", "Es gibt keine Informationsanforderung in Bearbeitung. Bitte wählen Sie einen Anforderungstyp aus der Dropdown-Liste aus.")
         else:
             dict_data = self.opened_requirement.getData() #access windows in filter.py and calls getData depending on window
 
@@ -334,13 +334,13 @@ class IdsSpecEditorWindow(QMainWindow):
                     self.opened_requirement = None
                     self.mdi_requirement.closeAllSubWindows()
                 else:
-                    Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+                    Ops.msgError(self, "Fehlende Informationen", "Alle als erforderlich gekennzeichneten Felder müssen ausgefüllt werden. Erforderliche Informationen sind mit (*) gekennzeichnet.")
             else:
-                Ops.msgError(self, "Existing entity facet", "An entity facet already exists. Only one entity facet is allowed.")
+                Ops.msgError(self, "Vorhandene Entity-Facet", "Ein Entity-Facet ist bereits vorhanden. Es ist nur eine Entity-Facet erlaubt.")
 
     def save_filters_data(self):
         if not self.mdi_filter.subWindowList() or not self.opened_filter:
-            Ops.msgError(self, "Error", "There is no filter in edition. Please select a filter type from the dropdown list.")
+            Ops.msgError(self, "Fehler", "Es gibt keinen Filter in Bearbeitung. Bitte wählen Sie einen Filtertyp aus der Dropdown-Liste aus.")
         else:
             dict_data = self.opened_filter.getData()
             if not IdsOps.checkExistingEntityFacet(self.dic_filters) or IdsOps.getExistingEntityFacet(self.dic_filters) == self.filter_in_edition: #Raised error if entity facet already exist ina applicability
@@ -367,9 +367,9 @@ class IdsSpecEditorWindow(QMainWindow):
                     self.opened_filter = None
                     self.mdi_filter.closeAllSubWindows()
                 else:
-                    Ops.msgError(self, "Missing Information", "All the fields marked as required must be provided. Required information is marked with (*)")
+                    Ops.msgError(self, "Fehlende Informationen", "Alle als erforderlich gekennzeichneten Felder müssen ausgefüllt werden. Erforderliche Informationen sind mit (*) gekennzeichnet.")
             else:
-                Ops.msgError(self, "Existing entity facet", "An entity facet already exists. Only one entity facet is allowed.")
+                Ops.msgError(self, "Vorhandene Entity-Facet", "Eine Entity-Facet existiert bereits. Es ist nur eine Entity-Facet erlaubt.")
 
     def clickDeleteRequirement(self):
         if Ops.checkIfElementSelected(self, self.list_requirements):
@@ -381,9 +381,9 @@ class IdsSpecEditorWindow(QMainWindow):
                 del facet
                 self.list_requirements.maxFileList+=1
             else:
-                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
+                Ops.msgError(self, "Fehler", "Ein Element in Bearbeitung kann nicht gelöscht werden.")
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zum Löschen ausgewählt.")
 
     def clickDeleteFilter(self):
         if Ops.checkIfElementSelected(self, self.list_filters):
@@ -395,9 +395,9 @@ class IdsSpecEditorWindow(QMainWindow):
                 del facet
                 self.list_filters.maxFileList+=1
             else:
-                Ops.msgError(self, "Error", "Item in edition cannot be deleted")
+                Ops.msgError(self, "Fehler", "Ein Element in Bearbeitung kann nicht gelöscht werden.")
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zum Löschen ausgewählt.")
     
     def loadRequirementsList(self):
         for requirement_load in self.my_spec.requirements:
@@ -446,7 +446,7 @@ class IdsSpecEditorWindow(QMainWindow):
             self.openRequirementSubWindow(text, req_selected)
             self.list_requirements.clearSelection()
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zur Bearbeitung ausgewählt.")
 
     def loadFilterSubWindow(self):
         if Ops.checkIfElementSelected(self, self.list_filters):
@@ -463,7 +463,7 @@ class IdsSpecEditorWindow(QMainWindow):
             self.openFilterSubWindow(text, filter_selected)
             self.list_filters.clearSelection()
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected for editing.") 
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zur Bearbeitung ausgewählt.") 
     
     def loadCardinality(self):
         #Set cardinality according with IDS documentation https://github.com/buildingSMART/IDS/blob/development/Documentation/specifications.md
@@ -480,14 +480,14 @@ class IdsSpecEditorWindow(QMainWindow):
             cardinality= "prohibited"
             index = self.combo_mandatory.findText(cardinality)
         else:
-            Ops.msgError(self, "Cardinality Error","The cardinality of the imported IDS file cannot be read, it might be corrupt.")
+            Ops.msgError(self, "Kardinalität-Fehler","Die Kardinalität der importierten IDS-Datei kann nicht gelesen werden, die Datei könnte beschädigt sein.")
         
         #Set combobox value depending on cardinality
         if index == -1:  # Value not found
-            Ops.msgError(self, "Cardinality Error","The cardinality found does not match elements in comboBox")
+            Ops.msgError(self, "Kardinalität-Fehler","Die gefundene Kardinalität stimmt nicht mit den Elementen der comboBox überein.")
         else:
             self.combo_mandatory.setCurrentIndex(index)
-            print(f"Value '{cardinality}' set successfully in the combo box for{self.my_spec}")
+            print(f"Wert '{cardinality}' erfolgreich in der ComboBox für {self.my_spec} gesetzt.")
 
     def saveSpecification(self):
         if self.txt_name.text() and self.list_filters.count() > 0:
@@ -510,7 +510,7 @@ class IdsSpecEditorWindow(QMainWindow):
             self.add_spec_to_list.emit()
             self.close()
         else:
-            Ops.msgError(self,"Specification Error", "Please check that the required information marked with (*) has been provided. A specification must have at least one item in the applicability section")
+            Ops.msgError(self,"Specification-Fehler", "Bitte überprüfen Sie, ob die mit (*) markierten erforderlichen Informationen angegeben wurden. Eine Specification muss mindestens ein Element im Applicability-Teil enthalten.")
 
 class IdsEditorWindow(QMainWindow):
     back_to_manage_ids= pyqtSignal()
@@ -562,7 +562,7 @@ class IdsEditorWindow(QMainWindow):
         self.mdi_list.resize(800,832)
         self.info_window = Ops.openSubWindow(self.mdi_list, IdsInfoWindow, self.info_window, None, my_ids_instance=my_ids)
 
-        Ops.msgError(self, "Warning", "To proceed with the IDS authoring process, all the fields marked as required must be provided. Required information is marked with *.")
+        Ops.msgError(self, "Warnung", "Um mit dem IDS-Erstellungsprozess fortzusetzen, müssen alle als erforderlich gekennzeichneten Felder ausgefüllt werden. Erforderliche Informationen sind mit * markiert.")
         self.btn_ids_specifications.show()
 
     def openSpecListWindow(self):
@@ -584,11 +584,11 @@ class IdsEditorWindow(QMainWindow):
 
     def openAuditWindow(self):
         if not self.info_window.txt_title.text() or not self.info_window.txt_version.text() or not self.info_window.txt_author.text():
-            Ops.msgError(self, "IDS Information: missing information", "To proceed with the IDS audit process, all the fields marked as required must be provided. Required information in marked with *.")
+            Ops.msgError(self, "Fehlende IDS-Informationen", "Um mit dem IDS-Auditprozess fortzufahren, müssen alle als erforderlich gekennzeichneten Felder ausgefüllt werden. Erforderliche Informationen sind mit * markiert.")
         elif not Ops.isValidEmail(self.info_window.txt_author.text()):
-            Ops.msgError(self, "IDS Information: Email required", "Field author requires a valid email address")
+            Ops.msgError(self, "IDS-Informationen: Email erforderlich", "Das Feld Autor erfordert eine gültige E-Mail-Adresse.")
         elif self.spec_list_window.list_ids_spec.count() == 0:
-            Ops.msgError(self, "IDS Specifications:", "The current IDS file has no specifications, add at least one specification before proceeding with the IDS audit process")
+            Ops.msgError(self, "IDS-Specifications:", "Die aktuelle IDS-Datei hat keine Specifications. Fügen Sie mindestens eine Specification hinzu, bevor Sie mit dem IDS-Auditprozess fortfahren.")
         else:
             self.mdi_editor.hide()
             self.mdi_list.resize(800,832)
@@ -638,18 +638,18 @@ class IdsEditorWindow(QMainWindow):
     
     def saveIds(self):
         if not self.info_window.txt_title.text() or not self.info_window.txt_version.text() or not self.info_window.txt_author.text():
-            Ops.msgError(self, "IDS Information: missing information", "IDS cannot be saved, required information is missing. All the fields marked as required must be provided, required information is marked with *.")
+            Ops.msgError(self, "Fehlende IDS-Informationen", "IDS cannot be saved, required information is missing. All the fields marked as required must be provided, required information is marked with *.")
         elif not Ops.isValidEmail(self.info_window.txt_author.text()):
-            Ops.msgError(self, "IDS Information: Email required", "Field author requires a valid email address")
+            Ops.msgError(self, "IDS-Informationen: Email erforderlich", "Das Feld Autor erfordert eine gültige E-Mail-Adresse.")
         elif self.spec_list_window.list_ids_spec.count() == 0:
-            Ops.msgError(self, "IDS Specifications:", "The current IDS file has no specifications, add at least one specification before proceeding.")
+            Ops.msgError(self, "IDS-Specifications:", "Die aktuelle IDS-Datei hat keine Specifications. Fügen Sie mindestens eine Specification hinzu, bevor Sie mit dem IDS-Auditprozess fortfahren.")
         else:
             self.generateIdsFile()
             self.setFilePathIds()
     
     def setFilePathIds(self):
-        self.filter="IDS files (*.ids)"
-        self.title= "Save IDS file"
+        self.filter="IDS-Dateien (*.ids)"
+        self.title= "IDS-Datei speichern"
         self.fileDialog = QFileDialog()
         self.fileDialog.setAcceptMode(QFileDialog.AcceptSave)
         self.file_path, _ = self.fileDialog.getSaveFileName(None, self.title, "", self.filter)
@@ -657,7 +657,7 @@ class IdsEditorWindow(QMainWindow):
             self.add_ids_to_list.emit() #Emit signal to class ManageIdsWindow method updateIdsList to pass ids.Ids() Object
             self.close()
         else:
-            Ops.msgError(self,"Error", "The process was interrupted, the IDS file has not been saved")
+            Ops.msgError(self,"Fehler", "Der Prozess wurde unterbrochen, die IDS-Datei wurde nicht gespeichert.")
 
     def backIdsList(self):
         self.back_to_manage_ids.emit()
@@ -725,16 +725,16 @@ class IfcInfoWindow(QMainWindow):
             self.loadIfc2X3Info()
             self.loadEntities()
         else:
-            Ops.msgError(self,"IFC Schema not supported", "The file is not supported. Make sure you are using a file with schemas IFC4 or IFC2x3")
+            Ops.msgError(self,"IFC-Schema wird nicht unterstützt", "Die Datei wird nicht unterstützt. Stellen Sie sicher, dass Sie eine Datei mit den Schema IFC4 oder IFC2x3 verwenden.")
             self.close()
         
 
     def loadIfc4Info(self):
         #Title
-        self.lbl_ifc_title.setText(f"IFC File: {os.path.basename(self.ifc_file_path)}")
+        self.lbl_ifc_title.setText(f"IFC-Datei: {os.path.basename(self.ifc_file_path)}")
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
-        self.txt_coordinate_sys.setText("Descrip.: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_DESCRIPTION)+
+        self.txt_coordinate_sys.setText("Beschreibung: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_DESCRIPTION)+
                                          " / Code: "+
                                         IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_CRS_NAME))
         self.txt_latitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LATITUDE)))
@@ -753,10 +753,10 @@ class IfcInfoWindow(QMainWindow):
     
     def loadIfc2X3Info(self):
         #Title
-        self.lbl_ifc_title.setText(f"IFC File: {os.path.basename(self.ifc_file_path)}")
+        self.lbl_ifc_title.setText(f"IFC-Datei: {os.path.basename(self.ifc_file_path)}")
         #Basic Information
         self.txt_base_point.setText(str(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_BASE_POINT)))
-        self.txt_coordinate_sys.setText("IFC2X3 Schema does not incorportate IfcCoordinateReferenceSystem")
+        self.txt_coordinate_sys.setText("Das IFC2X3 Schema enthält kein IfcCoordinateReferenceSystem")
         self.txt_latitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LATITUDE)))
         self.txt_longitude.setText(Ops.formatLatLong(IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_REF_LONGITUDE)))
         self.txt_ifc_schema.setText(self.my_schema)
@@ -767,8 +767,8 @@ class IfcInfoWindow(QMainWindow):
         self.txt_prj_description.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_DESCRIPTION)))
         self.txt_phase.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_PHASE)))
         self.txt_organization.setText((IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_ORG)))
-        self.txt_author.setText("Last Name: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
-                                 " , First Name: "+
+        self.txt_author.setText("Nachname: "+IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_LAST_NAME)+
+                                 " , Vorname: "+
                                  IfcOps.getInfoFromEntity(self.my_IfcOps,constants.IFC_PROJ_OWNER_AUTHOR_FIRST_NAME))
       
     def loadEntities(self):
@@ -1072,7 +1072,7 @@ class ManageIfcWindow(QMainWindow):
             #Updates maxFileList value
             self.list_ifc.maxFileList+=1
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
+            Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zum Löschen ausgewählt.")
     
     def checkIfc(self):
         if Ops.checkIfElementSelected(self, self.list_ifc):
@@ -1081,7 +1081,7 @@ class ManageIfcWindow(QMainWindow):
                 self.ifc_checker_window=Ops.openWindow(IfcInfoWindow,window_instance=None,setup_signals=None, ifc_file_path=ifc_file_path)
                 self.ifc_checker_window.show()
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to check.")
+            Ops.msgError(self, "Auswahlfehler", "Es wurde kein Element zur Überprüfung ausgewählt.")
 
 class ManageIdsWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -1118,8 +1118,8 @@ class ManageIdsWindow(QMainWindow):
         
     def clickImport(self):
         #Adds filepath from selected element to a list
-        self.filter="IDS-Files (*.ids)"
-        self.title= "Open"
+        self.filter="IDS-Dateien (*.ids)"
+        self.title= "Öffnen"
         self.fileDialog = QFileDialog()
         self.tuple_names= self.fileDialog.getOpenFileNames(self, self.title, "", self.filter)
         
@@ -1133,8 +1133,8 @@ class ManageIdsWindow(QMainWindow):
         else:
             self.msgError= QMessageBox()
             self.msgError.setIcon(QMessageBox.Warning)
-            self.msgError.setWindowTitle("Error")
-            self.msgError.setText("You cannot import more than 10 IFC files")
+            self.msgError.setWindowTitle("Fehler")
+            self.msgError.setText("Sie können nicht mehr als 10 IFC-Dateien importieren.")
             self.msgError.show()
     
     def clickDelete(self):
@@ -1150,11 +1150,11 @@ class ManageIdsWindow(QMainWindow):
                     self.list_ids_mgmnt.takeItem(row)
                     self.list_ids_mgmnt.maxFileList+=1
                 else:
-                    Ops.msgError(self, "Error", "Item in edition cannot be deleted")
+                    Ops.msgError(self, "Fehler", "Ein Element in Bearbeitung kann nicht gelöscht werden.")
             else:
-                Ops.msgError(self, "Selection Error", "There is no item selected to delete.")
+                Ops.msgError(self, "Auswahlfehler", "Kein Element zum Löschen ausgewählt.")
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected to delete.")           
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zum Löschen ausgewählt.")           
     
     def clickNewEditorWindow(self): 
         self.ids_in_edition=None
@@ -1180,7 +1180,7 @@ class ManageIdsWindow(QMainWindow):
             self.idsEditor_window.raise_()
             self.idsEditor_window.activateWindow()
         else:
-            Ops.msgError(self, "Selection Error", "There is no item selected for editing.")
+            Ops.msgError(self, "Auswahlfehler", "Kein Element zur Bearbeitung ausgewählt.")
 
     def setFilepathIds(self, my_ids):
         # self.filter="IDS files (*.ids)"
@@ -1191,20 +1191,20 @@ class ManageIdsWindow(QMainWindow):
         self.file_path = self.idsEditor_window.file_path
         if self.file_path:
             if len(self.list_ids_mgmnt.findItems(self.file_path, Qt.MatchExactly)) == 0:
-                print(f"File saved in: {self.file_path}")
+                print(f"Datei gespeichert in: {self.file_path}")
             else: 
-                print(f"filepath already in list, file in {self.file_path} was successfully overwritten.")
+                print(f"Dateipfad bereits in der Liste, die Datei in {self.file_path} wurde erfolgreich überschrieben.")
             my_ids.filepath=self.file_path
             my_ids.to_xml(self.file_path)
         else:
-            print("No file selected to save")
+            print("Keine Datei zum Speichern ausgewählt.")
 
     def updateIdsList(self):
         my_ids = self.idsEditor_window.my_ids
         self.setFilepathIds(my_ids)
         item= my_ids.filepath
          # Check if the item already exists in the dictionary, Find and remove the existing item from the list widget 
-        # TODO:uuid not supported by IDS schema, which approach for replacing elements in list, Just string translation?
+        # TODO:uuid not supported by IDS schema (?), which approach for replacing elements in list, Just string translation(?)
         if item in self.dic_ids:
             matching_items = self.list_ids_mgmnt.findItems(item, Qt.MatchExactly)
             for match in matching_items:
@@ -1233,7 +1233,7 @@ class ManageIdsWindow(QMainWindow):
             print(ids_as_dict)
             return ids_object
         else:
-            Ops.msgError(title="Error", msg='No element from IDS List was selected')
+            Ops.msgError(title="Fehler", msg='Es wurde kein Element aus der IDS-Liste ausgewählt.')
 
     def showManageIds(self):
         self.show()
@@ -1295,15 +1295,15 @@ class CheckWindow(QMainWindow):
             report_path= folder_path+ f"/{report_name}" 
             #Generate report
             IfcOps.checkIfcWithIds(ifc_file, ids_file, report_type, report_path)
-            self.lbl_notification.setText(f"Report was saved in: {report_path}")
+            self.lbl_notification.setText(f"bericht gespeichert in: {report_path}")
             self.lbl_notification.show()
         else:
-            Ops.msgError(self, "Error: Folder path", "A folder path must be provided")
+            Ops.msgError(self, "Fehler: Ordnerpfad", "Ein Ordnerpfad muss angegeben werden.")
 
     def openCustomFileDialog(self)->str:
         options = QFileDialog.Options()
         folder_path = QFileDialog.getExistingDirectory(self, 
-                                                       "Select Folder", 
+                                                       "Wählen Sie ein Ordner aus", 
                                                        options=options)
         if folder_path:
             return folder_path
@@ -1366,9 +1366,9 @@ class MainWindow(QMainWindow):
                 self.check_window.raise_()
                 self.check_window.activateWindow()
             else:
-                Ops.msgError(self, "Error","Before proceeding with the check, you must provide at least one IDS file and one IFC file.")
+                Ops.msgError(self, "Fehler","Bevor Sie mit der Überprüfung fortfahren, müssen Sie mindestens eine IDS-Datei und eine IFC-Datei angeben.")
         else:
-            Ops.msgError(self, "Error","Before proceeding with the check, you must provide at least one IDS file and one IFC file.")
+            Ops.msgError(self, "Fehler","Bevor Sie mit der Überprüfung fortfahren, müssen Sie mindestens eine IDS-Datei und eine IFC-Datei angeben.")
 
     def show_main_window(self):
         self.show()
