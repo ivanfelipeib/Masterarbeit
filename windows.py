@@ -263,22 +263,22 @@ class IdsSpecEditorWindow(QMainWindow):
         facet_to_load=facet_to_load
 
         match text:
-            case "Add filter by class":
+            case "Filter nach Klasse hinzufügen":
                 self.opened_filter =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add filter by part of":
+            case "Filter nach Subkomponente hinzufügen":
                 self.opened_filter = Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add filter by attribute":
+            case "Filter nach Attribut hinzufügen":
                 self.opened_filter = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add filter by property":
+            case "Filter nach Eigenschaft hinzufügen":
                 self.opened_filter =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add filter by classification":
+            case "Filter nach Klassifizierung hinzufügen":
                 self.opened_filter = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add filter by material":
+            case "Filter nach Material hinzufügen":
                 self.opened_filter = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
                 Ops.msgError(self, "Fehler","Text in der ComboBox stimmt mit keinem Filtertyp überein.")
         
-        if text != "Add filter by class": # In Applicability section, there's one cardinality for all facets. Individual cardinality comboBox hide
+        if text != "Filter nach Klasse hinzufügen": # In Applicability section, there's one cardinality for all facets. Individual cardinality comboBox hide
             self.opened_filter.combo_optionality.hide()
             self.opened_filter.lbl_optionality.hide()
         else: pass
@@ -289,17 +289,17 @@ class IdsSpecEditorWindow(QMainWindow):
         facet_to_load=facet_to_load
 
         match text:
-            case "Add requirement by class":
+            case "Anforderung nach Klasse hinzufügen":
                 self.opened_requirement =  Ops.openSubWindow(mdi_area, filters.byClass, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add requirement by part of":
+            case "Anforderung nach Subkomponente hinzufügen":
                 self.opened_requirement= Ops.openSubWindow(mdi_area, filters.byPartOf, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add requirement by attribute":
+            case "Anforderung nach Attribut hinzufügen":
                 self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byAttribute, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add requirement by property":
+            case "Anforderung nach Eigenschaft hinzufügen":
                 self.opened_requirement =  Ops.openSubWindow(mdi_area, filters.byProperty, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add requirement by classification":
+            case "Anforderung nach Klassifizierung hinzufügen":
                 self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byClassification, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
-            case "Add requirement by material":
+            case "Anforderung nach Material hinzufügen":
                 self.opened_requirement = Ops.openSubWindow(mdi_area, filters.byMaterial, window_instance=None, setup_signals=None,my_facet_instance=facet_to_load)
             case _:
                 Ops.msgError(self, "Fehler","Text in der ComboBox stimmt mit keinem Informationsanforderungstyp überein.")
@@ -336,7 +336,7 @@ class IdsSpecEditorWindow(QMainWindow):
                 else:
                     Ops.msgError(self, "Fehlende Informationen", "Alle als erforderlich gekennzeichneten Felder müssen ausgefüllt werden. Erforderliche Informationen sind mit (*) gekennzeichnet.")
             else:
-                Ops.msgError(self, "Vorhandene Entity-Facet", "Ein Entity-Facet ist bereits vorhanden. Es ist nur eine Entity-Facet erlaubt.")
+                Ops.msgError(self, "Vorhandene Entity-Facet", "Ein Entity-Facet ist bereits vorhanden. Es ist nur eine einzige Entity-Facet erlaubt.")
 
     def save_filters_data(self):
         if not self.mdi_filter.subWindowList() or not self.opened_filter:
@@ -369,7 +369,7 @@ class IdsSpecEditorWindow(QMainWindow):
                 else:
                     Ops.msgError(self, "Fehlende Informationen", "Alle als erforderlich gekennzeichneten Felder müssen ausgefüllt werden. Erforderliche Informationen sind mit (*) gekennzeichnet.")
             else:
-                Ops.msgError(self, "Vorhandene Entity-Facet", "Eine Entity-Facet existiert bereits. Es ist nur eine Entity-Facet erlaubt.")
+                Ops.msgError(self, "Vorhandene Entity-Facet", "Ein Entity-Facet ist bereits vorhanden. Es ist nur eine einzige Entity-Faceterlaubt.")
 
     def clickDeleteRequirement(self):
         if Ops.checkIfElementSelected(self, self.list_requirements):
@@ -437,11 +437,20 @@ class IdsSpecEditorWindow(QMainWindow):
                 req_selected = self.dic_requirements[item]
                 facet_class = type(req_selected).__name__.lower() #retrieve class as a lowercase string
                 #handle facet name to match element in ComboBox(combo_add_requirement)
-                if facet_class=="entity":
-                    facet_class = "class"
-                elif facet_class=="partof":
-                    facet_class = "part of"
-                text = "Add requirement by "+ facet_class
+                match facet_class:
+                    case "entity":
+                        facet_class="Klasse"
+                    case "attribute":
+                        facet_class="Attribut"
+                    case "classification":
+                        facet_class="Klassifizierung"
+                    case "property":
+                        facet_class="Eigenschaft"
+                    case "material":
+                        facet_class= "Material"
+                    case "partof":
+                        facet_class= "Subkomponente"
+                text = "Anforderung nach "+ facet_class + " hinzufügen"
                 Ops.setTextComboBox(self, "combo_add_requirement", text)#Set value of combobox with type of requirements to the corresponding type of selected requirement
             self.openRequirementSubWindow(text, req_selected)
             self.list_requirements.clearSelection()
@@ -456,9 +465,20 @@ class IdsSpecEditorWindow(QMainWindow):
                 self.filter_in_edition = item #Store item in edition to delete it from the list and add updated item
                 filter_selected = self.dic_filters[item]
                 facet_class = type(filter_selected).__name__.lower() #retrieve class as a lowercase string
-                if facet_class=="entity":
-                    facet_class = "class"
-                text = "Add filter by "+ facet_class
+                match facet_class:
+                    case "entity":
+                        facet_class="Klasse"
+                    case "attribute":
+                        facet_class="Attribut"
+                    case "classification":
+                        facet_class="Klassifizierung"
+                    case "property":
+                        facet_class="Eigenschaft"
+                    case "material":
+                        facet_class= "Material"
+                    case "partof":
+                        facet_class= "Subkomponente"
+                text = f"Filter nach {facet_class} hinzufügen"
                 Ops.setTextComboBox(self, "combo_add_filter", text) #Set value of combobox with type of filters to the corresponding type of selected filter
             self.openFilterSubWindow(text, filter_selected)
             self.list_filters.clearSelection()

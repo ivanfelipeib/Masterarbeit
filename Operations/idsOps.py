@@ -46,22 +46,22 @@ class IdsOps():
     @staticmethod
     def createFacet(spec_type: str, dict_data: dict, is_filter: bool= False, cardinality_filter: str = "required")-> ids.Facet:
 
-        if  spec_type == "Add filter by class" or spec_type == "Add requirement by class":
+        if  spec_type == "Filter nach Klasse hinzufügen" or spec_type == "Anforderung nach Klasse hinzufügen":
             facet= ids.Entity(name = dict_data["name"], predefinedType = dict_data["predef_type"])
 
-        elif spec_type == "Add filter by attribute" or spec_type == "Add requirement by attribute":
+        elif spec_type == "Filter nach Attribut hinzufügen" or spec_type == "Anforderung nach Attribut hinzufügen":
             facet= ids.Attribute(name = dict_data["name"], value = dict_data["value"], cardinality = dict_data["optionality"], instructions= None) 
 
-        elif spec_type == "Add filter by classification" or spec_type == "Add requirement by classification":
+        elif spec_type == "Filter nach Klassifizierung hinzufügen" or spec_type == "Anforderung nach Klassifizierung hinzufügen":
             facet= ids.Classification(system = dict_data["system"], value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
-        elif spec_type == "Add filter by property" or spec_type == "Add requirement by property":
+        elif spec_type == "Filter nach Eigenschaft hinzufügen" or spec_type == "Anforderung nach Eigenschaft hinzufügen":
             facet= ids.Property(propertySet= dict_data["pset"], baseName = dict_data["name"], dataType= dict_data["data_type"], value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
-        elif spec_type == "Add filter by material" or spec_type == "Add requirement by material":
+        elif spec_type == "Filter nach Material hinzufügen" or spec_type == "Anforderung nach Material hinzufügen":
             facet= ids.Material(value = dict_data["value"], uri = dict_data["uri"], cardinality = dict_data["optionality"], instructions= None) 
 
-        elif spec_type == "Add filter by part of" or spec_type == "Add requirement by part of":
+        elif spec_type == "Filter nach Subkomponente hinzufügen" or spec_type == "Anforderung nach Subkomponente hinzufügen":
             facet= ids.PartOf(name = dict_data["name"], predefinedType=  dict_data["predef_type"], relation= dict_data["relation"], cardinality = dict_data["optionality"], instructions= None) 
         
         else:

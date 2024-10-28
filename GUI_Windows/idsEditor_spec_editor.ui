@@ -29,7 +29,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab_description">
      <attribute name="title">
@@ -220,32 +220,32 @@
       </property>
       <item>
        <property name="text">
-        <string>Add filter by class</string>
+        <string>Filter nach Klasse hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add filter by attribute</string>
+        <string>Filter nach Attribut hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add filter by classification</string>
+        <string>Filter nach Klassifizierung hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add filter by property</string>
+        <string>Filter nach Eigenschaft hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add filter by material</string>
+        <string>Filter nach Material hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add filter by part of</string>
+        <string>Filter nach Subkomponente hinzufügen</string>
        </property>
       </item>
      </widget>
@@ -366,32 +366,32 @@
       </property>
       <item>
        <property name="text">
-        <string>Add requirement by class</string>
+        <string>Anforderung nach Klasse hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by attribute</string>
+        <string>Anforderung nach Attribut hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by classification</string>
+        <string>Anforderung nach Klassifizierung hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by property</string>
+        <string>Anforderung nach Eigenschaft hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by material</string>
+        <string>Anforderung nach Material hinzufügen</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Add requirement by part of</string>
+        <string>Anforderung nach Subkomponente hinzufügen</string>
        </property>
       </item>
      </widget>
