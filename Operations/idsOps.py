@@ -274,6 +274,3 @@ class IdsOps():
                 else:
                     pass
             return item
-
-   
-        
